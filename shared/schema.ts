@@ -18,7 +18,7 @@ export const drivers = pgTable("drivers", {
   simNumber: text("sim_number").notNull(),
   vehicleType: text("vehicle_type").notNull(),
   status: text("status").notNull().default("active"), // active, suspended, pending
-  rating: decimal("rating", { precision: 3, scale: 2 }).default("0.00"),
+  rating: text("rating").default("0"),
   totalOrders: integer("total_orders").default(0),
   joinDate: timestamp("join_date").defaultNow(),
 });
