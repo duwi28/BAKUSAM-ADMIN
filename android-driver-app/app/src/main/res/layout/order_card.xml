@@ -1,0 +1,215 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="12dp"
+    app:cardCornerRadius="12dp"
+    app:cardElevation="4dp"
+    android:clickable="true"
+    android:foreground="?android:attr/selectableItemBackground">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <!-- Order Header -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginBottom="8dp"
+            android:gravity="center_vertical">
+
+            <TextView
+                android:id="@+id/orderNumber"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Order #1"
+                android:textColor="#333333"
+                android:textSize="14sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="💰 TALANGAN"
+                android:background="@drawable/talangan_badge"
+                android:textColor="@android:color/white"
+                android:textSize="10sp"
+                android:textStyle="bold"
+                android:padding="4dp"
+                android:layout_marginLeft="8dp"
+                android:visibility="gone"
+                android:id="@+id/talanganBadge" />
+
+            <TextView
+                android:id="@+id/orderDistance"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="2.5 km"
+                android:textColor="#666666"
+                android:textSize="12sp"
+                android:layout_marginLeft="8dp" />
+
+        </LinearLayout>
+
+        <!-- Customer Name -->
+        <TextView
+            android:id="@+id/customerName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Andi Wijaya"
+            android:textColor="#333333"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="8dp" />
+
+        <!-- Address Info -->
+        <TextView
+            android:id="@+id/addressInfo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="📍 Mall Central Park → Apartemen Taman Anggrek"
+            android:textColor="#666666"
+            android:textSize="12sp"
+            android:layout_marginBottom="8dp" />
+
+        <!-- Talangan Section -->
+        <LinearLayout
+            android:id="@+id/talanganSection"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="@drawable/talangan_section_bg"
+            android:padding="12dp"
+            android:layout_marginVertical="8dp"
+            android:visibility="gone">
+
+            <!-- Talangan Header -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:layout_marginBottom="8dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="💰"
+                    android:textSize="16sp"
+                    android:layout_marginRight="8dp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="TALANGAN DIPERLUKAN"
+                    android:textColor="#E65100"
+                    android:textSize="14sp"
+                    android:textStyle="bold" />
+
+            </LinearLayout>
+
+            <!-- Talangan Amount -->
+            <TextView
+                android:id="@+id/talanganAmount"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Rp 50.000"
+                android:textColor="#E65100"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:layout_marginBottom="4dp" />
+
+            <!-- Talangan Note -->
+            <TextView
+                android:id="@+id/talanganNote"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Bayar tagihan listrik di loket mall"
+                android:textColor="#6D4C41"
+                android:textSize="12sp"
+                android:fontFamily="serif"
+                android:layout_marginBottom="8dp" />
+
+            <!-- Talangan Warning -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="⚠️ Siapkan uang tunai sesuai nominal"
+                android:background="@drawable/warning_bg"
+                android:textColor="#E65100"
+                android:textSize="11sp"
+                android:textStyle="bold"
+                android:padding="8dp" />
+
+        </LinearLayout>
+
+        <!-- Order Footer -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_marginTop="12dp">
+
+            <!-- Fare Section -->
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/orderFare"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Ongkir: Rp 25.000"
+                    android:textColor="#4CAF50"
+                    android:textSize="14sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/talanganSummary"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="+ Talangan: Rp 50.000"
+                    android:textColor="#FF9800"
+                    android:textSize="12sp"
+                    android:textStyle="bold"
+                    android:visibility="gone" />
+
+            </LinearLayout>
+
+            <!-- Time -->
+            <TextView
+                android:id="@+id/orderTime"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="15 menit"
+                android:textColor="#666666"
+                android:textSize="12sp"
+                android:layout_marginRight="10dp" />
+
+            <!-- Accept Button -->
+            <Button
+                android:id="@+id/acceptButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Terima"
+                android:background="@drawable/button_green"
+                android:textColor="@android:color/white"
+                android:textSize="12sp"
+                android:textStyle="bold"
+                android:padding="8dp"
+                android:minWidth="80dp" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</androidx.cardview.widget.CardView>
