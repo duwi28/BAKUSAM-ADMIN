@@ -4,12 +4,21 @@ import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Badge } from "@/components/ui/badge";
 import RevenueChart from "@/components/charts/revenue-chart";
 import OrdersChart from "@/components/charts/orders-chart";
 import { 
@@ -21,9 +30,14 @@ import {
   Star,
   Download,
   Calendar,
-  BarChart3
+  BarChart3,
+  Bike,
+  Car,
+  Truck,
+  Clock,
+  MapPin
 } from "lucide-react";
-import { formatCurrency } from "@/lib/utils";
+import { formatCurrency, formatDateTime } from "@/lib/utils";
 import { useState } from "react";
 
 interface DashboardStats {
@@ -130,8 +144,20 @@ export default function Reports() {
       </div>
 
       <Tabs defaultValue="overview" className="space-y-6">
-        <TabsList>
+        <TabsList className="grid w-full grid-cols-7">
           <TabsTrigger value="overview">Ringkasan</TabsTrigger>
+          <TabsTrigger value="motor" className="flex items-center space-x-1">
+            <Bike className="h-4 w-4" />
+            <span>Motor</span>
+          </TabsTrigger>
+          <TabsTrigger value="mobil" className="flex items-center space-x-1">
+            <Car className="h-4 w-4" />
+            <span>Mobil</span>
+          </TabsTrigger>
+          <TabsTrigger value="pickup" className="flex items-center space-x-1">
+            <Truck className="h-4 w-4" />
+            <span>Pickup</span>
+          </TabsTrigger>
           <TabsTrigger value="revenue">Pendapatan</TabsTrigger>
           <TabsTrigger value="performance">Performa</TabsTrigger>
           <TabsTrigger value="customers">Customer</TabsTrigger>

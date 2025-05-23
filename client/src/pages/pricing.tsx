@@ -247,10 +247,96 @@ export default function Pricing() {
         </TabsList>
 
         <TabsContent value="pricing" className="space-y-4">
+          {/* Tarif Flat Motor */}
+          <Card className="border-2 border-orange-200 bg-orange-50">
+            <CardHeader>
+              <CardTitle className="flex items-center space-x-2">
+                <Bike className="h-5 w-5 text-orange-600" />
+                <span className="text-orange-600">Tarif Flat Motor</span>
+                <Badge variant="secondary" className="bg-orange-100 text-orange-700">
+                  Tidak Bergantung Jarak
+                </Badge>
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div className="space-y-4">
+                  <div>
+                    <label className="text-sm font-medium text-muted-foreground">Tarif Flat Motor</label>
+                    <div className="flex items-center space-x-2 mt-1">
+                      <Input 
+                        placeholder="25000" 
+                        defaultValue="25000"
+                        className="font-bold text-lg"
+                      />
+                      <span className="text-sm text-muted-foreground">/ order</span>
+                    </div>
+                  </div>
+                  <p className="text-sm text-muted-foreground">
+                    Tarif tetap untuk semua pengiriman motor, tidak peduli jarak tempuh
+                  </p>
+                </div>
+                
+                <div className="space-y-4">
+                  <div>
+                    <label className="text-sm font-medium text-muted-foreground">Batas Maksimal Jarak</label>
+                    <div className="flex items-center space-x-2 mt-1">
+                      <Input 
+                        placeholder="15" 
+                        defaultValue="15"
+                        className="font-bold"
+                      />
+                      <span className="text-sm text-muted-foreground">KM</span>
+                    </div>
+                  </div>
+                  <p className="text-sm text-muted-foreground">
+                    Jarak maksimal yang masih menggunakan tarif flat
+                  </p>
+                </div>
+
+                <div className="space-y-4">
+                  <div>
+                    <label className="text-sm font-medium text-muted-foreground">Status</label>
+                    <div className="flex items-center space-x-2 mt-1">
+                      <Badge variant="default" className="bg-green-100 text-green-700">
+                        ✓ Aktif
+                      </Badge>
+                      <Button variant="outline" size="sm">
+                        Nonaktifkan
+                      </Button>
+                    </div>
+                  </div>
+                  <Button className="w-full bg-orange-600 hover:bg-orange-700">
+                    Update Tarif Flat
+                  </Button>
+                </div>
+              </div>
+
+              <div className="mt-6 p-4 bg-white rounded-lg border">
+                <h4 className="font-medium mb-2">Contoh Perhitungan:</h4>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+                  <div>
+                    <p className="text-muted-foreground">Jarak 2 KM:</p>
+                    <p className="font-bold text-green-600">Rp 25.000</p>
+                  </div>
+                  <div>
+                    <p className="text-muted-foreground">Jarak 8 KM:</p>
+                    <p className="font-bold text-green-600">Rp 25.000</p>
+                  </div>
+                  <div>
+                    <p className="text-muted-foreground">Jarak 15 KM:</p>
+                    <p className="font-bold text-green-600">Rp 25.000</p>
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Tarif Regular */}
           <Card>
             <CardHeader>
               <div className="flex items-center justify-between">
-                <CardTitle>Daftar Tarif</CardTitle>
+                <CardTitle>Daftar Tarif Berdasarkan Jarak</CardTitle>
                 <div className="flex items-center space-x-4">
                   <div className="relative">
                     <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
