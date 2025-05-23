@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Primary Colors -->
+    <color name="green_500">#4CAF50</color>
+    <color name="green_600">#45a049</color>
+    <color name="orange_500">#FF9800</color>
+    <color name="orange_600">#F57C00</color>
+    <color name="red_500">#f44336</color>
+    <color name="red_600">#D32F2F</color>
+    
+    <!-- Background Colors -->
+    <color name="background_light">#F5F5F5</color>
+    <color name="card_background">#FFFFFF</color>
+    
+    <!-- Text Colors -->
+    <color name="text_primary">#333333</color>
+    <color name="text_secondary">#666666</color>
+    <color name="text_hint">#999999</color>
+    
+    <!-- Talangan Colors -->
+    <color name="talangan_bg">#FFF8E1</color>
+    <color name="talangan_border">#FF9800</color>
+    <color name="talangan_text">#E65100</color>
+    <color name="talangan_note">#6D4C41</color>
+    
+    <!-- Status Colors -->
+    <color name="status_online">#4CAF50</color>
+    <color name="status_offline">#757575</color>
+    
+    <!-- Section Colors -->
+    <color name="section_info">#E3F2FD</color>
+    <color name="section_success">#E8F5E8</color>
+    <color name="section_warning">#FFEBEE</color>
+    
+    <!-- Gradient Colors -->
+    <color name="gradient_start">#4CAF50</color>
+    <color name="gradient_end">#45a049</color>
+</resources>

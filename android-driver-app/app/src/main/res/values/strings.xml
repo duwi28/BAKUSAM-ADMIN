@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Bakusam Driver</string>
+    <string name="welcome_message">Selamat datang,</string>
+    <string name="driver_name">Budi Santoso</string>
+    <string name="driver_rating">Motor • Rating: 4.8⭐</string>
+    <string name="status_online">ONLINE</string>
+    <string name="status_offline">OFFLINE</string>
+    <string name="earnings_today">Penghasilan Hari Ini</string>
+    <string name="balance">Saldo:</string>
+    <string name="withdraw_balance">Tarik Saldo</string>
+    <string name="orders_available">Order Tersedia (Radius 3KM)</string>
+    <string name="offline_message">📴 Anda sedang OFFLINE</string>
+    <string name="offline_description">Aktifkan status online untuk menerima order</string>
+    <string name="talangan_required">TALANGAN DIPERLUKAN</string>
+    <string name="talangan_warning">⚠️ Siapkan uang tunai sesuai nominal</string>
+    <string name="accept_order">Terima</string>
+    <string name="accept_talangan">💰 Terima + Talangan</string>
+    <string name="order_accepted">Order berhasil diterima!</string>
+    <string name="talangan_accepted">Order dengan talangan berhasil diterima!</string>
+    <string name="insufficient_balance">Saldo tidak mencukupi! Minimal penarikan Rp 50.000</string>
+    <string name="withdrawal_success">Penarikan berhasil!</string>
+    <string name="navigation_home">Beranda</string>
+    <string name="navigation_map">Peta</string>
+    <string name="navigation_chat">Chat</string>
+    <string name="navigation_profile">Profil</string>
+    <string name="talangan_confirmation_title">💰 Konfirmasi Talangan</string>
+    <string name="order_details">📋 Detail Order</string>
+    <string name="talangan_amount">💰 NOMINAL TALANGAN</string>
+    <string name="talangan_purpose">Keperluan:</string>
+    <string name="talangan_instructions">📋 INSTRUKSI TALANGAN</string>
+    <string name="talangan_warning_title">⚠️ PERINGATAN PENTING</string>
+    <string name="financial_summary">💵 RINGKASAN KEUANGAN</string>
+    <string name="fare_label">Ongkir:</string>
+    <string name="commission_label">Komisi Anda (70%):</string>
+    <string name="talangan_label">Talangan:</string>
+    <string name="net_label">Net:</string>
+    <string name="reject_order">❌ Tolak Order</string>
+    <string name="confirm_talangan">✅ Terima + Talangan</string>
+</resources>
