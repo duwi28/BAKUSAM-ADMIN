@@ -67,13 +67,33 @@ export default function Reports() {
     queryKey: ["/api/dashboard/stats"],
   });
 
-  const { data: orders } = useQuery({
+  const { data: drivers = [] } = useQuery({
+    queryKey: ["/api/drivers"],
+  });
+
+  const { data: orders = [] } = useQuery({
     queryKey: ["/api/orders"],
   });
 
-  const { data: drivers } = useQuery({
-    queryKey: ["/api/drivers"],
-  });
+  // Filter data by vehicle type
+  const motorDrivers = Array.isArray(drivers) ? drivers.filter((d: any) => d.vehicleType === "motor") : [];
+  const mobilDrivers = Array.isArray(drivers) ? drivers.filter((d: any) => d.vehicleType === "mobil") : [];
+  const pickupDrivers = Array.isArray(drivers) ? drivers.filter((d: any) => d.vehicleType === "pickup") : [];
+
+  const motorOrders = Array.isArray(orders) ? orders.filter((o: any) => {
+    const driver = drivers.find((d: any) => d.id === o.driverId);
+    return driver?.vehicleType === "motor";
+  }) : [];
+
+  const mobilOrders = Array.isArray(orders) ? orders.filter((o: any) => {
+    const driver = drivers.find((d: any) => d.id === o.driverId);
+    return driver?.vehicleType === "mobil";
+  }) : [];
+
+  const pickupOrders = Array.isArray(orders) ? orders.filter((o: any) => {
+    const driver = drivers.find((d: any) => d.id === o.driverId);
+    return driver?.vehicleType === "pickup";
+  }) : [];
 
   // Calculate additional metrics
   const averageOrderValue = stats?.revenue.thisMonth && stats?.orders.completed 
@@ -88,9 +108,30 @@ export default function Reports() {
     ? (stats.drivers.active / stats.drivers.total) * 100 
     : 0;
 
-  const averageRating = drivers?.length 
+  const averageRating = Array.isArray(drivers) && drivers.length 
     ? drivers.reduce((acc: number, driver: any) => acc + parseFloat(driver.rating || "0"), 0) / drivers.length 
     : 0;
+
+  // Vehicle type stats calculator
+  const getVehicleStats = (vehicleDrivers: any[], vehicleOrders: any[]) => {
+    const completedOrders = vehicleOrders.filter(o => o.status === "completed");
+    const totalRevenue = completedOrders.reduce((sum, order) => sum + parseFloat(order.totalFare || "0"), 0);
+    const avgOrderValue = completedOrders.length > 0 ? totalRevenue / completedOrders.length : 0;
+    const avgRating = vehicleDrivers.length > 0 
+      ? vehicleDrivers.reduce((acc, driver) => acc + parseFloat(driver.rating || "0"), 0) / vehicleDrivers.length 
+      : 0;
+
+    return {
+      totalDrivers: vehicleDrivers.length,
+      activeDrivers: vehicleDrivers.filter(d => d.status === "active").length,
+      totalOrders: vehicleOrders.length,
+      completedOrders: completedOrders.length,
+      totalRevenue,
+      avgOrderValue,
+      avgRating,
+      completionRate: vehicleOrders.length > 0 ? (completedOrders.length / vehicleOrders.length) * 100 : 0
+    };
+  };
 
   if (isLoading) {
     return (
