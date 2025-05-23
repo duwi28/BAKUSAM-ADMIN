@@ -1,0 +1,1062 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>📱 Demo Interaktif - Aplikasi Driver Bakusam Express</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .demo-container {
+            display: flex;
+            gap: 30px;
+            align-items: flex-start;
+        }
+        
+        .phone-container {
+            width: 375px;
+            height: 812px;
+            background: #000;
+            border-radius: 25px;
+            padding: 10px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+            position: relative;
+        }
+        
+        .phone-screen {
+            width: 100%;
+            height: 100%;
+            background: #f5f5f5;
+            border-radius: 20px;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .status-bar {
+            background: #4CAF50;
+            height: 44px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 20px;
+            color: white;
+            font-size: 14px;
+            font-weight: 600;
+        }
+        
+        .app-content {
+            height: calc(100% - 44px);
+            overflow-y: auto;
+            background: #f5f5f5;
+            padding-bottom: 80px;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #4CAF50, #45a049);
+            padding: 20px;
+            color: white;
+        }
+        
+        .driver-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .driver-details h2 {
+            font-size: 18px;
+            margin-bottom: 5px;
+        }
+        
+        .driver-details p {
+            font-size: 12px;
+            opacity: 0.9;
+        }
+        
+        .online-toggle {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .toggle-switch {
+            width: 50px;
+            height: 25px;
+            background: #81C784;
+            border-radius: 15px;
+            position: relative;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        
+        .toggle-switch.offline {
+            background: #757575;
+        }
+        
+        .toggle-switch::after {
+            content: '';
+            width: 21px;
+            height: 21px;
+            background: white;
+            border-radius: 50%;
+            position: absolute;
+            top: 2px;
+            right: 2px;
+            transition: 0.3s;
+        }
+        
+        .toggle-switch.offline::after {
+            right: 27px;
+        }
+        
+        .earnings-card {
+            background: white;
+            margin: 15px;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        .earnings-card h3 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 14px;
+        }
+        
+        .earnings-amount {
+            font-size: 24px;
+            font-weight: bold;
+            color: #4CAF50;
+            margin-bottom: 10px;
+        }
+        
+        .balance-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .balance-text {
+            color: #666;
+            font-size: 12px;
+        }
+        
+        .withdraw-btn {
+            background: #FF9800;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 6px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        
+        .withdraw-btn:hover {
+            background: #F57C00;
+            transform: scale(1.05);
+        }
+        
+        .orders-section {
+            margin: 15px;
+        }
+        
+        .section-title {
+            font-size: 16px;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 15px;
+        }
+        
+        .no-orders {
+            text-align: center;
+            color: #666;
+            padding: 40px 20px;
+            background: white;
+            border-radius: 12px;
+            margin-bottom: 20px;
+        }
+        
+        .order-card {
+            background: white;
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            position: relative;
+            transition: 0.3s;
+            cursor: pointer;
+        }
+        
+        .order-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+        }
+        
+        .order-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+        
+        .order-number {
+            font-weight: bold;
+            color: #333;
+        }
+        
+        .order-distance {
+            color: #666;
+            font-size: 12px;
+        }
+        
+        .talangan-badge {
+            background: #FF9800;
+            color: white;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 10px;
+            font-weight: bold;
+            margin-left: 8px;
+            animation: pulse 2s infinite;
+        }
+        
+        .customer-name {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 8px;
+        }
+        
+        .address-info {
+            font-size: 12px;
+            color: #666;
+            margin-bottom: 3px;
+        }
+        
+        .talangan-section {
+            background: #FFF8E1;
+            border-left: 4px solid #FF9800;
+            padding: 12px;
+            margin: 10px 0;
+            border-radius: 8px;
+        }
+        
+        .talangan-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+        
+        .talangan-icon {
+            font-size: 16px;
+            margin-right: 8px;
+        }
+        
+        .talangan-title {
+            font-size: 14px;
+            font-weight: bold;
+            color: #E65100;
+        }
+        
+        .talangan-amount {
+            font-size: 16px;
+            font-weight: bold;
+            color: #E65100;
+            margin-bottom: 4px;
+        }
+        
+        .talangan-note {
+            font-size: 12px;
+            color: #6D4C41;
+            font-style: italic;
+            margin-bottom: 8px;
+        }
+        
+        .talangan-warning {
+            background: #FFE0B2;
+            padding: 8px;
+            border-radius: 6px;
+            font-size: 11px;
+            color: #E65100;
+            font-weight: 500;
+        }
+        
+        .order-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 12px;
+        }
+        
+        .fare-section {
+            flex: 1;
+        }
+        
+        .order-fare {
+            font-weight: bold;
+            color: #4CAF50;
+            font-size: 14px;
+        }
+        
+        .talangan-summary {
+            font-size: 12px;
+            color: #FF9800;
+            font-weight: 600;
+        }
+        
+        .order-time {
+            color: #666;
+            font-size: 12px;
+            margin-right: 10px;
+        }
+        
+        .accept-btn {
+            background: #4CAF50;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        
+        .accept-btn:hover {
+            background: #45a049;
+            transform: scale(1.05);
+        }
+        
+        .accept-btn-talangan {
+            background: #FF9800;
+        }
+        
+        .accept-btn-talangan:hover {
+            background: #F57C00;
+        }
+        
+        .bottom-nav {
+            position: fixed;
+            bottom: 10px;
+            left: 10px;
+            right: 10px;
+            background: white;
+            border-radius: 20px;
+            padding: 10px;
+            display: flex;
+            justify-content: space-around;
+            box-shadow: 0 -2px 15px rgba(0,0,0,0.1);
+        }
+        
+        .nav-item {
+            text-align: center;
+            padding: 8px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        
+        .nav-item:hover {
+            background: #f0f0f0;
+        }
+        
+        .nav-icon {
+            font-size: 18px;
+            margin-bottom: 4px;
+        }
+        
+        .nav-text {
+            font-size: 10px;
+            color: #666;
+        }
+        
+        .demo-controls {
+            background: white;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            width: 300px;
+        }
+        
+        .demo-controls h3 {
+            margin-bottom: 20px;
+            color: #333;
+            text-align: center;
+        }
+        
+        .control-btn {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 10px;
+            border: none;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        
+        .control-btn.primary {
+            background: #4CAF50;
+            color: white;
+        }
+        
+        .control-btn.secondary {
+            background: #FF9800;
+            color: white;
+        }
+        
+        .control-btn.danger {
+            background: #f44336;
+            color: white;
+        }
+        
+        .control-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+        
+        .status-indicator {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 15px;
+            padding: 10px;
+            border-radius: 8px;
+            background: #f0f0f0;
+        }
+        
+        .status-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #4CAF50;
+        }
+        
+        .status-dot.offline {
+            background: #757575;
+        }
+        
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        
+        .modal-content {
+            background: white;
+            padding: 20px;
+            border-radius: 15px;
+            max-width: 90%;
+            max-height: 80%;
+            overflow-y: auto;
+        }
+        
+        .modal-title {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+        
+        .modal-section {
+            margin-bottom: 15px;
+            padding: 15px;
+            border-radius: 10px;
+        }
+        
+        .modal-section.info {
+            background: #E3F2FD;
+            border-left: 4px solid #2196F3;
+        }
+        
+        .modal-section.warning {
+            background: #FFEBEE;
+            border-left: 4px solid #f44336;
+        }
+        
+        .modal-section.success {
+            background: #E8F5E8;
+            border-left: 4px solid #4CAF50;
+        }
+        
+        .modal-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        
+        .modal-btn {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        
+        .modal-btn.accept {
+            background: #FF9800;
+            color: white;
+        }
+        
+        .modal-btn.reject {
+            background: #f44336;
+            color: white;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        
+        .hidden {
+            display: none !important;
+        }
+    </style>
+</head>
+<body>
+    <div class="demo-container">
+        <!-- Phone Demo -->
+        <div class="phone-container">
+            <div class="phone-screen">
+                <div class="status-bar">
+                    <span id="current-time">9:41</span>
+                    <span>Bakusam Driver</span>
+                    <span>🔋 100%</span>
+                </div>
+                
+                <div class="app-content">
+                    <!-- Header -->
+                    <div class="header">
+                        <div class="driver-info">
+                            <div class="driver-details">
+                                <h2>Selamat datang,</h2>
+                                <h2>Budi Santoso</h2>
+                                <p>Motor • Rating: 4.8⭐</p>
+                            </div>
+                            <div class="online-toggle">
+                                <span id="status-text" style="font-size: 12px; color: #C8E6C9;">ONLINE</span>
+                                <div class="toggle-switch" id="toggle-switch"></div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Earnings Card -->
+                    <div class="earnings-card">
+                        <h3>Penghasilan Hari Ini</h3>
+                        <div class="earnings-amount" id="earnings-amount">Rp 150.000</div>
+                        <div class="balance-info">
+                            <span class="balance-text" id="balance-text">Saldo: Rp 850.000</span>
+                            <button class="withdraw-btn" onclick="withdrawAction()">Tarik Saldo</button>
+                        </div>
+                    </div>
+                    
+                    <!-- Orders Section -->
+                    <div class="orders-section">
+                        <h3 class="section-title">Order Tersedia (Radius 3KM)</h3>
+                        
+                        <div id="no-orders" class="no-orders hidden">
+                            <h4>📴 Anda sedang OFFLINE</h4>
+                            <p>Aktifkan status online untuk menerima order</p>
+                        </div>
+                        
+                        <div id="orders-container">
+                            <!-- Order 1 - With Talangan -->
+                            <div class="order-card" onclick="selectOrder(1)">
+                                <div class="order-header">
+                                    <span class="order-number">Order #1</span>
+                                    <span class="order-distance">2.5 km</span>
+                                    <span class="talangan-badge">💰 TALANGAN</span>
+                                </div>
+                                <div class="customer-name">Andi Wijaya</div>
+                                <div class="address-info">📍 Mall Central Park → Apartemen Taman Anggrek</div>
+                                
+                                <div class="talangan-section">
+                                    <div class="talangan-header">
+                                        <span class="talangan-icon">💰</span>
+                                        <span class="talangan-title">TALANGAN DIPERLUKAN</span>
+                                    </div>
+                                    <div class="talangan-amount">Rp 50.000</div>
+                                    <div class="talangan-note">Bayar tagihan listrik di loket mall</div>
+                                    <div class="talangan-warning">⚠️ Siapkan uang tunai sesuai nominal</div>
+                                </div>
+                                
+                                <div class="order-footer">
+                                    <div class="fare-section">
+                                        <div class="order-fare">Ongkir: Rp 25.000</div>
+                                        <div class="talangan-summary">+ Talangan: Rp 50.000</div>
+                                    </div>
+                                    <span class="order-time">15 menit</span>
+                                    <button class="accept-btn accept-btn-talangan" onclick="event.stopPropagation(); acceptOrder(1, true)">💰 Terima + Talangan</button>
+                                </div>
+                            </div>
+                            
+                            <!-- Order 2 - Regular -->
+                            <div class="order-card" onclick="selectOrder(2)">
+                                <div class="order-header">
+                                    <span class="order-number">Order #2</span>
+                                    <span class="order-distance">3.1 km</span>
+                                </div>
+                                <div class="customer-name">Sari Indah</div>
+                                <div class="address-info">📍 Restoran Padang Sederhana → Kantor BCA Tower</div>
+                                
+                                <div class="order-footer">
+                                    <div class="fare-section">
+                                        <div class="order-fare">Ongkir: Rp 32.000</div>
+                                    </div>
+                                    <span class="order-time">18 menit</span>
+                                    <button class="accept-btn" onclick="event.stopPropagation(); acceptOrder(2, false)">Terima</button>
+                                </div>
+                            </div>
+                            
+                            <!-- Order 3 - With Talangan -->
+                            <div class="order-card" onclick="selectOrder(3)">
+                                <div class="order-header">
+                                    <span class="order-number">Order #3</span>
+                                    <span class="order-distance">4.2 km</span>
+                                    <span class="talangan-badge">💰 TALANGAN</span>
+                                </div>
+                                <div class="customer-name">Budi Hartono</div>
+                                <div class="address-info">📍 Apotek Kimia Farma → Perumahan Green Garden</div>
+                                
+                                <div class="talangan-section">
+                                    <div class="talangan-header">
+                                        <span class="talangan-icon">💰</span>
+                                        <span class="talangan-title">TALANGAN DIPERLUKAN</span>
+                                    </div>
+                                    <div class="talangan-amount">Rp 75.000</div>
+                                    <div class="talangan-note">Beli obat diabetes sesuai resep</div>
+                                    <div class="talangan-warning">⚠️ Siapkan uang tunai sesuai nominal</div>
+                                </div>
+                                
+                                <div class="order-footer">
+                                    <div class="fare-section">
+                                        <div class="order-fare">Ongkir: Rp 38.000</div>
+                                        <div class="talangan-summary">+ Talangan: Rp 75.000</div>
+                                    </div>
+                                    <span class="order-time">22 menit</span>
+                                    <button class="accept-btn accept-btn-talangan" onclick="event.stopPropagation(); acceptOrder(3, true)">💰 Terima + Talangan</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Bottom Navigation -->
+                <div class="bottom-nav">
+                    <div class="nav-item" onclick="navAction('home')">
+                        <div class="nav-icon">🏠</div>
+                        <div class="nav-text">Beranda</div>
+                    </div>
+                    <div class="nav-item" onclick="navAction('map')">
+                        <div class="nav-icon">🗺️</div>
+                        <div class="nav-text">Peta</div>
+                    </div>
+                    <div class="nav-item" onclick="navAction('chat')">
+                        <div class="nav-icon">💬</div>
+                        <div class="nav-text">Chat</div>
+                    </div>
+                    <div class="nav-item" onclick="navAction('profile')">
+                        <div class="nav-icon">👤</div>
+                        <div class="nav-text">Profil</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Demo Controls -->
+        <div class="demo-controls">
+            <h3>🎮 Demo Controls</h3>
+            
+            <div class="status-indicator">
+                <div class="status-dot" id="status-dot"></div>
+                <span id="driver-status">Driver Online</span>
+            </div>
+            
+            <button class="control-btn primary" onclick="toggleDriverStatus()">
+                🔄 Toggle Online/Offline
+            </button>
+            
+            <button class="control-btn secondary" onclick="simulateNewOrder()">
+                📦 Simulasi Order Baru
+            </button>
+            
+            <button class="control-btn secondary" onclick="simulateTalanganOrder()">
+                💰 Simulasi Order Talangan
+            </button>
+            
+            <button class="control-btn danger" onclick="clearOrders()">
+                🗑️ Hapus Semua Order
+            </button>
+            
+            <hr style="margin: 20px 0;">
+            
+            <h4 style="margin-bottom: 10px;">💰 Simulasi Penghasilan</h4>
+            <button class="control-btn primary" onclick="addEarnings()">
+                ➕ Tambah Penghasilan
+            </button>
+            
+            <button class="control-btn secondary" onclick="withdrawSimulation()">
+                💸 Simulasi Penarikan
+            </button>
+            
+            <hr style="margin: 20px 0;">
+            
+            <div style="font-size: 12px; color: #666; text-align: center;">
+                <p><strong>📱 Demo Interaktif</strong></p>
+                <p>Klik tombol untuk melihat fitur aplikasi driver dengan sistem talangan</p>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Talangan Confirmation Modal -->
+    <div class="modal" id="talanganModal">
+        <div class="modal-content" style="width: 400px;">
+            <div class="modal-title">💰 Konfirmasi Talangan</div>
+            
+            <div class="modal-section info">
+                <h4>📋 Detail Order</h4>
+                <p id="order-details">Order #1 - Andi Wijaya</p>
+                <p>📞 08223456789</p>
+            </div>
+            
+            <div class="modal-section success">
+                <h4>💰 Nominal Talangan</h4>
+                <div style="font-size: 24px; font-weight: bold; color: #1B5E20; margin: 10px 0;" id="talangan-amount-modal">Rp 50.000</div>
+                <p style="font-style: italic;" id="talangan-purpose">Keperluan: Bayar tagihan listrik</p>
+            </div>
+            
+            <div class="modal-section warning">
+                <h4>⚠️ Peringatan Penting</h4>
+                <ul style="margin-left: 20px; font-size: 12px;">
+                    <li>Uang talangan akan dipotong dari saldo Anda</li>
+                    <li>Pastikan nominal sesuai dengan permintaan</li>
+                    <li>Jangan berikan uang sebelum konfirmasi customer</li>
+                </ul>
+            </div>
+            
+            <div class="modal-section success">
+                <h4>💵 Ringkasan Keuangan</h4>
+                <p>Ongkir: Rp <span id="modal-fare">25.000</span></p>
+                <p>Komisi Anda (70%): Rp <span id="modal-commission">17.500</span></p>
+                <p>Talangan: -Rp <span id="modal-talangan">50.000</span></p>
+                <hr style="margin: 10px 0;">
+                <p><strong>Net: Rp <span id="modal-net">-32.500</span></strong></p>
+            </div>
+            
+            <div class="modal-buttons">
+                <button class="modal-btn reject" onclick="closeModal()">❌ Tolak Order</button>
+                <button class="modal-btn accept" onclick="confirmTalangan()">✅ Terima + Talangan</button>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        let isOnline = true;
+        let currentEarnings = 150000;
+        let currentBalance = 850000;
+        let orderCounter = 4;
+        let selectedOrderData = null;
+        
+        // Update time
+        function updateTime() {
+            const now = new Date();
+            const timeString = now.toLocaleTimeString('id-ID', { 
+                hour: '2-digit', 
+                minute: '2-digit' 
+            });
+            document.getElementById('current-time').textContent = timeString;
+        }
+        
+        setInterval(updateTime, 1000);
+        updateTime();
+        
+        // Toggle driver status
+        function toggleDriverStatus() {
+            isOnline = !isOnline;
+            const toggle = document.getElementById('toggle-switch');
+            const statusText = document.getElementById('status-text');
+            const statusDot = document.getElementById('status-dot');
+            const driverStatus = document.getElementById('driver-status');
+            const noOrders = document.getElementById('no-orders');
+            const ordersContainer = document.getElementById('orders-container');
+            
+            if (isOnline) {
+                toggle.classList.remove('offline');
+                statusText.textContent = 'ONLINE';
+                statusText.style.color = '#C8E6C9';
+                statusDot.classList.remove('offline');
+                driverStatus.textContent = 'Driver Online';
+                noOrders.classList.add('hidden');
+                ordersContainer.classList.remove('hidden');
+            } else {
+                toggle.classList.add('offline');
+                statusText.textContent = 'OFFLINE';
+                statusText.style.color = '#FFCDD2';
+                statusDot.classList.add('offline');
+                driverStatus.textContent = 'Driver Offline';
+                noOrders.classList.remove('hidden');
+                ordersContainer.classList.add('hidden');
+            }
+        }
+        
+        // Order actions
+        function selectOrder(orderNumber) {
+            console.log(`Order #${orderNumber} selected`);
+        }
+        
+        function acceptOrder(orderNumber, hasTalangan) {
+            if (hasTalangan) {
+                // Show talangan modal
+                selectedOrderData = {
+                    number: orderNumber,
+                    talangan: orderNumber === 1 ? 50000 : 75000,
+                    fare: orderNumber === 1 ? 25000 : 38000,
+                    customer: orderNumber === 1 ? 'Andi Wijaya' : 'Budi Hartono',
+                    purpose: orderNumber === 1 ? 'Bayar tagihan listrik' : 'Beli obat diabetes'
+                };
+                
+                document.getElementById('order-details').textContent = `Order #${orderNumber} - ${selectedOrderData.customer}`;
+                document.getElementById('talangan-amount-modal').textContent = `Rp ${selectedOrderData.talangan.toLocaleString()}`;
+                document.getElementById('talangan-purpose').textContent = `Keperluan: ${selectedOrderData.purpose}`;
+                document.getElementById('modal-fare').textContent = selectedOrderData.fare.toLocaleString();
+                document.getElementById('modal-commission').textContent = Math.round(selectedOrderData.fare * 0.7).toLocaleString();
+                document.getElementById('modal-talangan').textContent = selectedOrderData.talangan.toLocaleString();
+                document.getElementById('modal-net').textContent = (Math.round(selectedOrderData.fare * 0.7) - selectedOrderData.talangan).toLocaleString();
+                
+                document.getElementById('talanganModal').style.display = 'flex';
+            } else {
+                alert(`✅ Order #${orderNumber} berhasil diterima!\n\nMulai perjalanan menuju lokasi pickup.`);
+            }
+        }
+        
+        function closeModal() {
+            document.getElementById('talanganModal').style.display = 'none';
+        }
+        
+        function confirmTalangan() {
+            alert(`🎉 Order dengan talangan berhasil diterima!\n\n💰 Talangan: Rp ${selectedOrderData.talangan.toLocaleString()}\n📍 Menuju lokasi pickup...`);
+            currentBalance -= selectedOrderData.talangan;
+            updateBalance();
+            closeModal();
+        }
+        
+        // Simulation functions
+        function simulateNewOrder() {
+            const orderHtml = `
+                <div class="order-card" onclick="selectOrder(${orderCounter})">
+                    <div class="order-header">
+                        <span class="order-number">Order #${orderCounter}</span>
+                        <span class="order-distance">${(Math.random() * 3 + 1).toFixed(1)} km</span>
+                    </div>
+                    <div class="customer-name">Customer ${orderCounter}</div>
+                    <div class="address-info">📍 Lokasi A → Lokasi B</div>
+                    
+                    <div class="order-footer">
+                        <div class="fare-section">
+                            <div class="order-fare">Ongkir: Rp ${Math.floor(Math.random() * 20000 + 15000).toLocaleString()}</div>
+                        </div>
+                        <span class="order-time">${Math.floor(Math.random() * 15 + 10)} menit</span>
+                        <button class="accept-btn" onclick="event.stopPropagation(); acceptOrder(${orderCounter}, false)">Terima</button>
+                    </div>
+                </div>
+            `;
+            
+            document.getElementById('orders-container').insertAdjacentHTML('beforeend', orderHtml);
+            orderCounter++;
+            
+            // Show notification
+            alert('📦 Order baru masuk!\n\nOrder regular tanpa talangan tersedia.');
+        }
+        
+        function simulateTalanganOrder() {
+            const talanganAmount = Math.floor(Math.random() * 50000 + 25000);
+            const fare = Math.floor(Math.random() * 20000 + 15000);
+            
+            const orderHtml = `
+                <div class="order-card" onclick="selectOrder(${orderCounter})">
+                    <div class="order-header">
+                        <span class="order-number">Order #${orderCounter}</span>
+                        <span class="order-distance">${(Math.random() * 3 + 1).toFixed(1)} km</span>
+                        <span class="talangan-badge">💰 TALANGAN</span>
+                    </div>
+                    <div class="customer-name">Customer ${orderCounter}</div>
+                    <div class="address-info">📍 Lokasi A → Lokasi B</div>
+                    
+                    <div class="talangan-section">
+                        <div class="talangan-header">
+                            <span class="talangan-icon">💰</span>
+                            <span class="talangan-title">TALANGAN DIPERLUKAN</span>
+                        </div>
+                        <div class="talangan-amount">Rp ${talanganAmount.toLocaleString()}</div>
+                        <div class="talangan-note">Keperluan simulasi</div>
+                        <div class="talangan-warning">⚠️ Siapkan uang tunai sesuai nominal</div>
+                    </div>
+                    
+                    <div class="order-footer">
+                        <div class="fare-section">
+                            <div class="order-fare">Ongkir: Rp ${fare.toLocaleString()}</div>
+                            <div class="talangan-summary">+ Talangan: Rp ${talanganAmount.toLocaleString()}</div>
+                        </div>
+                        <span class="order-time">${Math.floor(Math.random() * 15 + 10)} menit</span>
+                        <button class="accept-btn accept-btn-talangan" onclick="event.stopPropagation(); acceptOrder(${orderCounter}, true)">💰 Terima + Talangan</button>
+                    </div>
+                </div>
+            `;
+            
+            document.getElementById('orders-container').insertAdjacentHTML('beforeend', orderHtml);
+            orderCounter++;
+            
+            // Show notification
+            alert(`💰 Order talangan masuk!\n\nNominal: Rp ${talanganAmount.toLocaleString()}\nPeriksa detail sebelum menerima.`);
+        }
+        
+        function clearOrders() {
+            document.getElementById('orders-container').innerHTML = `
+                <div class="order-card" onclick="selectOrder(1)">
+                    <div class="order-header">
+                        <span class="order-number">Order #1</span>
+                        <span class="order-distance">2.5 km</span>
+                        <span class="talangan-badge">💰 TALANGAN</span>
+                    </div>
+                    <div class="customer-name">Andi Wijaya</div>
+                    <div class="address-info">📍 Mall Central Park → Apartemen Taman Anggrek</div>
+                    
+                    <div class="talangan-section">
+                        <div class="talangan-header">
+                            <span class="talangan-icon">💰</span>
+                            <span class="talangan-title">TALANGAN DIPERLUKAN</span>
+                        </div>
+                        <div class="talangan-amount">Rp 50.000</div>
+                        <div class="talangan-note">Bayar tagihan listrik di loket mall</div>
+                        <div class="talangan-warning">⚠️ Siapkan uang tunai sesuai nominal</div>
+                    </div>
+                    
+                    <div class="order-footer">
+                        <div class="fare-section">
+                            <div class="order-fare">Ongkir: Rp 25.000</div>
+                            <div class="talangan-summary">+ Talangan: Rp 50.000</div>
+                        </div>
+                        <span class="order-time">15 menit</span>
+                        <button class="accept-btn accept-btn-talangan" onclick="event.stopPropagation(); acceptOrder(1, true)">💰 Terima + Talangan</button>
+                    </div>
+                </div>
+                
+                <div class="order-card" onclick="selectOrder(2)">
+                    <div class="order-header">
+                        <span class="order-number">Order #2</span>
+                        <span class="order-distance">3.1 km</span>
+                    </div>
+                    <div class="customer-name">Sari Indah</div>
+                    <div class="address-info">📍 Restoran Padang Sederhana → Kantor BCA Tower</div>
+                    
+                    <div class="order-footer">
+                        <div class="fare-section">
+                            <div class="order-fare">Ongkir: Rp 32.000</div>
+                        </div>
+                        <span class="order-time">18 menit</span>
+                        <button class="accept-btn" onclick="event.stopPropagation(); acceptOrder(2, false)">Terima</button>
+                    </div>
+                </div>
+                
+                <div class="order-card" onclick="selectOrder(3)">
+                    <div class="order-header">
+                        <span class="order-number">Order #3</span>
+                        <span class="order-distance">4.2 km</span>
+                        <span class="talangan-badge">💰 TALANGAN</span>
+                    </div>
+                    <div class="customer-name">Budi Hartono</div>
+                    <div class="address-info">📍 Apotek Kimia Farma → Perumahan Green Garden</div>
+                    
+                    <div class="talangan-section">
+                        <div class="talangan-header">
+                            <span class="talangan-icon">💰</span>
+                            <span class="talangan-title">TALANGAN DIPERLUKAN</span>
+                        </div>
+                        <div class="talangan-amount">Rp 75.000</div>
+                        <div class="talangan-note">Beli obat diabetes sesuai resep</div>
+                        <div class="talangan-warning">⚠️ Siapkan uang tunai sesuai nominal</div>
+                    </div>
+                    
+                    <div class="order-footer">
+                        <div class="fare-section">
+                            <div class="order-fare">Ongkir: Rp 38.000</div>
+                            <div class="talangan-summary">+ Talangan: Rp 75.000</div>
+                        </div>
+                        <span class="order-time">22 menit</span>
+                        <button class="accept-btn accept-btn-talangan" onclick="event.stopPropagation(); acceptOrder(3, true)">💰 Terima + Talangan</button>
+                    </div>
+                </div>
+            `;
+            orderCounter = 4;
+            alert('🔄 Order list direset ke kondisi awal');
+        }
+        
+        function addEarnings() {
+            const bonus = Math.floor(Math.random() * 25000 + 15000);
+            currentEarnings += bonus;
+            currentBalance += Math.round(bonus * 0.7);
+            updateBalance();
+            alert(`💰 Order selesai!\n\nOngkir: Rp ${bonus.toLocaleString()}\nKomisi: Rp ${Math.round(bonus * 0.7).toLocaleString()}`);
+        }
+        
+        function withdrawSimulation() {
+            if (currentBalance < 50000) {
+                alert('⚠️ Saldo tidak mencukupi!\n\nMinimal penarikan Rp 50.000');
+                return;
+            }
+            
+            const withdraw = 100000;
+            currentBalance -= withdraw;
+            updateBalance();
+            alert(`✅ Penarikan berhasil!\n\nJumlah: Rp ${withdraw.toLocaleString()}\nSaldo tersisa: Rp ${currentBalance.toLocaleString()}`);
+        }
+        
+        function updateBalance() {
+            document.getElementById('earnings-amount').textContent = `Rp ${currentEarnings.toLocaleString()}`;
+            document.getElementById('balance-text').textContent = `Saldo: Rp ${currentBalance.toLocaleString()}`;
+        }
+        
+        function withdrawAction() {
+            alert('💰 Halaman penarikan saldo\n\nFitur ini akan membuka form penarikan dengan:\n- Pilihan bank\n- Nominal penarikan\n- Konfirmasi PIN');
+        }
+        
+        function navAction(page) {
+            const pages = {
+                home: '🏠 Halaman Beranda\n\nDashboard utama driver',
+                map: '🗺️ Halaman Peta\n\nPeta real-time dengan lokasi order',
+                chat: '💬 Halaman Chat\n\nChat dengan customer service 24/7',
+                profile: '👤 Halaman Profil\n\nPengaturan akun dan preferensi'
+            };
+            alert(pages[page]);
+        }
+        
+        // Initialize
+        updateBalance();
+    </script>
+</body>
+</html>
