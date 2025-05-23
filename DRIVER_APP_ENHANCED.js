@@ -30,6 +30,12 @@ const BakusamDriverEnhanced = () => {
   const [selectedOrder, setSelectedOrder] = useState(null);
   const [loading, setLoading] = useState(false);
   
+  // Talangan states
+  const [showTalanganModal, setShowTalanganModal] = useState(false);
+  const [talanganAmount, setTalanganAmount] = useState('');
+  const [talanganNote, setTalanganNote] = useState('');
+  const [managingTalangan, setManagingTalangan] = useState(false);
+  
   // Chat states
   const [showChat, setShowChat] = useState(false);
   const [messages, setMessages] = useState([]);
@@ -61,8 +67,12 @@ const BakusamDriverEnhanced = () => {
         deliveryAddress: "Apartemen Taman Anggrek",
         distance: "2.5 km",
         totalFare: "25000",
+        talanganAmount: "50000",
         estimatedDuration: 15,
-        customer: { fullName: "Andi Wijaya", phone: "08223456789" }
+        customer: { fullName: "Andi Wijaya", phone: "08223456789" },
+        hasAdvance: true,
+        advanceNote: "Bayar tagihan listrik di loket mall",
+        items: "Dokumen + Talangan"
       },
       {
         id: 2,
@@ -70,8 +80,25 @@ const BakusamDriverEnhanced = () => {
         deliveryAddress: "Kantor BCA Tower",
         distance: "3.1 km",
         totalFare: "32000",
+        talanganAmount: "0",
         estimatedDuration: 18,
-        customer: { fullName: "Sari Indah", phone: "08334567890" }
+        customer: { fullName: "Sari Indah", phone: "08334567890" },
+        hasAdvance: false,
+        advanceNote: "",
+        items: "Makanan"
+      },
+      {
+        id: 3,
+        pickupAddress: "Apotek Kimia Farma",
+        deliveryAddress: "Perumahan Green Garden",
+        distance: "4.2 km",
+        totalFare: "38000",
+        talanganAmount: "75000",
+        estimatedDuration: 22,
+        customer: { fullName: "Budi Hartono", phone: "08445678901" },
+        hasAdvance: true,
+        advanceNote: "Beli obat diabetes sesuai resep",
+        items: "Obat-obatan + Talangan"
       }
     ];
 
@@ -470,22 +497,57 @@ const BakusamDriverEnhanced = () => {
               <View style={styles.orderHeader}>
                 <Text style={styles.orderNumber}>Order #{order.id}</Text>
                 <Text style={styles.orderDistance}>{order.distance}</Text>
+                {order.hasAdvance && (
+                  <View style={styles.talanganBadge}>
+                    <Text style={styles.talanganBadgeText}>💰 TALANGAN</Text>
+                  </View>
+                )}
               </View>
               <Text style={styles.orderCustomer}>{order.customer.fullName}</Text>
               <Text style={styles.orderRoute}>
                 {order.pickupAddress} → {order.deliveryAddress}
               </Text>
+              
+              {/* Talangan Information - Only for orders with advance payment */}
+              {order.hasAdvance && (
+                <View style={styles.talanganSection}>
+                  <View style={styles.talanganHeader}>
+                    <Text style={styles.talanganIcon}>💰</Text>
+                    <Text style={styles.talanganTitle}>TALANGAN DIPERLUKAN</Text>
+                  </View>
+                  <View style={styles.talanganDetails}>
+                    <Text style={styles.talanganAmount}>Rp {parseInt(order.talanganAmount).toLocaleString()}</Text>
+                    <Text style={styles.talanganNote}>{order.advanceNote}</Text>
+                    <Text style={styles.talanganItems}>Jenis: {order.items}</Text>
+                  </View>
+                  <View style={styles.talanganWarning}>
+                    <Text style={styles.warningText}>⚠️ Siapkan uang tunai sesuai nominal</Text>
+                  </View>
+                </View>
+              )}
+              
               <View style={styles.orderFooter}>
-                <Text style={styles.orderFare}>Rp {order.totalFare}</Text>
+                <View style={styles.fareSection}>
+                  <Text style={styles.orderFare}>Ongkir: Rp {order.totalFare}</Text>
+                  {order.hasAdvance && (
+                    <Text style={styles.talanganSummary}>+ Talangan: Rp {parseInt(order.talanganAmount).toLocaleString()}</Text>
+                  )}
+                </View>
                 <Text style={styles.orderTime}>{order.estimatedDuration} menit</Text>
                 <TouchableOpacity 
-                  style={styles.acceptButton}
+                  style={[styles.acceptButton, order.hasAdvance && styles.acceptButtonWithTalangan]}
                   onPress={() => {
                     setSelectedOrder(order);
-                    setShowOrderModal(true);
+                    if (order.hasAdvance) {
+                      setShowTalanganModal(true);
+                    } else {
+                      setShowOrderModal(true);
+                    }
                   }}
                 >
-                  <Text style={styles.acceptButtonText}>Terima</Text>
+                  <Text style={styles.acceptButtonText}>
+                    {order.hasAdvance ? '💰 Terima + Talangan' : 'Terima'}
+                  </Text>
                 </TouchableOpacity>
               </View>
             </View>
@@ -505,6 +567,17 @@ const BakusamDriverEnhanced = () => {
                 <Text style={styles.modalText}>Telepon: {selectedOrder.customer.phone}</Text>
                 <Text style={styles.modalText}>Jarak: {selectedOrder.distance}</Text>
                 <Text style={styles.modalText}>Estimasi: {selectedOrder.estimatedDuration} menit</Text>
+                
+                {/* Show advance payment info if applicable */}
+                {selectedOrder.hasAdvance && (
+                  <View style={styles.modalTalanganSection}>
+                    <Text style={styles.modalTalanganTitle}>💰 INFORMASI TALANGAN</Text>
+                    <Text style={styles.modalTalanganAmount}>Nominal: Rp {parseInt(selectedOrder.talanganAmount).toLocaleString()}</Text>
+                    <Text style={styles.modalTalanganNote}>Keperluan: {selectedOrder.advanceNote}</Text>
+                    <Text style={styles.modalTalanganWarning}>⚠️ Siapkan uang tunai sesuai nominal</Text>
+                  </View>
+                )}
+                
                 <Text style={styles.modalFare}>Total Ongkir: Rp {selectedOrder.totalFare}</Text>
                 <Text style={styles.modalCommission}>
                   Anda terima: Rp {Math.round(parseInt(selectedOrder.totalFare) * 0.7).toLocaleString()} (70%)
@@ -586,6 +659,79 @@ const BakusamDriverEnhanced = () => {
                 )}
               </TouchableOpacity>
             </View>
+          </View>
+        </View>
+      </Modal>
+
+      {/* Talangan Confirmation Modal */}
+      <Modal visible={showTalanganModal} animationType="slide" transparent>
+        <View style={styles.modalContainer}>
+          <View style={styles.talanganModalContent}>
+            <Text style={styles.modalTitle}>💰 Konfirmasi Talangan</Text>
+            {selectedOrder && (
+              <>
+                <View style={styles.talanganConfirmSection}>
+                  <Text style={styles.talanganConfirmTitle}>Detail Order dengan Talangan</Text>
+                  <Text style={styles.modalText}>Order #{selectedOrder.id}</Text>
+                  <Text style={styles.modalText}>Customer: {selectedOrder.customer.fullName}</Text>
+                  <Text style={styles.modalText}>Telepon: {selectedOrder.customer.phone}</Text>
+                </View>
+                
+                <View style={styles.talanganAmountSection}>
+                  <Text style={styles.talanganAmountTitle}>💰 NOMINAL TALANGAN</Text>
+                  <Text style={styles.talanganAmountDisplay}>Rp {parseInt(selectedOrder.talanganAmount).toLocaleString()}</Text>
+                  <Text style={styles.talanganPurpose}>Keperluan: {selectedOrder.advanceNote}</Text>
+                </View>
+                
+                <View style={styles.talanganInstructionSection}>
+                  <Text style={styles.instructionTitle}>📋 INSTRUKSI TALANGAN</Text>
+                  <Text style={styles.instructionText}>1. Siapkan uang tunai sesuai nominal</Text>
+                  <Text style={styles.instructionText}>2. Berikan uang kepada customer di pickup</Text>
+                  <Text style={styles.instructionText}>3. Minta konfirmasi dari customer</Text>
+                  <Text style={styles.instructionText}>4. Lanjutkan pengiriman seperti biasa</Text>
+                </View>
+                
+                <View style={styles.talanganWarningSection}>
+                  <Text style={styles.warningTitle}>⚠️ PERINGATAN PENTING</Text>
+                  <Text style={styles.warningDetail}>• Uang talangan akan dipotong dari saldo Anda</Text>
+                  <Text style={styles.warningDetail}>• Pastikan nominal sesuai dengan permintaan</Text>
+                  <Text style={styles.warningDetail}>• Jangan berikan uang sebelum konfirmasi customer</Text>
+                </View>
+                
+                <View style={styles.talanganSummarySection}>
+                  <Text style={styles.summaryTitle}>💵 RINGKASAN KEUANGAN</Text>
+                  <Text style={styles.summaryText}>Ongkir: Rp {selectedOrder.totalFare}</Text>
+                  <Text style={styles.summaryText}>Komisi Anda (70%): Rp {Math.round(parseInt(selectedOrder.totalFare) * 0.7).toLocaleString()}</Text>
+                  <Text style={styles.summaryText}>Talangan: -Rp {parseInt(selectedOrder.talanganAmount).toLocaleString()}</Text>
+                  <Text style={styles.summaryTotal}>
+                    Net: Rp {(Math.round(parseInt(selectedOrder.totalFare) * 0.7) - parseInt(selectedOrder.talanganAmount)).toLocaleString()}
+                  </Text>
+                </View>
+                
+                <View style={styles.talanganModalButtons}>
+                  <TouchableOpacity 
+                    style={styles.rejectTalanganButton}
+                    onPress={() => setShowTalanganModal(false)}
+                  >
+                    <Text style={styles.rejectTalanganButtonText}>❌ Tolak Order</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity 
+                    style={styles.acceptTalanganButton}
+                    onPress={() => {
+                      acceptOrder(selectedOrder);
+                      setShowTalanganModal(false);
+                    }}
+                    disabled={managingTalangan}
+                  >
+                    {managingTalangan ? (
+                      <ActivityIndicator color="white" />
+                    ) : (
+                      <Text style={styles.acceptTalanganButtonText}>✅ Terima + Talangan</Text>
+                    )}
+                  </TouchableOpacity>
+                </View>
+              </>
+            )}
           </View>
         </View>
       </Modal>
