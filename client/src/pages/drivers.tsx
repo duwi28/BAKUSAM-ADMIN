@@ -132,8 +132,8 @@ export default function Drivers() {
 
   const handleCommissionChange = (driver: Driver) => {
     setSelectedDriverForCommission(driver);
-    // Set current commission rate (assume 70% default for now)
-    setCommissionRate([70]);
+    // Set current commission rate from driver data (70% default minimum)
+    setCommissionRate([driver.commission || 70]);
     setIsCommissionModalOpen(true);
   };
 
@@ -438,26 +438,35 @@ export default function Drivers() {
                     <Slider
                       value={commissionRate}
                       onValueChange={setCommissionRate}
-                      max={30}
-                      min={5}
+                      max={95}
+                      min={70}
                       step={1}
                       className="w-full"
                     />
                     <div className="flex justify-between text-sm text-muted-foreground">
-                      <span>5%</span>
+                      <span>70%</span>
                       <span className="font-medium text-primary">{commissionRate[0]}%</span>
-                      <span>30%</span>
+                      <span>95%</span>
                     </div>
                   </div>
                 </div>
                 
-                <div className="p-4 bg-muted rounded-lg">
-                  <p className="text-sm">
-                    <span className="font-medium">Driver mendapat:</span> {commissionRate[0]}%
-                  </p>
-                  <p className="text-sm">
-                    <span className="font-medium">Platform mendapat:</span> {100 - commissionRate[0]}%
-                  </p>
+                <div className="p-4 bg-gradient-to-r from-green-50 to-blue-50 rounded-lg border">
+                  <div className="space-y-3">
+                    <div className="flex justify-between items-center">
+                      <span className="text-sm font-medium text-green-800">💰 Driver mendapat:</span>
+                      <span className="text-lg font-bold text-green-600">{commissionRate[0]}%</span>
+                    </div>
+                    <div className="flex justify-between items-center">
+                      <span className="text-sm font-medium text-blue-800">🏢 Platform mendapat:</span>
+                      <span className="text-lg font-bold text-blue-600">{100 - commissionRate[0]}%</span>
+                    </div>
+                    <div className="mt-3 p-2 bg-white rounded text-xs text-center">
+                      <span className="text-gray-600">Contoh: Dari tarif Rp 50.000</span><br/>
+                      <span className="text-green-600 font-medium">Driver: Rp {formatCurrency((50000 * commissionRate[0]) / 100)}</span> | 
+                      <span className="text-blue-600 font-medium"> Platform: Rp {formatCurrency((50000 * (100 - commissionRate[0])) / 100)}</span>
+                    </div>
+                  </div>
                 </div>
               </div>
 
