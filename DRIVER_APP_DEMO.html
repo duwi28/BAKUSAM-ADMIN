@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>📱 Demo Aplikasi Android Driver Bakusam Express</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .phone-container {
+            width: 375px;
+            height: 812px;
+            background: #000;
+            border-radius: 25px;
+            padding: 10px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+            position: relative;
+        }
+        
+        .phone-screen {
+            width: 100%;
+            height: 100%;
+            background: #f5f5f5;
+            border-radius: 20px;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .status-bar {
+            background: #4CAF50;
+            height: 44px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 20px;
+            color: white;
+            font-size: 14px;
+            font-weight: 600;
+        }
+        
+        .app-content {
+            height: calc(100% - 44px);
+            overflow-y: auto;
+            background: #f5f5f5;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #4CAF50, #45a049);
+            padding: 20px;
+            color: white;
+        }
+        
+        .driver-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .driver-details h2 {
+            font-size: 18px;
+            margin-bottom: 5px;
+        }
+        
+        .driver-details p {
+            font-size: 12px;
+            opacity: 0.9;
+        }
+        
+        .online-toggle {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .toggle-switch {
+            width: 50px;
+            height: 25px;
+            background: #81C784;
+            border-radius: 15px;
+            position: relative;
+            cursor: pointer;
+        }
+        
+        .toggle-switch::after {
+            content: '';
+            width: 21px;
+            height: 21px;
+            background: white;
+            border-radius: 50%;
+            position: absolute;
+            top: 2px;
+            right: 2px;
+            transition: 0.3s;
+        }
+        
+        .earnings-card {
+            background: white;
+            margin: 15px;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        .earnings-card h3 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 14px;
+        }
+        
+        .earnings-amount {
+            font-size: 24px;
+            font-weight: bold;
+            color: #4CAF50;
+            margin-bottom: 10px;
+        }
+        
+        .balance-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .balance-text {
+            color: #666;
+            font-size: 12px;
+        }
+        
+        .withdraw-btn {
+            background: #FF9800;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 6px;
+            font-size: 12px;
+            cursor: pointer;
+        }
+        
+        .orders-section {
+            margin: 15px;
+        }
+        
+        .section-title {
+            font-size: 16px;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 15px;
+        }
+        
+        .order-card {
+            background: white;
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            position: relative;
+        }
+        
+        .order-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+        
+        .order-number {
+            font-weight: bold;
+            color: #333;
+        }
+        
+        .order-distance {
+            color: #666;
+            font-size: 12px;
+        }
+        
+        .talangan-badge {
+            background: #FF9800;
+            color: white;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 10px;
+            font-weight: bold;
+            margin-left: 8px;
+        }
+        
+        .customer-name {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 8px;
+        }
+        
+        .address-info {
+            font-size: 12px;
+            color: #666;
+            margin-bottom: 3px;
+        }
+        
+        .talangan-section {
+            background: #FFF8E1;
+            border-left: 4px solid #FF9800;
+            padding: 12px;
+            margin: 10px 0;
+            border-radius: 8px;
+        }
+        
+        .talangan-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+        
+        .talangan-icon {
+            font-size: 16px;
+            margin-right: 8px;
+        }
+        
+        .talangan-title {
+            font-size: 14px;
+            font-weight: bold;
+            color: #E65100;
+        }
+        
+        .talangan-amount {
+            font-size: 16px;
+            font-weight: bold;
+            color: #E65100;
+            margin-bottom: 4px;
+        }
+        
+        .talangan-note {
+            font-size: 12px;
+            color: #6D4C41;
+            font-style: italic;
+            margin-bottom: 8px;
+        }
+        
+        .talangan-warning {
+            background: #FFE0B2;
+            padding: 8px;
+            border-radius: 6px;
+            font-size: 11px;
+            color: #E65100;
+            font-weight: 500;
+        }
+        
+        .order-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 12px;
+        }
+        
+        .fare-section {
+            flex: 1;
+        }
+        
+        .order-fare {
+            font-weight: bold;
+            color: #4CAF50;
+            font-size: 14px;
+        }
+        
+        .talangan-summary {
+            font-size: 12px;
+            color: #FF9800;
+            font-weight: 600;
+        }
+        
+        .order-time {
+            color: #666;
+            font-size: 12px;
+            margin-right: 10px;
+        }
+        
+        .accept-btn {
+            background: #4CAF50;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        
+        .accept-btn-talangan {
+            background: #FF9800;
+        }
+        
+        .bottom-nav {
+            position: fixed;
+            bottom: 10px;
+            left: 10px;
+            right: 10px;
+            background: white;
+            border-radius: 20px;
+            padding: 10px;
+            display: flex;
+            justify-content: space-around;
+            box-shadow: 0 -2px 15px rgba(0,0,0,0.1);
+        }
+        
+        .nav-item {
+            text-align: center;
+            padding: 8px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        
+        .nav-item:hover {
+            background: #f0f0f0;
+        }
+        
+        .nav-icon {
+            font-size: 18px;
+            margin-bottom: 4px;
+        }
+        
+        .nav-text {
+            font-size: 10px;
+            color: #666;
+        }
+        
+        .demo-info {
+            position: absolute;
+            top: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0,0,0,0.8);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 20px;
+            font-size: 12px;
+            z-index: 1000;
+        }
+        
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+    </style>
+</head>
+<body>
+    <div class="demo-info">
+        📱 Demo Aplikasi Driver - Fitur Talangan Aktif
+    </div>
+    
+    <div class="phone-container">
+        <div class="phone-screen">
+            <div class="status-bar">
+                <span>9:41</span>
+                <span>Bakusam Driver</span>
+                <span>🔋 100%</span>
+            </div>
+            
+            <div class="app-content">
+                <!-- Header -->
+                <div class="header">
+                    <div class="driver-info">
+                        <div class="driver-details">
+                            <h2>Selamat datang,</h2>
+                            <h2>Budi Santoso</h2>
+                            <p>Motor • Rating: 4.8⭐</p>
+                        </div>
+                        <div class="online-toggle">
+                            <span style="font-size: 12px; color: #C8E6C9;">ONLINE</span>
+                            <div class="toggle-switch"></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Earnings Card -->
+                <div class="earnings-card">
+                    <h3>Penghasilan Hari Ini</h3>
+                    <div class="earnings-amount">Rp 150.000</div>
+                    <div class="balance-info">
+                        <span class="balance-text">Saldo: Rp 850.000</span>
+                        <button class="withdraw-btn">Tarik Saldo</button>
+                    </div>
+                </div>
+                
+                <!-- Orders Section -->
+                <div class="orders-section">
+                    <h3 class="section-title">Order Tersedia (Radius 3KM)</h3>
+                    
+                    <!-- Order with Talangan -->
+                    <div class="order-card pulse">
+                        <div class="order-header">
+                            <span class="order-number">Order #1</span>
+                            <span class="order-distance">2.5 km</span>
+                            <span class="talangan-badge">💰 TALANGAN</span>
+                        </div>
+                        <div class="customer-name">Andi Wijaya</div>
+                        <div class="address-info">📍 Mall Central Park → Apartemen Taman Anggrek</div>
+                        
+                        <div class="talangan-section">
+                            <div class="talangan-header">
+                                <span class="talangan-icon">💰</span>
+                                <span class="talangan-title">TALANGAN DIPERLUKAN</span>
+                            </div>
+                            <div class="talangan-amount">Rp 50.000</div>
+                            <div class="talangan-note">Bayar tagihan listrik di loket mall</div>
+                            <div class="talangan-warning">⚠️ Siapkan uang tunai sesuai nominal</div>
+                        </div>
+                        
+                        <div class="order-footer">
+                            <div class="fare-section">
+                                <div class="order-fare">Ongkir: Rp 25.000</div>
+                                <div class="talangan-summary">+ Talangan: Rp 50.000</div>
+                            </div>
+                            <span class="order-time">15 menit</span>
+                            <button class="accept-btn accept-btn-talangan">💰 Terima + Talangan</button>
+                        </div>
+                    </div>
+                    
+                    <!-- Regular Order -->
+                    <div class="order-card">
+                        <div class="order-header">
+                            <span class="order-number">Order #2</span>
+                            <span class="order-distance">3.1 km</span>
+                        </div>
+                        <div class="customer-name">Sari Indah</div>
+                        <div class="address-info">📍 Restoran Padang Sederhana → Kantor BCA Tower</div>
+                        
+                        <div class="order-footer">
+                            <div class="fare-section">
+                                <div class="order-fare">Ongkir: Rp 32.000</div>
+                            </div>
+                            <span class="order-time">18 menit</span>
+                            <button class="accept-btn">Terima</button>
+                        </div>
+                    </div>
+                    
+                    <!-- Another Order with Talangan -->
+                    <div class="order-card">
+                        <div class="order-header">
+                            <span class="order-number">Order #3</span>
+                            <span class="order-distance">4.2 km</span>
+                            <span class="talangan-badge">💰 TALANGAN</span>
+                        </div>
+                        <div class="customer-name">Budi Hartono</div>
+                        <div class="address-info">📍 Apotek Kimia Farma → Perumahan Green Garden</div>
+                        
+                        <div class="talangan-section">
+                            <div class="talangan-header">
+                                <span class="talangan-icon">💰</span>
+                                <span class="talangan-title">TALANGAN DIPERLUKAN</span>
+                            </div>
+                            <div class="talangan-amount">Rp 75.000</div>
+                            <div class="talangan-note">Beli obat diabetes sesuai resep</div>
+                            <div class="talangan-warning">⚠️ Siapkan uang tunai sesuai nominal</div>
+                        </div>
+                        
+                        <div class="order-footer">
+                            <div class="fare-section">
+                                <div class="order-fare">Ongkir: Rp 38.000</div>
+                                <div class="talangan-summary">+ Talangan: Rp 75.000</div>
+                            </div>
+                            <span class="order-time">22 menit</span>
+                            <button class="accept-btn accept-btn-talangan">💰 Terima + Talangan</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Bottom padding for nav -->
+                <div style="height: 100px;"></div>
+            </div>
+            
+            <!-- Bottom Navigation -->
+            <div class="bottom-nav">
+                <div class="nav-item">
+                    <div class="nav-icon">🏠</div>
+                    <div class="nav-text">Beranda</div>
+                </div>
+                <div class="nav-item">
+                    <div class="nav-icon">🗺️</div>
+                    <div class="nav-text">Peta</div>
+                </div>
+                <div class="nav-item">
+                    <div class="nav-icon">💬</div>
+                    <div class="nav-text">Chat</div>
+                </div>
+                <div class="nav-item">
+                    <div class="nav-icon">👤</div>
+                    <div class="nav-text">Profil</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Add some interactivity
+        document.querySelectorAll('.accept-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                if (this.textContent.includes('Talangan')) {
+                    alert('🎉 Modal konfirmasi talangan akan muncul dengan instruksi lengkap!');
+                } else {
+                    alert('✅ Order berhasil diterima!');
+                }
+            });
+        });
+        
+        document.querySelector('.toggle-switch').addEventListener('click', function() {
+            alert('🔄 Status online/offline berhasil diubah!');
+        });
+        
+        document.querySelector('.withdraw-btn').addEventListener('click', function() {
+            alert('💰 Fitur tarik saldo akan membuka halaman withdrawal!');
+        });
+    </script>
+</body>
+</html>
