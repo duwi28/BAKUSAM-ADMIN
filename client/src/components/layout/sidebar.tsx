@@ -55,16 +55,18 @@ export default function Sidebar() {
           const isActive = location === item.href || (item.href === "/dashboard" && location === "/");
           
           return (
-            <Link key={item.name} href={item.href}>
-              <a className={cn(
+            <Link 
+              key={item.name} 
+              href={item.href}
+              className={cn(
                 "flex items-center space-x-3 px-4 py-3 rounded-lg transition-colors",
                 isActive 
                   ? "bg-primary/10 text-primary border border-primary/20" 
                   : "text-muted-foreground hover:bg-muted hover:text-foreground"
-              )}>
-                <Icon className="w-5 h-5" />
-                {!collapsed && <span className="font-medium">{item.name}</span>}
-              </a>
+              )}
+            >
+              <Icon className="w-5 h-5" />
+              {!collapsed && <span className="font-medium">{item.name}</span>}
             </Link>
           );
         })}
