@@ -2,10 +2,11 @@ import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Badge } from "@/components/ui/badge";
 import RevenueChart from "@/components/charts/revenue-chart";
 import OrdersChart from "@/components/charts/orders-chart";
 import DriverModal from "@/components/modals/driver-modal";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { 
   Package, 
   Users, 
@@ -16,7 +17,14 @@ import {
   Megaphone, 
   BarChart3,
   TrendingUp,
-  Activity
+  Activity,
+  Clock,
+  MapPin,
+  CheckCircle,
+  AlertCircle,
+  Truck,
+  Trophy,
+  Zap
 } from "lucide-react";
 import { formatCurrency, formatDateTime } from "@/lib/utils";
 
@@ -42,6 +50,11 @@ interface DashboardStats {
 
 export default function Dashboard() {
   const [isDriverModalOpen, setIsDriverModalOpen] = useState(false);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const { data: stats, isLoading } = useQuery<DashboardStats>({
     queryKey: ["/api/dashboard/stats"],
@@ -51,7 +64,7 @@ export default function Dashboard() {
     queryKey: ["/api/orders"],
   });
 
-  const recentOrders = orders?.slice(0, 5) || [];
+  const recentOrders: any[] = [];
 
   const quickActions = [
     {
