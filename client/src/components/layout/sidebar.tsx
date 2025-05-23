@@ -13,7 +13,8 @@ import {
   Settings,
   Truck,
   MapPin,
-  PlusCircle
+  PlusCircle,
+  Smartphone
 } from "lucide-react";
 
 const navigation = [
@@ -22,6 +23,7 @@ const navigation = [
   { name: "Customer", href: "/customers", icon: UserCheck },
   { name: "Order", href: "/orders", icon: Package },
   { name: "Order Manual", href: "/manual-order", icon: PlusCircle },
+  { name: "Aplikasi Driver", href: "/driver-app", icon: Smartphone },
   { name: "Kendaraan", href: "/vehicles", icon: Car },
   { name: "Tracking & Assignment", href: "/tracking", icon: MapPin },
   { name: "Tarif & Promo", href: "/pricing", icon: Tags },

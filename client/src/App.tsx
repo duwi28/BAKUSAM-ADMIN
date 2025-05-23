@@ -9,6 +9,7 @@ import Drivers from "@/pages/drivers";
 import Customers from "@/pages/customers";
 import Orders from "@/pages/orders";
 import ManualOrder from "@/pages/manual-order";
+import DriverApp from "@/pages/driver-app";
 import Vehicles from "@/pages/vehicles";
 import Pricing from "@/pages/pricing";
 import Reports from "@/pages/reports";
@@ -29,6 +30,7 @@ function Router() {
       <Route path="/customers" component={Customers} />
       <Route path="/orders" component={Orders} />
       <Route path="/manual-order" component={ManualOrder} />
+      <Route path="/driver-app" component={DriverApp} />
       <Route path="/vehicles" component={Vehicles} />
       <Route path="/pricing" component={Pricing} />
       <Route path="/reports" component={Reports} />
