@@ -19,8 +19,11 @@ import {
   TrendingUp,
   Activity,
   Clock,
+  MapPin,
   CheckCircle,
+  AlertCircle,
   Truck,
+  Trophy,
   Zap,
   Sparkles,
   Target,
@@ -56,6 +59,7 @@ export default function Dashboard() {
 
   useEffect(() => {
     setMounted(true);
+    // Staggered animation for cards
     const timer = setInterval(() => {
       setCardIndex(prev => prev + 1);
     }, 200);
