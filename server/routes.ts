@@ -763,6 +763,327 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // === FITUR BERBAGI CERITA DAN PENGALAMAN DRIVER ===
+  
+  // API: Mendapatkan semua cerita driver
+  app.get("/api/driver-stories", async (req, res) => {
+    try {
+      const { category, mood, search } = req.query;
+      
+      // Mock data cerita driver untuk demonstrasi
+      const mockStories = [
+        {
+          id: 1,
+          driverId: 1,
+          title: "Pengalaman Pertama Mengantar di Hujan Deras",
+          content: "Hari itu hujan sangat deras, tapi saya tetap harus mengantar orderan. Awalnya takut, tapi ternyata customer sangat pengertian dan bahkan memberi tip tambahan. Pelajaran penting: selalu bawa jas hujan dan komunikasi yang baik dengan customer adalah kunci!",
+          category: "experience",
+          mood: "positive",
+          tags: ["hujan", "tips", "customer", "pengalaman"],
+          isAnonymous: false,
+          isApproved: true,
+          likesCount: 15,
+          commentsCount: 8,
+          viewsCount: 120,
+          createdAt: new Date(Date.now() - 86400000 * 2).toISOString(),
+          driver: {
+            id: 1,
+            fullName: "Budi Santoso",
+            vehicleType: "Motor",
+            rating: "4.8"
+          },
+          isLiked: false
+        },
+        {
+          id: 2,
+          driverId: 2,
+          title: "Tips Hemat BBM untuk Driver Motor",
+          content: "Setelah 3 tahun jadi driver, saya menemukan cara menghemat BBM hingga 30%. Kuncinya: jaga kecepatan konstan 40-50 km/jam, hindari rem mendadak, dan pastikan angin ban selalu cukup. Juga, pilih rute yang minim macet meski agak jauh.",
+          category: "tips",
+          mood: "educational",
+          tags: ["hemat", "bbm", "motor", "tips"],
+          isAnonymous: false,
+          isApproved: true,
+          likesCount: 32,
+          commentsCount: 15,
+          viewsCount: 280,
+          createdAt: new Date(Date.now() - 86400000 * 5).toISOString(),
+          driver: {
+            id: 2,
+            fullName: "Sari Wahyuni",
+            vehicleType: "Motor",
+            rating: "4.9"
+          },
+          isLiked: true
+        },
+        {
+          id: 3,
+          driverId: 1,
+          title: "Cerita Lucu: Customer yang Lupa Alamat",
+          content: "Ada customer yang pesan tapi lupa alamat lengkap. Dia cuma bilang 'rumah warna biru di dekat warung'. Saya keliling 1 jam, akhirnya ketemu setelah telpon 5 kali. Ternyata rumahnya hijau, bukan biru! Tapi customer baik hati, kasih tip besar karena merasa bersalah 😄",
+          category: "funny",
+          mood: "positive",
+          tags: ["lucu", "customer", "alamat", "pengalaman"],
+          isAnonymous: false,
+          isApproved: true,
+          likesCount: 45,
+          commentsCount: 22,
+          viewsCount: 350,
+          createdAt: new Date(Date.now() - 86400000 * 1).toISOString(),
+          driver: {
+            id: 1,
+            fullName: "Budi Santoso",
+            vehicleType: "Motor",
+            rating: "4.8"
+          },
+          isLiked: false
+        },
+        {
+          id: 4,
+          driverId: 3,
+          title: "Strategi Mencari Order di Jam Sepi",
+          content: "Jam 2-4 siang biasanya sepi order. Tapi saya punya trik: tunggu di dekat rumah sakit, perkantoran, atau mall. Biasanya ada yang butuh antar makanan atau dokumen mendadak. Juga, aktifkan notifikasi dari semua platform delivery.",
+          category: "tips",
+          mood: "educational",
+          tags: ["strategi", "jam sepi", "lokasi", "order"],
+          isAnonymous: false,
+          isApproved: true,
+          likesCount: 28,
+          commentsCount: 12,
+          viewsCount: 195,
+          createdAt: new Date(Date.now() - 86400000 * 3).toISOString(),
+          driver: {
+            id: 3,
+            fullName: "Driver Anonim",
+            vehicleType: "Motor",
+            rating: "4.7"
+          },
+          isLiked: false
+        }
+      ];
+
+      let filteredStories = mockStories;
+
+      // Filter berdasarkan kategori
+      if (category && category !== 'all') {
+        filteredStories = filteredStories.filter(story => story.category === category);
+      }
+
+      // Filter berdasarkan mood
+      if (mood) {
+        filteredStories = filteredStories.filter(story => story.mood === mood);
+      }
+
+      // Filter berdasarkan pencarian
+      if (search) {
+        const searchLower = search.toString().toLowerCase();
+        filteredStories = filteredStories.filter(story => 
+          story.title.toLowerCase().includes(searchLower) ||
+          story.content.toLowerCase().includes(searchLower) ||
+          story.tags.some(tag => tag.toLowerCase().includes(searchLower))
+        );
+      }
+
+      res.json(filteredStories);
+    } catch (error) {
+      console.error("Error fetching driver stories:", error);
+      res.status(500).json({ error: "Gagal mengambil cerita driver" });
+    }
+  });
+
+  // API: Membuat cerita driver baru
+  app.post("/api/driver-stories", async (req, res) => {
+    try {
+      const { title, content, category, mood, tags, isAnonymous, driverId } = req.body;
+
+      if (!title || !content) {
+        return res.status(400).json({ error: "Judul dan konten cerita harus diisi" });
+      }
+
+      const newStory = {
+        id: Date.now(), // Simple ID generation for demo
+        driverId,
+        title,
+        content,
+        category: category || 'experience',
+        mood: mood || 'positive',
+        tags: tags || [],
+        isAnonymous: isAnonymous || false,
+        isApproved: false, // Perlu moderasi admin
+        likesCount: 0,
+        commentsCount: 0,
+        viewsCount: 0,
+        createdAt: new Date().toISOString(),
+        driver: {
+          id: driverId,
+          fullName: isAnonymous ? "Driver Anonim" : "User Baru",
+          vehicleType: "Motor",
+          rating: "4.5"
+        },
+        isLiked: false
+      };
+
+      res.status(201).json({
+        success: true,
+        message: "Cerita berhasil dibuat dan menunggu persetujuan admin",
+        story: newStory
+      });
+    } catch (error) {
+      console.error("Error creating driver story:", error);
+      res.status(500).json({ error: "Gagal membuat cerita" });
+    }
+  });
+
+  // API: Like/Unlike cerita
+  app.post("/api/driver-stories/:id/like", async (req, res) => {
+    try {
+      const storyId = parseInt(req.params.id);
+      const { driverId } = req.body;
+
+      // Simulasi toggle like
+      res.json({
+        success: true,
+        message: "Like berhasil ditoggle",
+        newLikeCount: Math.floor(Math.random() * 50) + 10
+      });
+    } catch (error) {
+      console.error("Error toggling story like:", error);
+      res.status(500).json({ error: "Gagal toggle like" });
+    }
+  });
+
+  // API: Mendapatkan tips driver
+  app.get("/api/driver-tips", async (req, res) => {
+    try {
+      const { category, difficulty } = req.query;
+
+      // Mock data tips driver
+      const mockTips = [
+        {
+          id: 1,
+          driverId: 1,
+          title: "Cara Membaca GPS dengan Efektif",
+          content: "Sebelum berangkat, pelajari dulu rute di GPS. Catat landmark penting seperti spbu, minimarket, atau gedung tinggi. Jangan hanya andalkan suara GPS, karena kadang sinyal hilang di area padat.",
+          category: "navigation",
+          difficulty: "beginner",
+          helpfulCount: 25,
+          isVerified: true,
+          createdAt: new Date(Date.now() - 86400000 * 1).toISOString(),
+          driver: {
+            id: 1,
+            fullName: "Budi Santoso",
+            vehicleType: "Motor"
+          },
+          isHelpful: false
+        },
+        {
+          id: 2,
+          driverId: 2,
+          title: "Komunikasi Sopan dengan Customer Marah",
+          content: "Jika customer marah, tetap tenang dan dengarkan keluhan mereka. Minta maaf meski bukan salah kita, lalu tawarkan solusi. Hindari membalas dengan nada tinggi. Ingat, review buruk bisa merusak rating kita.",
+          category: "customer_service",
+          difficulty: "intermediate",
+          helpfulCount: 18,
+          isVerified: true,
+          createdAt: new Date(Date.now() - 86400000 * 3).toISOString(),
+          driver: {
+            id: 2,
+            fullName: "Sari Wahyuni",
+            vehicleType: "Motor"
+          },
+          isHelpful: true
+        },
+        {
+          id: 3,
+          driverId: 3,
+          title: "Perawatan Motor Harian untuk Driver",
+          content: "Setiap pagi, cek tekanan ban, oli mesin, dan rem. Bersihkan kaca spion dan lampu. Sekali seminggu, cuci motor dan cek busi. Motor yang terawat = performa maksimal = penghasilan optimal.",
+          category: "vehicle_maintenance",
+          difficulty: "beginner",
+          helpfulCount: 31,
+          isVerified: false,
+          createdAt: new Date(Date.now() - 86400000 * 2).toISOString(),
+          driver: {
+            id: 3,
+            fullName: "Agus Pratama",
+            vehicleType: "Motor"
+          },
+          isHelpful: false
+        }
+      ];
+
+      let filteredTips = mockTips;
+
+      if (category) {
+        filteredTips = filteredTips.filter(tip => tip.category === category);
+      }
+
+      if (difficulty) {
+        filteredTips = filteredTips.filter(tip => tip.difficulty === difficulty);
+      }
+
+      res.json(filteredTips);
+    } catch (error) {
+      console.error("Error fetching driver tips:", error);
+      res.status(500).json({ error: "Gagal mengambil tips driver" });
+    }
+  });
+
+  // API: Membuat tip baru
+  app.post("/api/driver-tips", async (req, res) => {
+    try {
+      const { title, content, category, difficulty, driverId } = req.body;
+
+      if (!title || !content) {
+        return res.status(400).json({ error: "Judul dan konten tips harus diisi" });
+      }
+
+      const newTip = {
+        id: Date.now(),
+        driverId,
+        title,
+        content,
+        category: category || 'navigation',
+        difficulty: difficulty || 'beginner',
+        helpfulCount: 0,
+        isVerified: false,
+        createdAt: new Date().toISOString(),
+        driver: {
+          id: driverId,
+          fullName: "User Baru",
+          vehicleType: "Motor"
+        },
+        isHelpful: false
+      };
+
+      res.status(201).json({
+        success: true,
+        message: "Tips berhasil dibuat",
+        tip: newTip
+      });
+    } catch (error) {
+      console.error("Error creating driver tip:", error);
+      res.status(500).json({ error: "Gagal membuat tips" });
+    }
+  });
+
+  // API: Tandai tips sebagai helpful
+  app.post("/api/driver-tips/:id/helpful", async (req, res) => {
+    try {
+      const tipId = parseInt(req.params.id);
+      const { driverId, isHelpful } = req.body;
+
+      res.json({
+        success: true,
+        message: isHelpful ? "Tips ditandai helpful" : "Tips ditandai tidak helpful",
+        newHelpfulCount: Math.floor(Math.random() * 40) + 5
+      });
+    } catch (error) {
+      console.error("Error marking tip as helpful:", error);
+      res.status(500).json({ error: "Gagal menandai tips" });
+    }
+  });
+
   // Driver API routes
   app.use("/api/driver", driverApi);
 

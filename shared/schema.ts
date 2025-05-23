@@ -148,6 +148,63 @@ export const driverPriorityLogs = pgTable("driver_priority_logs", {
   changedBy: integer("changed_by"), // admin user id
 });
 
+// Driver Stories and Experience Sharing System
+export const driverStories = pgTable("driver_stories", {
+  id: serial("id").primaryKey(),
+  driverId: integer("driver_id").notNull().references(() => drivers.id),
+  title: text("title").notNull(),
+  content: text("content").notNull(),
+  category: text("category").notNull().default("experience"), // experience, tips, challenge, achievement, funny
+  mood: text("mood").default("positive"), // positive, neutral, challenging, educational
+  tags: text("tags").array(), // ["tips", "traffic", "customer_service", "rain", etc]
+  imageUrl: text("image_url"), // Optional image
+  isAnonymous: boolean("is_anonymous").default(false),
+  isApproved: boolean("is_approved").default(false), // Admin moderation
+  likesCount: integer("likes_count").default(0),
+  commentsCount: integer("comments_count").default(0),
+  viewsCount: integer("views_count").default(0),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+export const storyComments = pgTable("story_comments", {
+  id: serial("id").primaryKey(),
+  storyId: integer("story_id").notNull().references(() => driverStories.id),
+  driverId: integer("driver_id").notNull().references(() => drivers.id),
+  content: text("content").notNull(),
+  isAnonymous: boolean("is_anonymous").default(false),
+  likesCount: integer("likes_count").default(0),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+export const storyLikes = pgTable("story_likes", {
+  id: serial("id").primaryKey(),
+  storyId: integer("story_id").references(() => driverStories.id),
+  commentId: integer("comment_id").references(() => storyComments.id),
+  driverId: integer("driver_id").notNull().references(() => drivers.id),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+export const driverTips = pgTable("driver_tips", {
+  id: serial("id").primaryKey(),
+  driverId: integer("driver_id").notNull().references(() => drivers.id),
+  title: text("title").notNull(),
+  content: text("content").notNull(),
+  category: text("category").notNull(), // navigation, customer_service, vehicle_maintenance, safety, earnings
+  difficulty: text("difficulty").default("beginner"), // beginner, intermediate, advanced
+  helpfulCount: integer("helpful_count").default(0),
+  isVerified: boolean("is_verified").default(false), // Verified by experienced drivers or admin
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+export const tipRatings = pgTable("tip_ratings", {
+  id: serial("id").primaryKey(),
+  tipId: integer("tip_id").notNull().references(() => driverTips.id),
+  driverId: integer("driver_id").notNull().references(() => drivers.id),
+  isHelpful: boolean("is_helpful").notNull(),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
 export const driverBalanceTransactions = pgTable("driver_balance_transactions", {
   id: serial("id").primaryKey(),
   driverId: integer("driver_id").notNull().references(() => drivers.id),
@@ -212,3 +269,25 @@ export type InsertComplaint = z.infer<typeof insertComplaintSchema>;
 
 export type SystemSetting = typeof systemSettings.$inferSelect;
 export type InsertSystemSetting = z.infer<typeof insertSystemSettingSchema>;
+
+// Driver Stories Schema Types
+export const insertDriverStorySchema = createInsertSchema(driverStories).omit({ id: true, likesCount: true, commentsCount: true, viewsCount: true, createdAt: true, updatedAt: true });
+export const insertStoryCommentSchema = createInsertSchema(storyComments).omit({ id: true, likesCount: true, createdAt: true });
+export const insertStoryLikeSchema = createInsertSchema(storyLikes).omit({ id: true, createdAt: true });
+export const insertDriverTipSchema = createInsertSchema(driverTips).omit({ id: true, helpfulCount: true, isVerified: true, createdAt: true });
+export const insertTipRatingSchema = createInsertSchema(tipRatings).omit({ id: true, createdAt: true });
+
+export type DriverStory = typeof driverStories.$inferSelect;
+export type InsertDriverStory = z.infer<typeof insertDriverStorySchema>;
+
+export type StoryComment = typeof storyComments.$inferSelect;
+export type InsertStoryComment = z.infer<typeof insertStoryCommentSchema>;
+
+export type StoryLike = typeof storyLikes.$inferSelect;
+export type InsertStoryLike = z.infer<typeof insertStoryLikeSchema>;
+
+export type DriverTip = typeof driverTips.$inferSelect;
+export type InsertDriverTip = z.infer<typeof insertDriverTipSchema>;
+
+export type TipRating = typeof tipRatings.$inferSelect;
+export type InsertTipRating = z.infer<typeof insertTipRatingSchema>;
