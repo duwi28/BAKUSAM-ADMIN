@@ -49,7 +49,10 @@ import {
   Percent,
   Bike,
   Car,
-  Truck
+  Truck,
+  Crown,
+  Users,
+  Shield
 } from "lucide-react";
 import { formatDate, getStatusColor, getStatusText, formatCurrency } from "@/lib/utils";
 import { useToast } from "@/hooks/use-toast";
@@ -70,6 +73,10 @@ export default function Drivers() {
   const [balanceAmount, setBalanceAmount] = useState("");
   const [balanceDescription, setBalanceDescription] = useState("");
   const [balanceType, setBalanceType] = useState<"add" | "deduct">("add");
+  
+  // Priority management states
+  const [isPriorityModalOpen, setIsPriorityModalOpen] = useState(false);
+  const [selectedDriverForPriority, setSelectedDriverForPriority] = useState<Driver | null>(null);
   
   const { toast } = useToast();
   const queryClient = useQueryClient();
@@ -166,6 +173,28 @@ export default function Drivers() {
     },
   });
 
+  // Priority management mutation
+  const updatePriorityMutation = useMutation({
+    mutationFn: ({ driverId, priorityLevel }: { driverId: number; priorityLevel: string }) =>
+      apiRequest("PATCH", `/api/drivers/${driverId}/priority`, { priorityLevel }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/drivers"] });
+      setIsPriorityModalOpen(false);
+      setSelectedDriverForPriority(null);
+      toast({
+        title: "👑 Berhasil",
+        description: "Level prioritas driver berhasil diperbarui",
+      });
+    },
+    onError: () => {
+      toast({
+        title: "Error",
+        description: "Gagal memperbarui level prioritas driver",
+        variant: "destructive",
+      });
+    },
+  });
+
   // Filter drivers by vehicle type and search term
   const getFilteredDriversByType = (vehicleType: string) => {
     return drivers.filter(
@@ -208,6 +237,40 @@ export default function Drivers() {
     setBalanceAmount("");
     setBalanceDescription("");
     setIsBalanceModalOpen(true);
+  };
+
+  // Priority management functions
+  const openPriorityModal = (driver: Driver) => {
+    setSelectedDriverForPriority(driver);
+    setIsPriorityModalOpen(true);
+  };
+
+  const togglePriority = (driver: Driver) => {
+    const newPriorityLevel = driver.priorityLevel === "priority" ? "normal" : "priority";
+    updatePriorityMutation.mutate({
+      driverId: driver.id,
+      priorityLevel: newPriorityLevel
+    });
+  };
+
+  const getPriorityIcon = (level: string) => {
+    return level === "priority" ? (
+      <Crown className="h-4 w-4 text-yellow-500" />
+    ) : (
+      <Users className="h-4 w-4 text-gray-400" />
+    );
+  };
+
+  const getPriorityBadge = (level: string) => {
+    return level === "priority" ? (
+      <Badge className="bg-yellow-100 text-yellow-800 border-yellow-300">
+        👑 Prioritas
+      </Badge>
+    ) : (
+      <Badge variant="secondary">
+        👤 Normal
+      </Badge>
+    );
   };
 
   const handleBalanceSubmit = () => {
@@ -362,6 +425,7 @@ export default function Drivers() {
                   <TableHead>Kontak</TableHead>
                   <TableHead>Total Order</TableHead>
                   <TableHead>Rating</TableHead>
+                  <TableHead>Prioritas</TableHead>
                   <TableHead>Saldo</TableHead>
                   <TableHead>Komisi</TableHead>
                   <TableHead>Status</TableHead>
@@ -398,6 +462,20 @@ export default function Drivers() {
                         <div className="flex items-center space-x-1">
                           <Star className="h-4 w-4 text-yellow-400 fill-current" />
                           <span className="font-medium">{driver.rating || "4.5"}</span>
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        <div className="flex items-center space-x-2">
+                          {getPriorityBadge(driver.priorityLevel || "normal")}
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => togglePriority(driver)}
+                            disabled={updatePriorityMutation.isPending}
+                            className="h-6 w-6 p-0"
+                          >
+                            {getPriorityIcon(driver.priorityLevel || "normal")}
+                          </Button>
                         </div>
                       </TableCell>
                       <TableCell>
