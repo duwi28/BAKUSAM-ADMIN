@@ -201,6 +201,50 @@ export default function Drivers() {
     }
   };
 
+  // Balance management functions
+  const openBalanceModal = (driver: Driver, type: "add" | "deduct") => {
+    setSelectedDriverForBalance(driver);
+    setBalanceType(type);
+    setBalanceAmount("");
+    setBalanceDescription("");
+    setIsBalanceModalOpen(true);
+  };
+
+  const handleBalanceSubmit = () => {
+    if (!selectedDriverForBalance || !balanceAmount || !balanceDescription) {
+      toast({
+        title: "Error",
+        description: "Mohon lengkapi semua field",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    const amount = parseInt(balanceAmount.replace(/\D/g, ""));
+    if (amount <= 0) {
+      toast({
+        title: "Error", 
+        description: "Nominal harus lebih besar dari 0",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (balanceType === "add") {
+      addBalanceMutation.mutate({
+        driverId: selectedDriverForBalance.id,
+        amount,
+        description: balanceDescription
+      });
+    } else {
+      deductBalanceMutation.mutate({
+        driverId: selectedDriverForBalance.id,
+        amount,
+        description: balanceDescription
+      });
+    }
+  };
+
   const getVehicleIcon = (type: string) => {
     switch (type) {
       case "motor": return <Bike className="h-4 w-4" />;
@@ -318,6 +362,7 @@ export default function Drivers() {
                   <TableHead>Kontak</TableHead>
                   <TableHead>Total Order</TableHead>
                   <TableHead>Rating</TableHead>
+                  <TableHead>Saldo</TableHead>
                   <TableHead>Komisi</TableHead>
                   <TableHead>Status</TableHead>
                   <TableHead>Tanggal Bergabung</TableHead>
@@ -356,8 +401,33 @@ export default function Drivers() {
                         </div>
                       </TableCell>
                       <TableCell>
+                        <div className="flex flex-col space-y-2">
+                          <span className="font-medium text-green-600">
+                            💰 Rp {formatCurrency(driver.balance || 0)}
+                          </span>
+                          <div className="flex space-x-1">
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              className="h-7 px-2 text-xs bg-green-50 hover:bg-green-100 border-green-200 text-green-700"
+                              onClick={() => openBalanceModal(driver, "add")}
+                            >
+                              + Tambah
+                            </Button>
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              className="h-7 px-2 text-xs bg-red-50 hover:bg-red-100 border-red-200 text-red-700"
+                              onClick={() => openBalanceModal(driver, "deduct")}
+                            >
+                              - Kurangi
+                            </Button>
+                          </div>
+                        </div>
+                      </TableCell>
+                      <TableCell>
                         <div className="flex items-center space-x-2">
-                          <Badge variant="secondary">70%</Badge>
+                          <Badge variant="secondary">{driver.commission || 70}%</Badge>
                           <Button
                             variant="ghost"
                             size="sm"
@@ -531,6 +601,101 @@ export default function Drivers() {
                 </Button>
                 <Button onClick={saveCommissionRate} disabled={updateCommissionMutation.isPending}>
                   {updateCommissionMutation.isPending ? "Menyimpan..." : "Simpan"}
+                </Button>
+              </div>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
+
+      {/* Balance Management Modal */}
+      <Dialog open={isBalanceModalOpen} onOpenChange={setIsBalanceModalOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>
+              {balanceType === "add" ? "💰 Tambah Saldo Driver" : "💸 Kurangi Saldo Driver"}
+            </DialogTitle>
+          </DialogHeader>
+          {selectedDriverForBalance && (
+            <div className="space-y-6">
+              <div className="space-y-2">
+                <p className="text-sm text-muted-foreground">Driver:</p>
+                <p className="font-medium">{selectedDriverForBalance.fullName}</p>
+                <p className="text-sm text-muted-foreground">
+                  Saldo Saat Ini: <span className="font-medium text-green-600">Rp {formatCurrency(selectedDriverForBalance.balance || 0)}</span>
+                </p>
+              </div>
+              
+              <div className="space-y-4">
+                <div className="space-y-2">
+                  <label className="text-sm font-medium">Nominal {balanceType === "add" ? "Penambahan" : "Pengurangan"}</label>
+                  <input
+                    type="text"
+                    className="w-full p-3 border rounded-lg"
+                    placeholder="Masukkan nominal (Rp)"
+                    value={balanceAmount}
+                    onChange={(e) => {
+                      const value = e.target.value.replace(/\D/g, "");
+                      setBalanceAmount(value ? parseInt(value).toLocaleString("id-ID") : "");
+                    }}
+                  />
+                </div>
+                
+                <div className="space-y-2">
+                  <label className="text-sm font-medium">Keterangan</label>
+                  <textarea
+                    className="w-full p-3 border rounded-lg"
+                    placeholder="Masukkan keterangan transaksi..."
+                    rows={3}
+                    value={balanceDescription}
+                    onChange={(e) => setBalanceDescription(e.target.value)}
+                  />
+                </div>
+                
+                {balanceAmount && (
+                  <div className={`p-4 rounded-lg border ${balanceType === "add" ? "bg-green-50 border-green-200" : "bg-red-50 border-red-200"}`}>
+                    <div className="space-y-2">
+                      <div className="flex justify-between text-sm">
+                        <span>Saldo Sebelumnya:</span>
+                        <span className="font-medium">Rp {formatCurrency(selectedDriverForBalance.balance || 0)}</span>
+                      </div>
+                      <div className="flex justify-between text-sm">
+                        <span>{balanceType === "add" ? "Penambahan:" : "Pengurangan:"}</span>
+                        <span className={`font-medium ${balanceType === "add" ? "text-green-600" : "text-red-600"}`}>
+                          {balanceType === "add" ? "+" : "-"} Rp {balanceAmount}
+                        </span>
+                      </div>
+                      <hr className="border-gray-300" />
+                      <div className="flex justify-between font-medium">
+                        <span>Saldo Setelah:</span>
+                        <span className="text-primary">
+                          Rp {formatCurrency(
+                            balanceType === "add" 
+                              ? (selectedDriverForBalance.balance || 0) + parseInt(balanceAmount.replace(/\D/g, "") || "0")
+                              : Math.max(0, (selectedDriverForBalance.balance || 0) - parseInt(balanceAmount.replace(/\D/g, "") || "0"))
+                          )}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              <div className="flex justify-end space-x-2">
+                <Button variant="outline" onClick={() => setIsBalanceModalOpen(false)}>
+                  Batal
+                </Button>
+                <Button 
+                  onClick={handleBalanceSubmit} 
+                  disabled={addBalanceMutation.isPending || deductBalanceMutation.isPending}
+                  className={balanceType === "add" ? "bg-green-600 hover:bg-green-700" : "bg-red-600 hover:bg-red-700"}
+                >
+                  {(addBalanceMutation.isPending || deductBalanceMutation.isPending) 
+                    ? "Memproses..." 
+                    : balanceType === "add" 
+                      ? "💰 Tambah Saldo" 
+                      : "💸 Kurangi Saldo"
+                  }
                 </Button>
               </div>
             </div>
