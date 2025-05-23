@@ -31,6 +31,7 @@ export const drivers = pgTable("drivers", {
   lastOrderDate: timestamp("last_order_date"),
   priorityExpiryDate: timestamp("priority_expiry_date"), // Kapan prioritas expired
   commission: integer("commission").default(70), // Custom commission per driver
+  balance: integer("balance").default(0), // Saldo driver dalam rupiah
 });
 
 export const customers = pgTable("customers", {
@@ -147,6 +148,18 @@ export const driverPriorityLogs = pgTable("driver_priority_logs", {
   changedBy: integer("changed_by"), // admin user id
 });
 
+export const driverBalanceTransactions = pgTable("driver_balance_transactions", {
+  id: serial("id").primaryKey(),
+  driverId: integer("driver_id").notNull().references(() => drivers.id),
+  amount: integer("amount").notNull(), // Amount in rupiah (positive for credit, negative for debit)
+  type: text("type").notNull(), // manual_add, manual_deduct, order_payment, bonus, penalty
+  description: text("description").notNull(),
+  previousBalance: integer("previous_balance").notNull(),
+  newBalance: integer("new_balance").notNull(),
+  transactionDate: timestamp("transaction_date").defaultNow(),
+  createdBy: integer("created_by"), // admin user id
+});
+
 // Insert schemas
 export const insertUserSchema = createInsertSchema(users).omit({ id: true });
 export const insertDriverSchema = createInsertSchema(drivers).omit({ 
@@ -159,6 +172,7 @@ export const insertDriverSchema = createInsertSchema(drivers).omit({
 });
 export const insertOrderAssignmentSchema = createInsertSchema(orderAssignments).omit({ id: true, assignedAt: true });
 export const insertDriverPriorityLogSchema = createInsertSchema(driverPriorityLogs).omit({ id: true, changedAt: true });
+export const insertDriverBalanceTransactionSchema = createInsertSchema(driverBalanceTransactions).omit({ id: true, transactionDate: true });
 export const insertCustomerSchema = createInsertSchema(customers).omit({ id: true, joinDate: true, totalOrders: true });
 export const insertVehicleSchema = createInsertSchema(vehicles).omit({ id: true });
 export const insertOrderSchema = createInsertSchema(orders).omit({ id: true, orderDate: true, completedDate: true });

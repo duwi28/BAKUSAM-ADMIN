@@ -379,6 +379,137 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Driver Balance Management APIs
+  app.post("/api/drivers/:id/balance/add", async (req, res) => {
+    try {
+      const driverId = parseInt(req.params.id);
+      const { amount, description } = req.body;
+      
+      if (!amount || amount <= 0) {
+        return res.status(400).json({ error: "Amount harus lebih besar dari 0" });
+      }
+
+      const driver = await storage.getDriver(driverId);
+      if (!driver) {
+        return res.status(404).json({ error: "Driver tidak ditemukan" });
+      }
+
+      const previousBalance = driver.balance || 0;
+      const newBalance = previousBalance + amount;
+
+      // Update driver balance
+      const updatedDriver = await storage.updateDriver(driverId, {
+        balance: newBalance
+      });
+
+      res.json({
+        success: true,
+        driver: updatedDriver,
+        transaction: {
+          previousBalance,
+          newBalance,
+          amount,
+          description
+        },
+        message: `Berhasil menambah saldo Rp ${amount.toLocaleString('id-ID')}`
+      });
+    } catch (error) {
+      res.status(500).json({ error: "Failed to add balance" });
+    }
+  });
+
+  app.post("/api/drivers/:id/balance/deduct", async (req, res) => {
+    try {
+      const driverId = parseInt(req.params.id);
+      const { amount, description } = req.body;
+      
+      if (!amount || amount <= 0) {
+        return res.status(400).json({ error: "Amount harus lebih besar dari 0" });
+      }
+
+      const driver = await storage.getDriver(driverId);
+      if (!driver) {
+        return res.status(404).json({ error: "Driver tidak ditemukan" });
+      }
+
+      const previousBalance = driver.balance || 0;
+      const newBalance = Math.max(0, previousBalance - amount);
+
+      // Update driver balance
+      const updatedDriver = await storage.updateDriver(driverId, {
+        balance: newBalance
+      });
+
+      res.json({
+        success: true,
+        driver: updatedDriver,
+        transaction: {
+          previousBalance,
+          newBalance,
+          amount: -amount,
+          description
+        },
+        message: `Berhasil mengurangi saldo Rp ${amount.toLocaleString('id-ID')}`
+      });
+    } catch (error) {
+      res.status(500).json({ error: "Failed to deduct balance" });
+    }
+  });
+
+  app.get("/api/drivers/:id/balance/history", async (req, res) => {
+    try {
+      const driverId = parseInt(req.params.id);
+      
+      // For now, return mock transaction history
+      // In real implementation, this would query the balance transactions table
+      const mockHistory = [
+        {
+          id: 1,
+          amount: 50000,
+          type: "manual_add",
+          description: "Top up saldo manual",
+          previousBalance: 0,
+          newBalance: 50000,
+          transactionDate: new Date().toISOString()
+        },
+        {
+          id: 2,
+          amount: 25000,
+          type: "order_payment",
+          description: "Pembayaran order #123",
+          previousBalance: 50000,
+          newBalance: 75000,
+          transactionDate: new Date(Date.now() - 86400000).toISOString()
+        }
+      ];
+
+      res.json(mockHistory);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch balance history" });
+    }
+  });
+
+  app.get("/api/drivers/balance/summary", async (req, res) => {
+    try {
+      const drivers = await storage.getDrivers();
+      
+      const balanceSummary = {
+        totalDrivers: drivers.length,
+        totalBalance: drivers.reduce((sum, driver) => sum + (driver.balance || 0), 0),
+        averageBalance: drivers.length > 0 
+          ? Math.round(drivers.reduce((sum, driver) => sum + (driver.balance || 0), 0) / drivers.length)
+          : 0,
+        driversWithBalance: drivers.filter(d => (d.balance || 0) > 0).length,
+        highestBalance: Math.max(...drivers.map(d => d.balance || 0)),
+        lowestBalance: Math.min(...drivers.map(d => d.balance || 0))
+      };
+
+      res.json(balanceSummary);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch balance summary" });
+    }
+  });
+
   // Driver API routes
   app.use("/api/driver", driverApi);
 

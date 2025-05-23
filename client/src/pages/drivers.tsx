@@ -63,6 +63,14 @@ export default function Drivers() {
   const [isCommissionModalOpen, setIsCommissionModalOpen] = useState(false);
   const [selectedDriverForCommission, setSelectedDriverForCommission] = useState<Driver | null>(null);
   const [commissionRate, setCommissionRate] = useState([70]);
+  
+  // Balance management states
+  const [isBalanceModalOpen, setIsBalanceModalOpen] = useState(false);
+  const [selectedDriverForBalance, setSelectedDriverForBalance] = useState<Driver | null>(null);
+  const [balanceAmount, setBalanceAmount] = useState("");
+  const [balanceDescription, setBalanceDescription] = useState("");
+  const [balanceType, setBalanceType] = useState<"add" | "deduct">("add");
+  
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
@@ -106,6 +114,53 @@ export default function Drivers() {
       toast({
         title: "Error",
         description: "Gagal memperbarui komisi driver",
+        variant: "destructive",
+      });
+    },
+  });
+
+  // Balance management mutations
+  const addBalanceMutation = useMutation({
+    mutationFn: ({ driverId, amount, description }: { driverId: number; amount: number; description: string }) =>
+      apiRequest("POST", `/api/drivers/${driverId}/balance/add`, { amount, description }),
+    onSuccess: (data: any) => {
+      queryClient.invalidateQueries({ queryKey: ["/api/drivers"] });
+      setIsBalanceModalOpen(false);
+      setSelectedDriverForBalance(null);
+      setBalanceAmount("");
+      setBalanceDescription("");
+      toast({
+        title: "💰 Berhasil",
+        description: data.message,
+      });
+    },
+    onError: () => {
+      toast({
+        title: "Error",
+        description: "Gagal menambah saldo driver",
+        variant: "destructive",
+      });
+    },
+  });
+
+  const deductBalanceMutation = useMutation({
+    mutationFn: ({ driverId, amount, description }: { driverId: number; amount: number; description: string }) =>
+      apiRequest("POST", `/api/drivers/${driverId}/balance/deduct`, { amount, description }),
+    onSuccess: (data: any) => {
+      queryClient.invalidateQueries({ queryKey: ["/api/drivers"] });
+      setIsBalanceModalOpen(false);
+      setSelectedDriverForBalance(null);
+      setBalanceAmount("");
+      setBalanceDescription("");
+      toast({
+        title: "💸 Berhasil",
+        description: data.message,
+      });
+    },
+    onError: () => {
+      toast({
+        title: "Error",
+        description: "Gagal mengurangi saldo driver",
         variant: "destructive",
       });
     },
