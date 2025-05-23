@@ -158,6 +158,64 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Create manual order
+  app.post("/api/orders/manual", async (req, res) => {
+    try {
+      const {
+        pickupAddress,
+        pickupPhone,
+        deliveryAddress,
+        deliveryPhone,
+        advanceAmount,
+        baseFare,
+        totalFare,
+        itemType,
+        itemDescription,
+        vehicleType,
+        priority,
+        notes
+      } = req.body;
+
+      // Validation
+      if (!pickupAddress || !deliveryAddress || !pickupPhone || !deliveryPhone) {
+        return res.status(400).json({ message: "Alamat dan nomor HP wajib diisi" });
+      }
+
+      // Create a dummy customer for manual orders
+      const customerData = {
+        fullName: `Customer Manual Order`,
+        phone: pickupPhone,
+        email: `manual_${Date.now()}@bakusamexpress.com`,
+        address: pickupAddress
+      };
+      
+      const customer = await storage.createCustomer(customerData);
+
+      // Create the order
+      const orderData = {
+        customerId: customer.id,
+        pickupAddress: `${pickupAddress} (Tel: ${pickupPhone})`,
+        deliveryAddress: `${deliveryAddress} (Tel: ${deliveryPhone})`,
+        distance: "0 km", // Will be calculated later
+        baseFare: baseFare?.toString() || "0",
+        totalFare: totalFare?.toString() || "0",
+        status: priority === "urgent" ? "urgent" : "pending",
+        notes: `Manual Order - ${itemType}\n${itemDescription || ""}\nTalangan: Rp ${advanceAmount || 0}\nVehicle: ${vehicleType}\n${notes || ""}`
+      };
+
+      const order = await storage.createOrder(orderData);
+      
+      res.status(201).json({
+        message: "Order manual berhasil dibuat",
+        order,
+        customer
+      });
+    } catch (error) {
+      console.error("Error creating manual order:", error);
+      res.status(500).json({ message: "Gagal membuat order manual" });
+    }
+  });
+
   app.patch("/api/orders/:id", async (req, res) => {
     try {
       const id = parseInt(req.params.id);

@@ -12,7 +12,8 @@ import {
   Bell, 
   Settings,
   Truck,
-  MapPin
+  MapPin,
+  PlusCircle
 } from "lucide-react";
 
 const navigation = [
@@ -20,6 +21,7 @@ const navigation = [
   { name: "Driver", href: "/drivers", icon: Users },
   { name: "Customer", href: "/customers", icon: UserCheck },
   { name: "Order", href: "/orders", icon: Package },
+  { name: "Order Manual", href: "/manual-order", icon: PlusCircle },
   { name: "Kendaraan", href: "/vehicles", icon: Car },
   { name: "Tracking & Assignment", href: "/tracking", icon: MapPin },
   { name: "Tarif & Promo", href: "/pricing", icon: Tags },
