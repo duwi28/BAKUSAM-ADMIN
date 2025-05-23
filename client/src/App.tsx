@@ -13,6 +13,7 @@ import Pricing from "@/pages/pricing";
 import Reports from "@/pages/reports";
 import Notifications from "@/pages/notifications";
 import Settings from "@/pages/settings";
+import Tracking from "@/pages/tracking";
 import NotFound from "@/pages/not-found";
 
 import Sidebar from "@/components/layout/sidebar";
@@ -31,6 +32,7 @@ function Router() {
       <Route path="/reports" component={Reports} />
       <Route path="/notifications" component={Notifications} />
       <Route path="/settings" component={Settings} />
+      <Route path="/tracking" component={Tracking} />
       <Route component={NotFound} />
     </Switch>
   );

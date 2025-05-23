@@ -11,7 +11,8 @@ import {
   BarChart3, 
   Bell, 
   Settings,
-  Truck
+  Truck,
+  MapPin
 } from "lucide-react";
 
 const navigation = [
@@ -20,6 +21,7 @@ const navigation = [
   { name: "Customer", href: "/customers", icon: UserCheck },
   { name: "Order", href: "/orders", icon: Package },
   { name: "Kendaraan", href: "/vehicles", icon: Car },
+  { name: "Tracking & Assignment", href: "/tracking", icon: MapPin },
   { name: "Tarif & Promo", href: "/pricing", icon: Tags },
   { name: "Laporan", href: "/reports", icon: BarChart3 },
   { name: "Notifikasi", href: "/notifications", icon: Bell },
