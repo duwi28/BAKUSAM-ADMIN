@@ -21,6 +21,16 @@ export const drivers = pgTable("drivers", {
   rating: text("rating").default("0"),
   totalOrders: integer("total_orders").default(0),
   joinDate: timestamp("join_date").defaultNow(),
+  // Priority System Fields
+  priorityLevel: text("priority_level").notNull().default("normal"), // priority, normal
+  priorityScore: integer("priority_score").default(0), // 0-100 calculated score
+  isAdvertising: boolean("is_advertising").default(false), // Driver yang pasang iklan
+  completionRate: integer("completion_rate").default(100), // Percentage 0-100
+  responseTime: integer("response_time").default(300), // Average response time in seconds
+  consecutiveRejects: integer("consecutive_rejects").default(0), // Berapa kali reject berturut-turut
+  lastOrderDate: timestamp("last_order_date"),
+  priorityExpiryDate: timestamp("priority_expiry_date"), // Kapan prioritas expired
+  commission: integer("commission").default(70), // Custom commission per driver
 });
 
 export const customers = pgTable("customers", {
@@ -115,9 +125,40 @@ export const systemSettings = pgTable("system_settings", {
   description: text("description"),
 });
 
+// Priority Assignment System Tables
+export const orderAssignments = pgTable("order_assignments", {
+  id: serial("id").primaryKey(),
+  orderId: integer("order_id").notNull().references(() => orders.id),
+  driverId: integer("driver_id").notNull().references(() => drivers.id),
+  assignedAt: timestamp("assigned_at").defaultNow(),
+  responseStatus: text("response_status").default("pending"), // pending, accepted, rejected, timeout
+  responseTime: integer("response_time"), // in seconds
+  priorityScore: integer("priority_score").default(0), // Score used for assignment
+  assignmentReason: text("assignment_reason"), // priority, advertising, rating, availability
+});
+
+export const driverPriorityLogs = pgTable("driver_priority_logs", {
+  id: serial("id").primaryKey(),
+  driverId: integer("driver_id").notNull().references(() => drivers.id),
+  previousLevel: text("previous_level").notNull(),
+  newLevel: text("new_level").notNull(),
+  reason: text("reason").notNull(), // rating_upgrade, advertising_purchase, manual_promotion, etc
+  changedAt: timestamp("changed_at").defaultNow(),
+  changedBy: integer("changed_by"), // admin user id
+});
+
 // Insert schemas
 export const insertUserSchema = createInsertSchema(users).omit({ id: true });
-export const insertDriverSchema = createInsertSchema(drivers).omit({ id: true, joinDate: true, totalOrders: true, rating: true });
+export const insertDriverSchema = createInsertSchema(drivers).omit({ 
+  id: true, 
+  joinDate: true, 
+  totalOrders: true, 
+  rating: true,
+  priorityScore: true,
+  lastOrderDate: true
+});
+export const insertOrderAssignmentSchema = createInsertSchema(orderAssignments).omit({ id: true, assignedAt: true });
+export const insertDriverPriorityLogSchema = createInsertSchema(driverPriorityLogs).omit({ id: true, changedAt: true });
 export const insertCustomerSchema = createInsertSchema(customers).omit({ id: true, joinDate: true, totalOrders: true });
 export const insertVehicleSchema = createInsertSchema(vehicles).omit({ id: true });
 export const insertOrderSchema = createInsertSchema(orders).omit({ id: true, orderDate: true, completedDate: true });
