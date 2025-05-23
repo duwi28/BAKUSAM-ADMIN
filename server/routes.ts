@@ -2,6 +2,7 @@ import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import driverApi from "./driver-api";
+import { DriverRecommendationEngine } from "./driver-recommendation";
 import { insertDriverSchema, insertCustomerSchema, insertVehicleSchema, insertOrderSchema, insertPricingRuleSchema, insertPromotionSchema, insertNotificationSchema, insertComplaintSchema } from "@shared/schema";
 
 export async function registerRoutes(app: Express): Promise<Server> {
@@ -593,6 +594,172 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.json(balanceSummary);
     } catch (error) {
       res.status(500).json({ error: "Failed to fetch balance summary" });
+    }
+  });
+
+  // === SISTEM REKOMENDASI DRIVER ===
+  
+  // API: Mendapatkan rekomendasi driver untuk order tertentu
+  app.post("/api/orders/:orderId/driver-recommendations", async (req, res) => {
+    try {
+      const orderId = parseInt(req.params.orderId);
+      const { maxRecommendations = 5 } = req.body;
+      
+      const order = await storage.getOrder(orderId);
+      if (!order) {
+        return res.status(404).json({ error: "Order tidak ditemukan" });
+      }
+
+      const recommendations = await DriverRecommendationEngine.getDriverRecommendations(
+        order, 
+        maxRecommendations
+      );
+
+      res.json({
+        success: true,
+        order: {
+          id: order.id,
+          pickupAddress: order.pickupAddress,
+          deliveryAddress: order.deliveryAddress,
+          distance: order.distance
+        },
+        recommendations,
+        totalRecommendations: recommendations.length,
+        timestamp: new Date().toISOString()
+      });
+    } catch (error) {
+      console.error("Error getting driver recommendations:", error);
+      res.status(500).json({ error: "Gagal mendapatkan rekomendasi driver" });
+    }
+  });
+
+  // API: Mendapatkan rekomendasi driver untuk order baru (manual order)
+  app.post("/api/driver-recommendations/new-order", async (req, res) => {
+    try {
+      const { pickupAddress, deliveryAddress, distance, maxRecommendations = 5 } = req.body;
+      
+      if (!pickupAddress || !deliveryAddress || !distance) {
+        return res.status(400).json({ 
+          error: "pickupAddress, deliveryAddress, dan distance harus diisi" 
+        });
+      }
+
+      // Buat object order sementara untuk rekomendasi
+      const tempOrder = {
+        id: 0,
+        customerId: 0,
+        driverId: null,
+        pickupAddress,
+        deliveryAddress,
+        distance: distance.toString(),
+        baseFare: "0",
+        totalFare: "0",
+        status: "pending",
+        rating: null,
+        orderDate: new Date(),
+        completedDate: null,
+        notes: null
+      };
+
+      const recommendations = await DriverRecommendationEngine.getDriverRecommendations(
+        tempOrder, 
+        maxRecommendations
+      );
+
+      res.json({
+        success: true,
+        orderDetails: { pickupAddress, deliveryAddress, distance },
+        recommendations,
+        totalRecommendations: recommendations.length,
+        timestamp: new Date().toISOString()
+      });
+    } catch (error) {
+      console.error("Error getting recommendations for new order:", error);
+      res.status(500).json({ error: "Gagal mendapatkan rekomendasi driver" });
+    }
+  });
+
+  // API: Mendapatkan insights performa driver individual
+  app.get("/api/drivers/:id/performance-insights", async (req, res) => {
+    try {
+      const driverId = parseInt(req.params.id);
+      
+      const insights = await DriverRecommendationEngine.getDriverPerformanceInsights(driverId);
+
+      res.json({
+        success: true,
+        driverId,
+        ...insights,
+        timestamp: new Date().toISOString()
+      });
+    } catch (error) {
+      console.error("Error getting driver performance insights:", error);
+      res.status(500).json({ error: "Gagal mendapatkan insights performa driver" });
+    }
+  });
+
+  // API: Mendapatkan ranking driver berdasarkan performa
+  app.get("/api/drivers/performance-ranking", async (req, res) => {
+    try {
+      const { limit = 10, sortBy = 'recommendationScore' } = req.query;
+      
+      const drivers = await storage.getDrivers();
+      const activeDrivers = drivers.filter(d => d.status === 'active');
+      
+      const driverRankings = [];
+      
+      for (const driver of activeDrivers) {
+        try {
+          const insights = await DriverRecommendationEngine.getDriverPerformanceInsights(driver.id);
+          
+          // Hitung skor rekomendasi untuk ranking
+          const tempOrder = {
+            id: 0, customerId: 0, driverId: null, pickupAddress: "", 
+            deliveryAddress: "", distance: "5", baseFare: "0", totalFare: "0",
+            status: "pending", rating: null, orderDate: new Date(), 
+            completedDate: null, notes: null
+          };
+          
+          const recommendations = await DriverRecommendationEngine.getDriverRecommendations(tempOrder, 1);
+          const recommendationScore = recommendations.length > 0 ? recommendations[0].recommendationScore : 0;
+          
+          driverRankings.push({
+            driver: {
+              id: driver.id,
+              fullName: driver.fullName,
+              vehicleType: driver.vehicleType,
+              priorityLevel: driver.priorityLevel,
+              rating: driver.rating
+            },
+            metrics: insights.metrics,
+            ranking: insights.ranking,
+            recommendationScore,
+            topInsights: insights.insights.slice(0, 2)
+          });
+        } catch (error) {
+          console.error(`Error processing driver ${driver.id}:`, error);
+        }
+      }
+
+      // Sort berdasarkan parameter yang diminta
+      if (sortBy === 'completionRate') {
+        driverRankings.sort((a, b) => b.metrics.completionRate - a.metrics.completionRate);
+      } else if (sortBy === 'rating') {
+        driverRankings.sort((a, b) => b.metrics.averageRating - a.metrics.averageRating);
+      } else {
+        driverRankings.sort((a, b) => b.recommendationScore - a.recommendationScore);
+      }
+
+      res.json({
+        success: true,
+        rankings: driverRankings.slice(0, parseInt(limit as string)),
+        sortBy,
+        totalDrivers: driverRankings.length,
+        timestamp: new Date().toISOString()
+      });
+    } catch (error) {
+      console.error("Error getting driver rankings:", error);
+      res.status(500).json({ error: "Gagal mendapatkan ranking driver" });
     }
   });
 

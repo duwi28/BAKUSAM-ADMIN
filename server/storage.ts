@@ -156,6 +156,7 @@ export class MemStorage implements IStorage {
         totalFare: "25000",
         status: "completed",
         rating: 5,
+        notes: "Pengiriman lancar",
         completedDate: new Date()
       },
       {
