@@ -18,6 +18,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import PriorityManagement from "@/components/priority-management";
 import {
   Dialog,
   DialogContent,

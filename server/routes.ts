@@ -296,6 +296,89 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Driver Priority System APIs
+  app.post("/api/drivers/:id/priority/upgrade", async (req, res) => {
+    try {
+      const driverId = parseInt(req.params.id);
+      const { reason, expiryDate } = req.body;
+      
+      const driver = await storage.getDriver(driverId);
+      if (!driver) {
+        return res.status(404).json({ error: "Driver not found" });
+      }
+
+      const updatedDriver = await storage.updateDriver(driverId, {
+        priorityLevel: "priority",
+        priorityExpiryDate: expiryDate ? new Date(expiryDate) : null
+      });
+
+      res.json({ 
+        success: true, 
+        driver: updatedDriver,
+        message: "Driver berhasil di-upgrade ke prioritas"
+      });
+    } catch (error) {
+      res.status(500).json({ error: "Failed to upgrade driver priority" });
+    }
+  });
+
+  app.post("/api/drivers/:id/priority/downgrade", async (req, res) => {
+    try {
+      const driverId = parseInt(req.params.id);
+      
+      const updatedDriver = await storage.updateDriver(driverId, {
+        priorityLevel: "normal",
+        priorityExpiryDate: null
+      });
+
+      res.json({ 
+        success: true, 
+        driver: updatedDriver,
+        message: "Driver berhasil diturunkan ke level normal"
+      });
+    } catch (error) {
+      res.status(500).json({ error: "Failed to downgrade driver priority" });
+    }
+  });
+
+  app.post("/api/drivers/:id/advertising/toggle", async (req, res) => {
+    try {
+      const driverId = parseInt(req.params.id);
+      const { isAdvertising } = req.body;
+      
+      const updatedDriver = await storage.updateDriver(driverId, {
+        isAdvertising: isAdvertising
+      });
+
+      res.json({ 
+        success: true, 
+        driver: updatedDriver,
+        message: isAdvertising ? "Iklan driver diaktifkan" : "Iklan driver dinonaktifkan"
+      });
+    } catch (error) {
+      res.status(500).json({ error: "Failed to toggle advertising" });
+    }
+  });
+
+  app.get("/api/drivers/priority/stats", async (req, res) => {
+    try {
+      const drivers = await storage.getDrivers();
+      
+      const priorityStats = {
+        total: drivers.length,
+        priority: drivers.filter(d => d.priorityLevel === "priority").length,
+        normal: drivers.filter(d => d.priorityLevel === "normal").length,
+        advertising: drivers.filter(d => d.isAdvertising).length,
+        highRating: drivers.filter(d => parseFloat(d.rating || "0") >= 4.8).length,
+        available: drivers.filter(d => d.status === "active").length
+      };
+
+      res.json(priorityStats);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch priority stats" });
+    }
+  });
+
   // Driver API routes
   app.use("/api/driver", driverApi);
 
