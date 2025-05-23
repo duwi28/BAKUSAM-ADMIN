@@ -781,6 +781,79 @@ export default function Drivers() {
         </DialogContent>
       </Dialog>
 
+      {/* Priority Management Modal */}
+      <Dialog open={isPriorityModalOpen} onOpenChange={setIsPriorityModalOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>👑 Pengaturan Prioritas Driver</DialogTitle>
+          </DialogHeader>
+          {selectedDriverForPriority && (
+            <div className="space-y-6">
+              <div className="space-y-2">
+                <p className="text-sm text-muted-foreground">Driver:</p>
+                <p className="font-medium">{selectedDriverForPriority.fullName}</p>
+                <p className="text-sm text-muted-foreground">
+                  Kendaraan: <span className="font-medium">{selectedDriverForPriority.vehicleType}</span>
+                </p>
+                <p className="text-sm text-muted-foreground">
+                  Status Saat Ini: {getPriorityBadge(selectedDriverForPriority.priorityLevel || "normal")}
+                </p>
+              </div>
+              
+              <div className="space-y-4">
+                <div className="p-4 bg-gradient-to-r from-yellow-50 to-orange-50 rounded-lg border border-yellow-200">
+                  <h4 className="font-medium text-yellow-800 mb-3">📋 Sistem Prioritas 2 Level:</h4>
+                  <div className="space-y-3">
+                    <div className="flex items-center space-x-3 p-3 bg-white rounded border">
+                      <Crown className="h-5 w-5 text-yellow-500" />
+                      <div>
+                        <p className="font-medium text-yellow-800">👑 Prioritas</p>
+                        <p className="text-xs text-yellow-600">Mendapat order pertama kali, lebih diutamakan</p>
+                      </div>
+                    </div>
+                    <div className="flex items-center space-x-3 p-3 bg-white rounded border">
+                      <Users className="h-5 w-5 text-gray-500" />
+                      <div>
+                        <p className="font-medium text-gray-800">👤 Normal</p>
+                        <p className="text-xs text-gray-600">Mendapat order setelah driver prioritas</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="p-4 bg-blue-50 rounded-lg border border-blue-200">
+                  <p className="text-sm text-blue-800">
+                    💡 <strong>Tip:</strong> Driver dengan level "Prioritas" akan mendapat order lebih dahulu 
+                    dibandingkan driver "Normal" pada semua jenis kendaraan (motor, mobil, pickup).
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex justify-end space-x-2">
+                <Button variant="outline" onClick={() => setIsPriorityModalOpen(false)}>
+                  Batal
+                </Button>
+                <Button 
+                  onClick={() => togglePriority(selectedDriverForPriority)} 
+                  disabled={updatePriorityMutation.isPending}
+                  className={selectedDriverForPriority.priorityLevel === "priority" 
+                    ? "bg-gray-600 hover:bg-gray-700" 
+                    : "bg-yellow-600 hover:bg-yellow-700"
+                  }
+                >
+                  {updatePriorityMutation.isPending 
+                    ? "Memproses..." 
+                    : selectedDriverForPriority.priorityLevel === "priority"
+                      ? "👤 Ubah ke Normal"
+                      : "👑 Ubah ke Prioritas"
+                  }
+                </Button>
+              </div>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
+
       <DriverModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
     </div>
   );

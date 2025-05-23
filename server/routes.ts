@@ -59,6 +59,34 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Update driver priority level
+  app.patch("/api/drivers/:id/priority", async (req, res) => {
+    try {
+      const driverId = parseInt(req.params.id);
+      const { priorityLevel } = req.body;
+
+      if (!priorityLevel || !["priority", "normal"].includes(priorityLevel)) {
+        return res.status(400).json({ message: "Level prioritas tidak valid" });
+      }
+
+      const driver = await storage.getDriver(driverId);
+      if (!driver) {
+        return res.status(404).json({ message: "Driver tidak ditemukan" });
+      }
+
+      await storage.updateDriver(driverId, { priorityLevel });
+
+      const priorityText = priorityLevel === "priority" ? "👑 Prioritas" : "👤 Normal";
+      res.json({ 
+        message: `Berhasil mengubah level prioritas driver ${driver.fullName} menjadi ${priorityText}`,
+        priorityLevel 
+      });
+    } catch (error) {
+      console.error("Error updating driver priority:", error);
+      res.status(500).json({ message: "Gagal memperbarui level prioritas driver" });
+    }
+  });
+
   // Customers
   app.get("/api/customers", async (req, res) => {
     try {
