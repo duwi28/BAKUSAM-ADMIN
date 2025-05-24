@@ -12,7 +12,7 @@ import Drivers from "@/pages/drivers";
 import DriverBalance from "@/pages/driver-balance";
 import Customers from "@/pages/customers";
 import Orders from "@/pages/orders";
-import ManualOrder from "@/pages/manual-order";
+import ManualOrderEnhanced from "@/pages/manual-order-enhanced";
 
 import LiveTrackingEnhanced from "@/pages/live-tracking-enhanced";
 import PushNotifications from "@/pages/push-notifications";
@@ -57,7 +57,7 @@ function DashboardLayout() {
             <Route path="/driver-balance" component={DriverBalance} />
             <Route path="/customers" component={Customers} />
             <Route path="/orders" component={Orders} />
-            <Route path="/manual-order" component={ManualOrder} />
+            <Route path="/manual-order" component={ManualOrderEnhanced} />
 
             <Route path="/live-tracking" component={LiveTrackingEnhanced} />
             <Route path="/push-notifications" component={PushNotifications} />
