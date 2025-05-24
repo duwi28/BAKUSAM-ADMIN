@@ -38,16 +38,19 @@ export default function Login() {
   });
 
   const loginMutation = useMutation({
-    mutationFn: (data: LoginForm) => apiRequest("POST", "/api/auth/login", data),
-    onSuccess: (response: any) => {
-      console.log("Login response:", response);
+    mutationFn: async (data: LoginForm) => {
+      const response = await apiRequest("POST", "/api/auth/login", data);
+      return await response.json();
+    },
+    onSuccess: (data: any) => {
+      console.log("Login response:", data);
       
       // Use auth context login method
-      login(response.token, response.user);
+      login(data.token, data.user);
       
       toast({
         title: "🎉 Login Berhasil!",
-        description: `Selamat datang kembali, ${response.user.fullName}!`,
+        description: `Selamat datang kembali, ${data.user.fullName}!`,
       });
       
       // Redirect to dashboard
