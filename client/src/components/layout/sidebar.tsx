@@ -46,7 +46,6 @@ const navigation = [
   { name: "Live GPS Tracking", href: "/live-tracking", icon: Navigation },
   { name: "Push Notifications", href: "/push-notifications", icon: Send },
   { name: "Auto-Assignment", href: "/auto-assignment", icon: Zap },
-  { name: "Revenue Calculator", href: "/revenue-calculator", icon: Calculator },
   { name: "Smart Route Optimization", href: "/smart-route-optimization", icon: Route },
   { name: "Multi-City & Franchise", href: "/integrated-city-franchise", icon: Globe },
   { name: "Smart AI Operations", href: "/smart-ai-operations", icon: Brain },
