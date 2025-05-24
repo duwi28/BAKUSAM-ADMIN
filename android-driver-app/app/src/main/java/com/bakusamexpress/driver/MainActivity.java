@@ -21,6 +21,24 @@ import java.util.Date;
 
 public class MainActivity extends AppCompatActivity {
     
+    // ===== SERVER CONNECTION SETTINGS =====
+    // Update this URL to match your web admin server
+    private static final String BASE_URL = "http://10.0.2.2:5000/api/";  // For Android Emulator
+    // Alternative URLs:
+    // private static final String BASE_URL = "http://192.168.1.100:5000/api/";  // For physical device (replace with your IP)
+    // private static final String BASE_URL = "https://your-domain.com/api/";    // For production server
+    
+    private static final String LOGIN_ENDPOINT = BASE_URL + "driver/login";
+    private static final String ORDERS_ENDPOINT = BASE_URL + "driver/orders/available";
+    private static final String ACCEPT_ORDER_ENDPOINT = BASE_URL + "driver/orders/";
+    private static final String LOCATION_UPDATE_ENDPOINT = BASE_URL + "driver/location/update";
+    private static final String BALANCE_ENDPOINT = BASE_URL + "driver/";
+    private static final String NOTIFICATIONS_ENDPOINT = BASE_URL + "driver/";
+    
+    // Driver credentials for testing (use data from your database)
+    private static final String TEST_DRIVER_PHONE = "087784862783";  // From your driver database
+    private static final String TEST_DRIVER_PASSWORD = "driver123";
+    
     private Switch onlineSwitch;
     private TextView statusText;
     private TextView earningsAmount;
