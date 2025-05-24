@@ -3435,6 +3435,71 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Authentication API
+  app.post("/api/auth/login", async (req, res) => {
+    try {
+      const { username, password } = req.body;
+
+      // Demo users for authentication
+      const demoUsers = {
+        admin: {
+          id: 1,
+          username: "admin",
+          password: "admin123",
+          fullName: "Administrator",
+          email: "admin@bakusamexpress.com",
+          role: "admin",
+          permissions: ["all"],
+          cityId: null,
+          cityName: null
+        },
+        regional: {
+          id: 2,
+          username: "regional",
+          password: "regional123",
+          fullName: "Regional Manager",
+          email: "regional@bakusamexpress.com",
+          role: "regional",
+          permissions: ["driver_management", "order_tracking", "reporting"],
+          cityId: 1,
+          cityName: "Jakarta Pusat"
+        }
+      };
+
+      const user = Object.values(demoUsers).find(u => u.username === username && u.password === password);
+
+      if (!user) {
+        return res.status(401).json({ error: "Username atau password tidak valid" });
+      }
+
+      // Generate simple token (in production, use JWT)
+      const token = `token_${user.id}_${Date.now()}`;
+
+      // Remove password from response
+      const { password: _, ...userResponse } = user;
+
+      res.json({
+        success: true,
+        message: "Login berhasil",
+        token,
+        user: userResponse
+      });
+    } catch (error) {
+      res.status(500).json({ error: "Internal server error" });
+    }
+  });
+
+  app.post("/api/auth/logout", async (req, res) => {
+    try {
+      res.json({
+        success: true,
+        message: "Logout berhasil"
+      });
+    } catch (error) {
+      res.status(500).json({ error: "Internal server error" });
+    }
+  });
+
   // Driver API routes
   app.use("/api/driver", driverApi);
 
