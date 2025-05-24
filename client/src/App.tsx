@@ -24,8 +24,7 @@ import SmartRouteOptimization from "@/pages/smart-route-optimization";
 
 import RecommendationSystem from "@/pages/recommendation-system";
 import DriverCommunityChat from "@/pages/driver-community-chat";
-import MultiCityManagement from "@/pages/multi-city-management";
-import FranchiseSystem from "@/pages/franchise-system";
+import IntegratedCityFranchise from "@/pages/integrated-city-franchise";
 import DriverCreditScoring from "@/pages/driver-credit-scoring";
 import SmartDemandPrediction from "@/pages/smart-demand-prediction";
 import DynamicRouteLearning from "@/pages/dynamic-route-learning";
@@ -79,8 +78,7 @@ function DashboardLayout() {
             <Route path="/smart-route-optimization" component={SmartRouteOptimization} />
             <Route path="/recommendation-system" component={RecommendationSystem} />
             <Route path="/driver-community-chat" component={DriverCommunityChat} />
-            <Route path="/multi-city-management" component={MultiCityManagement} />
-            <Route path="/franchise-system" component={FranchiseSystem} />
+            <Route path="/integrated-city-franchise" component={IntegratedCityFranchise} />
             <Route path="/driver-credit-scoring" component={DriverCreditScoring} />
             <Route path="/smart-demand-prediction" component={SmartDemandPrediction} />
             <Route path="/dynamic-route-learning" component={DynamicRouteLearning} />
