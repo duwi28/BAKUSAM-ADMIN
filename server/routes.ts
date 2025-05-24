@@ -1084,6 +1084,152 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // === SISTEM KESELAMATAN DRIVER REAL-TIME ===
+
+  // Safety Alerts API
+  app.get("/api/safety-alerts", async (req, res) => {
+    try {
+      const alerts = await storage.getSafetyAlerts();
+      res.json(alerts);
+    } catch (error) {
+      console.error("Error fetching safety alerts:", error);
+      res.status(500).json({ error: "Failed to fetch safety alerts" });
+    }
+  });
+
+  app.post("/api/safety-alerts", async (req, res) => {
+    try {
+      const validatedData = insertSafetyAlertSchema.parse(req.body);
+      const newAlert = await storage.createSafetyAlert(validatedData);
+      res.status(201).json(newAlert);
+    } catch (error) {
+      console.error("Error creating safety alert:", error);
+      res.status(400).json({ error: "Invalid safety alert data" });
+    }
+  });
+
+  app.post("/api/safety-alerts/:id/acknowledge", async (req, res) => {
+    try {
+      const alertId = parseInt(req.params.id);
+      const updatedAlert = await storage.acknowledgeSafetyAlert(alertId);
+      
+      if (!updatedAlert) {
+        return res.status(404).json({ error: "Safety alert not found" });
+      }
+      
+      res.json(updatedAlert);
+    } catch (error) {
+      console.error("Error acknowledging safety alert:", error);
+      res.status(500).json({ error: "Failed to acknowledge safety alert" });
+    }
+  });
+
+  // Driver Safety Status API
+  app.get("/api/driver-safety-status", async (req, res) => {
+    try {
+      const statuses = await storage.getDriverSafetyStatuses();
+      res.json(statuses);
+    } catch (error) {
+      console.error("Error fetching driver safety statuses:", error);
+      res.status(500).json({ error: "Failed to fetch driver safety statuses" });
+    }
+  });
+
+  app.post("/api/driver-safety/:driverId/emergency", async (req, res) => {
+    try {
+      const driverId = parseInt(req.params.driverId);
+      await storage.triggerEmergencyAlert(driverId);
+      
+      // Create emergency alert
+      await storage.createSafetyAlert({
+        driverId: driverId,
+        alertType: "emergency",
+        severity: "critical",
+        title: "EMERGENCY ALERT - Driver Panic Button",
+        message: "Driver telah mengaktifkan tombol darurat. Segera hubungi dan berikan bantuan!",
+        location: "GPS tracking active",
+        isActive: true,
+        isAcknowledged: false,
+        expiresAt: null,
+        metadata: null
+      });
+      
+      res.json({ success: true, message: "Emergency alert triggered" });
+    } catch (error) {
+      console.error("Error triggering emergency alert:", error);
+      res.status(500).json({ error: "Failed to trigger emergency alert" });
+    }
+  });
+
+  app.patch("/api/driver-safety-status/:driverId", async (req, res) => {
+    try {
+      const driverId = parseInt(req.params.driverId);
+      const updates = req.body;
+      
+      const updatedStatus = await storage.updateDriverSafetyStatus(driverId, updates);
+      
+      if (!updatedStatus) {
+        return res.status(404).json({ error: "Driver safety status not found" });
+      }
+      
+      res.json(updatedStatus);
+    } catch (error) {
+      console.error("Error updating driver safety status:", error);
+      res.status(500).json({ error: "Failed to update driver safety status" });
+    }
+  });
+
+  // Safety Incidents API
+  app.get("/api/safety-incidents", async (req, res) => {
+    try {
+      const incidents = await storage.getSafetyIncidents();
+      res.json(incidents);
+    } catch (error) {
+      console.error("Error fetching safety incidents:", error);
+      res.status(500).json({ error: "Failed to fetch safety incidents" });
+    }
+  });
+
+  app.post("/api/safety-incidents", async (req, res) => {
+    try {
+      const validatedData = insertSafetyIncidentSchema.parse(req.body);
+      const newIncident = await storage.createSafetyIncident(validatedData);
+      res.status(201).json(newIncident);
+    } catch (error) {
+      console.error("Error creating safety incident:", error);
+      res.status(400).json({ error: "Invalid safety incident data" });
+    }
+  });
+
+  app.patch("/api/safety-incidents/:id", async (req, res) => {
+    try {
+      const incidentId = parseInt(req.params.id);
+      const updates = req.body;
+      
+      const updatedIncident = await storage.updateSafetyIncident(incidentId, updates);
+      
+      if (!updatedIncident) {
+        return res.status(404).json({ error: "Safety incident not found" });
+      }
+      
+      res.json(updatedIncident);
+    } catch (error) {
+      console.error("Error updating safety incident:", error);
+      res.status(500).json({ error: "Failed to update safety incident" });
+    }
+  });
+
+  // Safety Statistics API
+  app.get("/api/safety-statistics", async (req, res) => {
+    try {
+      const stats = await storage.getSafetyStatistics();
+      res.json(stats);
+    } catch (error) {
+      console.error("Error fetching safety statistics:", error);
+      res.status(500).json({ error: "Failed to fetch safety statistics" });
+    }
+  });
+
   // Driver API routes
   app.use("/api/driver", driverApi);
 

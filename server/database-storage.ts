@@ -270,4 +270,183 @@ export class DatabaseStorage implements IStorage {
       return result[0];
     }
   }
+
+  // Safety Alerts Methods
+  async getSafetyAlerts(): Promise<SafetyAlert[]> {
+    const result = await db.select({
+      id: safetyAlerts.id,
+      driverId: safetyAlerts.driverId,
+      alertType: safetyAlerts.alertType,
+      severity: safetyAlerts.severity,
+      title: safetyAlerts.title,
+      message: safetyAlerts.message,
+      location: safetyAlerts.location,
+      isActive: safetyAlerts.isActive,
+      isAcknowledged: safetyAlerts.isAcknowledged,
+      acknowledgedAt: safetyAlerts.acknowledgedAt,
+      createdAt: safetyAlerts.createdAt,
+      expiresAt: safetyAlerts.expiresAt,
+      metadata: safetyAlerts.metadata,
+      driver: {
+        id: drivers.id,
+        fullName: drivers.fullName,
+        vehicleType: drivers.vehicleType,
+        phone: drivers.phone
+      }
+    })
+    .from(safetyAlerts)
+    .leftJoin(drivers, eq(safetyAlerts.driverId, drivers.id))
+    .orderBy(desc(safetyAlerts.createdAt));
+    
+    return result;
+  }
+
+  async createSafetyAlert(alert: InsertSafetyAlert): Promise<SafetyAlert> {
+    const result = await db.insert(safetyAlerts).values({
+      ...alert,
+      createdAt: new Date()
+    }).returning();
+    return result[0];
+  }
+
+  async acknowledgeSafetyAlert(alertId: number): Promise<SafetyAlert | undefined> {
+    const result = await db
+      .update(safetyAlerts)
+      .set({ 
+        isAcknowledged: true, 
+        acknowledgedAt: new Date() 
+      })
+      .where(eq(safetyAlerts.id, alertId))
+      .returning();
+    return result[0];
+  }
+
+  // Driver Safety Status Methods
+  async getDriverSafetyStatuses(): Promise<DriverSafetyStatus[]> {
+    const result = await db.select({
+      id: driverSafetyStatus.id,
+      driverId: driverSafetyStatus.driverId,
+      currentLocation: driverSafetyStatus.currentLocation,
+      speed: driverSafetyStatus.speed,
+      isOnDuty: driverSafetyStatus.isOnDuty,
+      lastActiveTime: driverSafetyStatus.lastActiveTime,
+      batteryLevel: driverSafetyStatus.batteryLevel,
+      signalStrength: driverSafetyStatus.signalStrength,
+      safetyScore: driverSafetyStatus.safetyScore,
+      emergencyContact: driverSafetyStatus.emergencyContact,
+      isInEmergency: driverSafetyStatus.isInEmergency,
+      lastEmergencyAlert: driverSafetyStatus.lastEmergencyAlert,
+      updatedAt: driverSafetyStatus.updatedAt,
+      driver: {
+        id: drivers.id,
+        fullName: drivers.fullName,
+        vehicleType: drivers.vehicleType,
+        phone: drivers.phone
+      }
+    })
+    .from(driverSafetyStatus)
+    .leftJoin(drivers, eq(driverSafetyStatus.driverId, drivers.id))
+    .orderBy(desc(driverSafetyStatus.updatedAt));
+    
+    return result;
+  }
+
+  async updateDriverSafetyStatus(driverId: number, updates: Partial<DriverSafetyStatus>): Promise<DriverSafetyStatus | undefined> {
+    const result = await db
+      .update(driverSafetyStatus)
+      .set({ ...updates, updatedAt: new Date() })
+      .where(eq(driverSafetyStatus.driverId, driverId))
+      .returning();
+    return result[0];
+  }
+
+  async triggerEmergencyAlert(driverId: number): Promise<void> {
+    await db
+      .update(driverSafetyStatus)
+      .set({ 
+        isInEmergency: true, 
+        lastEmergencyAlert: new Date(),
+        updatedAt: new Date()
+      })
+      .where(eq(driverSafetyStatus.driverId, driverId));
+  }
+
+  // Safety Incidents Methods
+  async getSafetyIncidents(): Promise<SafetyIncident[]> {
+    const result = await db.select({
+      id: safetyIncidents.id,
+      driverId: safetyIncidents.driverId,
+      incidentType: safetyIncidents.incidentType,
+      severity: safetyIncidents.severity,
+      description: safetyIncidents.description,
+      location: safetyIncidents.location,
+      reportedAt: safetyIncidents.reportedAt,
+      resolvedAt: safetyIncidents.resolvedAt,
+      status: safetyIncidents.status,
+      witnessContact: safetyIncidents.witnessContact,
+      policeReport: safetyIncidents.policeReport,
+      insuranceClaim: safetyIncidents.insuranceClaim,
+      actionsTaken: safetyIncidents.actionsTaken,
+      followUpRequired: safetyIncidents.followUpRequired,
+      driver: {
+        id: drivers.id,
+        fullName: drivers.fullName,
+        vehicleType: drivers.vehicleType
+      }
+    })
+    .from(safetyIncidents)
+    .leftJoin(drivers, eq(safetyIncidents.driverId, drivers.id))
+    .orderBy(desc(safetyIncidents.reportedAt));
+    
+    return result;
+  }
+
+  async createSafetyIncident(incident: InsertSafetyIncident): Promise<SafetyIncident> {
+    const result = await db.insert(safetyIncidents).values({
+      ...incident,
+      reportedAt: new Date()
+    }).returning();
+    return result[0];
+  }
+
+  async updateSafetyIncident(incidentId: number, updates: Partial<SafetyIncident>): Promise<SafetyIncident | undefined> {
+    const result = await db
+      .update(safetyIncidents)
+      .set(updates)
+      .where(eq(safetyIncidents.id, incidentId))
+      .returning();
+    return result[0];
+  }
+
+  // Safety Statistics
+  async getSafetyStatistics(): Promise<{
+    totalAlerts: number;
+    activeAlerts: number;
+    emergencyCount: number;
+    averageSafetyScore: number;
+    incidentsByType: Record<string, number>;
+  }> {
+    const alerts = await this.getSafetyAlerts();
+    const statuses = await this.getDriverSafetyStatuses();
+    const incidents = await this.getSafetyIncidents();
+
+    const activeAlerts = alerts.filter(alert => alert.isActive).length;
+    const emergencyCount = statuses.filter(status => status.isInEmergency).length;
+    const averageSafetyScore = statuses.length > 0 
+      ? statuses.reduce((sum, status) => sum + status.safetyScore, 0) / statuses.length 
+      : 100;
+
+    const incidentsByType = incidents.reduce((acc, incident) => {
+      acc[incident.incidentType] = (acc[incident.incidentType] || 0) + 1;
+      return acc;
+    }, {} as Record<string, number>);
+
+    return {
+      totalAlerts: alerts.length,
+      activeAlerts,
+      emergencyCount,
+      averageSafetyScore: Math.round(averageSafetyScore),
+      incidentsByType
+    };
+  }
 }
