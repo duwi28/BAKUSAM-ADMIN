@@ -17,7 +17,7 @@ import ManualOrder from "@/pages/manual-order";
 import LiveTracking from "@/pages/live-tracking";
 import PushNotifications from "@/pages/push-notifications";
 import AutoAssignment from "@/pages/auto-assignment";
-import AnalyticsReports from "@/pages/analytics-reports";
+
 import BulkOperations from "@/pages/bulk-operations";
 import RevenueCalculator from "@/pages/revenue-calculator";
 import SmartRouteOptimization from "@/pages/smart-route-optimization";
@@ -75,7 +75,6 @@ function DashboardLayout() {
             <Route path="/push-notifications" component={PushNotifications} />
             <Route path="/auto-assignment" component={AutoAssignment} />
 
-            <Route path="/analytics-reports" component={AnalyticsReports} />
             <Route path="/bulk-operations" component={BulkOperations} />
             <Route path="/revenue-calculator" component={RevenueCalculator} />
             <Route path="/smart-route-optimization" component={SmartRouteOptimization} />

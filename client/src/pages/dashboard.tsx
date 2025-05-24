@@ -25,7 +25,11 @@ import {
   Sparkles,
   Target,
   Award,
-  Gauge
+  Gauge,
+  FileText,
+  PieChart,
+  Calendar,
+  Download
 } from "lucide-react";
 import { formatCurrency, formatDateTime } from "@/lib/utils";
 
@@ -370,6 +374,107 @@ export default function Dashboard() {
               </div>
             </CardContent>
           </Card>
+
+          {/* Analytics & Reports Section - Integrated into Dashboard */}
+          <div className="mt-8 space-y-6">
+            <div className="flex items-center justify-between">
+              <h2 className="text-2xl font-bold text-gray-800 flex items-center">
+                <BarChart3 className="h-7 w-7 mr-3 text-blue-600" />
+                Analytics & Reports
+              </h2>
+              <div className="flex space-x-3">
+                <Button variant="outline" size="sm">
+                  <Download className="h-4 w-4 mr-2" />
+                  Export Data
+                </Button>
+                <Button variant="outline" size="sm">
+                  <Calendar className="h-4 w-4 mr-2" />
+                  Custom Range
+                </Button>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              {/* Revenue Analytics */}
+              <Card className="bg-white/80 backdrop-blur-lg border-0 shadow-xl">
+                <CardHeader>
+                  <CardTitle className="flex items-center text-lg font-bold text-gray-800">
+                    <DollarSign className="h-5 w-5 mr-2 text-green-600" />
+                    Revenue Analytics
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-4">
+                    <div className="grid grid-cols-2 gap-4">
+                      <div className="text-center p-3 bg-gradient-to-br from-green-50 to-green-100 rounded-lg">
+                        <div className="text-xl font-bold text-green-800">{formatCurrency(stats?.revenue?.today || 0)}</div>
+                        <div className="text-sm text-green-600">Hari Ini</div>
+                      </div>
+                      <div className="text-center p-3 bg-gradient-to-br from-blue-50 to-blue-100 rounded-lg">
+                        <div className="text-xl font-bold text-blue-800">{formatCurrency(stats?.revenue?.thisMonth || 0)}</div>
+                        <div className="text-sm text-blue-600">Bulan Ini</div>
+                      </div>
+                    </div>
+                    <RevenueChart />
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Orders Analytics */}
+              <Card className="bg-white/80 backdrop-blur-lg border-0 shadow-xl">
+                <CardHeader>
+                  <CardTitle className="flex items-center text-lg font-bold text-gray-800">
+                    <Package className="h-5 w-5 mr-2 text-purple-600" />
+                    Orders Analytics
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-4">
+                    <div className="grid grid-cols-2 gap-4">
+                      <div className="text-center p-3 bg-gradient-to-br from-purple-50 to-purple-100 rounded-lg">
+                        <div className="text-xl font-bold text-purple-800">{stats?.orders?.completed || 0}</div>
+                        <div className="text-sm text-purple-600">Selesai</div>
+                      </div>
+                      <div className="text-center p-3 bg-gradient-to-br from-orange-50 to-orange-100 rounded-lg">
+                        <div className="text-xl font-bold text-orange-800">{stats?.orders?.pending || 0}</div>
+                        <div className="text-sm text-orange-600">Pending</div>
+                      </div>
+                    </div>
+                    <OrdersChart />
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+
+            {/* Quick Reports */}
+            <Card className="bg-white/80 backdrop-blur-lg border-0 shadow-xl">
+              <CardHeader>
+                <CardTitle className="flex items-center text-lg font-bold text-gray-800">
+                  <FileText className="h-5 w-5 mr-2 text-gray-600" />
+                  Quick Reports
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <Button variant="outline" className="h-auto p-4 flex flex-col items-center space-y-2 hover:bg-blue-50">
+                    <BarChart3 className="h-6 w-6 text-blue-600" />
+                    <span className="font-medium">Driver Performance</span>
+                    <span className="text-xs text-gray-500">Weekly summary</span>
+                  </Button>
+                  <Button variant="outline" className="h-auto p-4 flex flex-col items-center space-y-2 hover:bg-green-50">
+                    <TrendingUp className="h-6 w-6 text-green-600" />
+                    <span className="font-medium">Revenue Report</span>
+                    <span className="text-xs text-gray-500">Monthly breakdown</span>
+                  </Button>
+                  <Button variant="outline" className="h-auto p-4 flex flex-col items-center space-y-2 hover:bg-purple-50">
+                    <Target className="h-6 w-6 text-purple-600" />
+                    <span className="font-medium">Customer Insights</span>
+                    <span className="text-xs text-gray-500">Behavior analysis</span>
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
         </div>
       </div>
 
