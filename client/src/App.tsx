@@ -7,7 +7,7 @@ import { ThemeProvider } from "@/components/theme-provider";
 import { AuthProvider } from "@/contexts/AuthContext";
 import ProtectedRoute from "@/components/ProtectedRoute";
 
-import Dashboard from "@/pages/dashboard-new";
+import Dashboard from "@/pages/dashboard";
 import Drivers from "@/pages/drivers";
 import DriverBalance from "@/pages/driver-balance";
 import Customers from "@/pages/customers";
