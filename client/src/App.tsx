@@ -18,11 +18,10 @@ import LiveTracking from "@/pages/live-tracking";
 import PushNotifications from "@/pages/push-notifications";
 import AutoAssignment from "@/pages/auto-assignment";
 
-import BulkOperations from "@/pages/bulk-operations";
 import RevenueCalculator from "@/pages/revenue-calculator";
 import SmartRouteOptimization from "@/pages/smart-route-optimization";
+import OrdersBulkManagement from "@/pages/orders-bulk-management";
 
-import DriverCommunityChat from "@/pages/driver-community-chat";
 import IntegratedCityFranchise from "@/pages/integrated-city-franchise";
 import SmartAIOperations from "@/pages/smart-ai-operations";
 import Pricing from "@/pages/pricing";
