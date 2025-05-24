@@ -3,6 +3,7 @@ import { db } from "./db";
 import { 
   users, drivers, customers, vehicles, orders, pricingRules, 
   promotions, notifications, complaints, systemSettings,
+  safetyAlerts, driverSafetyStatus, safetyIncidents,
   type User, type InsertUser,
   type Driver, type InsertDriver,
   type Customer, type InsertCustomer,
@@ -12,7 +13,10 @@ import {
   type Promotion, type InsertPromotion,
   type Notification, type InsertNotification,
   type Complaint, type InsertComplaint,
-  type SystemSetting, type InsertSystemSetting
+  type SystemSetting, type InsertSystemSetting,
+  type SafetyAlert, type InsertSafetyAlert,
+  type DriverSafetyStatus, type InsertDriverSafetyStatus,
+  type SafetyIncident, type InsertSafetyIncident
 } from "@shared/schema";
 import { IStorage } from "./storage";
 

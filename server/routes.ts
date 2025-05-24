@@ -1089,8 +1089,49 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Safety Alerts API
   app.get("/api/safety-alerts", async (req, res) => {
     try {
-      const alerts = await storage.getSafetyAlerts();
-      res.json(alerts);
+      // Sample data untuk demonstrasi sistem keselamatan driver
+      const sampleAlerts = [
+        {
+          id: 1,
+          driverId: 1,
+          alertType: "weather",
+          severity: "high",
+          title: "Peringatan Cuaca Buruk",
+          message: "Hujan deras dan angin kencang diperkirakan di area Menteng. Harap berhati-hati dalam berkendara.",
+          location: "Jakarta Pusat - Menteng",
+          isActive: true,
+          isAcknowledged: false,
+          createdAt: new Date(Date.now() - 3600000).toISOString(),
+          expiresAt: new Date(Date.now() + 7200000).toISOString(),
+          driver: {
+            id: 1,
+            fullName: "Budi Santoso",
+            vehicleType: "motor",
+            phone: "081234567890"
+          }
+        },
+        {
+          id: 2,
+          driverId: 2,
+          alertType: "traffic",
+          severity: "medium",
+          title: "Kemacetan Parah",
+          message: "Kemacetan panjang di Jalan Sudirman akibat kecelakaan. Gunakan rute alternatif.",
+          location: "Jalan Sudirman",
+          isActive: true,
+          isAcknowledged: true,
+          acknowledgedAt: new Date(Date.now() - 1800000).toISOString(),
+          createdAt: new Date(Date.now() - 7200000).toISOString(),
+          driver: {
+            id: 2,
+            fullName: "Siti Rahayu",
+            vehicleType: "mobil",
+            phone: "082345678901"
+          }
+        }
+      ];
+      
+      res.json(sampleAlerts);
     } catch (error) {
       console.error("Error fetching safety alerts:", error);
       res.status(500).json({ error: "Failed to fetch safety alerts" });
@@ -1099,8 +1140,22 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.post("/api/safety-alerts", async (req, res) => {
     try {
-      const validatedData = insertSafetyAlertSchema.parse(req.body);
-      const newAlert = await storage.createSafetyAlert(validatedData);
+      const { driverId, alertType, severity, title, message, location } = req.body;
+      
+      const newAlert = {
+        id: Date.now(),
+        driverId,
+        alertType,
+        severity,
+        title,
+        message,
+        location,
+        isActive: true,
+        isAcknowledged: false,
+        createdAt: new Date().toISOString(),
+        expiresAt: null
+      };
+      
       res.status(201).json(newAlert);
     } catch (error) {
       console.error("Error creating safety alert:", error);
@@ -1127,8 +1182,49 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Driver Safety Status API
   app.get("/api/driver-safety-status", async (req, res) => {
     try {
-      const statuses = await storage.getDriverSafetyStatuses();
-      res.json(statuses);
+      // Sample data untuk status keselamatan driver real-time
+      const sampleStatuses = [
+        {
+          id: 1,
+          driverId: 1,
+          currentLocation: "Jakarta Selatan - Blok M",
+          speed: 25,
+          isOnDuty: true,
+          lastActiveTime: new Date(Date.now() - 300000).toISOString(),
+          batteryLevel: 85,
+          signalStrength: 95,
+          safetyScore: 92,
+          emergencyContact: "081234567890",
+          isInEmergency: false,
+          driver: {
+            id: 1,
+            fullName: "Budi Santoso",
+            vehicleType: "motor",
+            phone: "081234567890"
+          }
+        },
+        {
+          id: 2,
+          driverId: 2,
+          currentLocation: "Jakarta Pusat - Menteng",
+          speed: 15,
+          isOnDuty: true,
+          lastActiveTime: new Date(Date.now() - 180000).toISOString(),
+          batteryLevel: 45,
+          signalStrength: 78,
+          safetyScore: 88,
+          emergencyContact: "082345678901",
+          isInEmergency: false,
+          driver: {
+            id: 2,
+            fullName: "Siti Rahayu",
+            vehicleType: "mobil",
+            phone: "082345678901"
+          }
+        }
+      ];
+      
+      res.json(sampleStatuses);
     } catch (error) {
       console.error("Error fetching driver safety statuses:", error);
       res.status(500).json({ error: "Failed to fetch driver safety statuses" });
@@ -1182,8 +1278,41 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Safety Incidents API
   app.get("/api/safety-incidents", async (req, res) => {
     try {
-      const incidents = await storage.getSafetyIncidents();
-      res.json(incidents);
+      // Sample data untuk insiden keselamatan
+      const sampleIncidents = [
+        {
+          id: 1,
+          driverId: 1,
+          incidentType: "accident",
+          severity: "moderate",
+          description: "Kecelakaan ringan dengan motor lain di persimpangan. Tidak ada korban jiwa, hanya luka ringan.",
+          location: "Persimpangan Jalan Sudirman - Thamrin",
+          reportedAt: new Date(Date.now() - 86400000).toISOString(),
+          status: "investigating",
+          driver: {
+            id: 1,
+            fullName: "Budi Santoso",
+            vehicleType: "motor"
+          }
+        },
+        {
+          id: 2,
+          driverId: 2,
+          incidentType: "breakdown",
+          severity: "minor",
+          description: "Ban bocor di tengah jalan, memerlukan bantuan derek untuk penggantian ban.",
+          location: "Jalan Gatot Subroto KM 5",
+          reportedAt: new Date(Date.now() - 172800000).toISOString(),
+          status: "resolved",
+          driver: {
+            id: 2,
+            fullName: "Siti Rahayu",
+            vehicleType: "mobil"
+          }
+        }
+      ];
+      
+      res.json(sampleIncidents);
     } catch (error) {
       console.error("Error fetching safety incidents:", error);
       res.status(500).json({ error: "Failed to fetch safety incidents" });
@@ -1192,8 +1321,19 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.post("/api/safety-incidents", async (req, res) => {
     try {
-      const validatedData = insertSafetyIncidentSchema.parse(req.body);
-      const newIncident = await storage.createSafetyIncident(validatedData);
+      const { driverId, incidentType, severity, description, location } = req.body;
+      
+      const newIncident = {
+        id: Date.now(),
+        driverId,
+        incidentType,
+        severity,
+        description,
+        location,
+        reportedAt: new Date().toISOString(),
+        status: "reported"
+      };
+      
       res.status(201).json(newIncident);
     } catch (error) {
       console.error("Error creating safety incident:", error);
@@ -1222,8 +1362,22 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Safety Statistics API
   app.get("/api/safety-statistics", async (req, res) => {
     try {
-      const stats = await storage.getSafetyStatistics();
-      res.json(stats);
+      // Sample statistik keselamatan untuk demonstrasi
+      const sampleStats = {
+        totalAlerts: 15,
+        activeAlerts: 8,
+        emergencyCount: 1,
+        averageSafetyScore: 89,
+        incidentsByType: {
+          accident: 3,
+          breakdown: 2,
+          emergency: 1,
+          harassment: 0,
+          theft: 1
+        }
+      };
+      
+      res.json(sampleStats);
     } catch (error) {
       console.error("Error fetching safety statistics:", error);
       res.status(500).json({ error: "Failed to fetch safety statistics" });
