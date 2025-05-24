@@ -1535,6 +1535,229 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // === PUSH NOTIFICATIONS SYSTEM ===
+  
+  // Get push notifications history
+  app.get("/api/push-notifications", async (req, res) => {
+    try {
+      const notifications = [
+        {
+          id: 1,
+          title: "Order Baru Tersedia!",
+          message: "Ada order pickup di Jakarta Pusat dengan jarak 2.3 km dari lokasi Anda",
+          type: "order_new",
+          targetType: "all",
+          targetIds: [],
+          scheduledAt: null,
+          sentAt: new Date(Date.now() - 300000).toISOString(),
+          status: "sent",
+          priority: "normal",
+          sound: true,
+          vibration: true,
+          clickAction: "/orders/123",
+          deliveryCount: 15,
+          readCount: 12
+        },
+        {
+          id: 2,
+          title: "Sistem Maintenance",
+          message: "Sistem akan maintenance pada pukul 02:00 - 04:00 WIB malam ini",
+          type: "system",
+          targetType: "all",
+          targetIds: [],
+          scheduledAt: null,
+          sentAt: new Date(Date.now() - 3600000).toISOString(),
+          status: "sent",
+          priority: "high",
+          sound: false,
+          vibration: false,
+          clickAction: null,
+          deliveryCount: 25,
+          readCount: 18
+        }
+      ];
+      
+      res.json(notifications);
+    } catch (error) {
+      console.error("Error fetching push notifications:", error);
+      res.status(500).json({ error: "Failed to fetch push notifications" });
+    }
+  });
+
+  // Send push notification
+  app.post("/api/push-notifications/send", async (req, res) => {
+    try {
+      const notificationData = req.body;
+      
+      // In real implementation, integrate with FCM or similar service
+      const notification = {
+        id: Date.now(),
+        ...notificationData,
+        sentAt: new Date().toISOString(),
+        status: "sent",
+        deliveryCount: notificationData.targetType === "all" ? 25 : notificationData.targetIds?.length || 0,
+        readCount: 0
+      };
+      
+      res.json({ success: true, notification });
+    } catch (error) {
+      console.error("Error sending push notification:", error);
+      res.status(500).json({ error: "Failed to send push notification" });
+    }
+  });
+
+  // Get notification templates
+  app.get("/api/notification-templates", async (req, res) => {
+    try {
+      const templates = [
+        {
+          id: 1,
+          name: "Order Baru",
+          title: "Order Baru Tersedia!",
+          message: "Ada order pickup di {location} dengan jarak {distance} km dari lokasi Anda",
+          type: "order_new",
+          isActive: true
+        },
+        {
+          id: 2,
+          name: "Update Order",
+          title: "Update Status Order",
+          message: "Status order #{orderId} telah berubah menjadi {status}",
+          type: "order_update",
+          isActive: true
+        }
+      ];
+      
+      res.json(templates);
+    } catch (error) {
+      console.error("Error fetching notification templates:", error);
+      res.status(500).json({ error: "Failed to fetch notification templates" });
+    }
+  });
+
+  // === AUTO-ASSIGNMENT SYSTEM ===
+
+  // Get auto-assignment rules
+  app.get("/api/auto-assignment/rules", async (req, res) => {
+    try {
+      const rules = [
+        {
+          id: 1,
+          name: "Priority Motor Jakarta Pusat",
+          isActive: true,
+          priority: 1,
+          conditions: {
+            vehicleType: ["motor"],
+            driverStatus: ["online"],
+            maxDistance: 5,
+            minRating: 4.0,
+            priorityDriversFirst: true
+          },
+          weights: {
+            distance: 40,
+            rating: 20,
+            completionRate: 15,
+            responseTime: 15,
+            workload: 10
+          }
+        }
+      ];
+      
+      res.json(rules);
+    } catch (error) {
+      console.error("Error fetching auto-assignment rules:", error);
+      res.status(500).json({ error: "Failed to fetch auto-assignment rules" });
+    }
+  });
+
+  // Create auto-assignment rule
+  app.post("/api/auto-assignment/rules", async (req, res) => {
+    try {
+      const ruleData = req.body;
+      
+      const newRule = {
+        id: Date.now(),
+        ...ruleData,
+        isActive: true,
+        priority: 1
+      };
+      
+      res.json({ success: true, rule: newRule });
+    } catch (error) {
+      console.error("Error creating auto-assignment rule:", error);
+      res.status(500).json({ error: "Failed to create auto-assignment rule" });
+    }
+  });
+
+  // Get assignment logs
+  app.get("/api/auto-assignment/logs", async (req, res) => {
+    try {
+      const logs = [
+        {
+          id: 1,
+          orderId: 12345,
+          driverId: 1,
+          driverName: "Budi Santoso",
+          assignedAt: new Date(Date.now() - 600000).toISOString(),
+          algorithm: "Smart Distance + Rating",
+          score: 87.5,
+          distance: 2.3,
+          responseTime: 45,
+          status: "accepted"
+        },
+        {
+          id: 2,
+          orderId: 12346,
+          driverId: 2,
+          driverName: "Siti Rahayu",
+          assignedAt: new Date(Date.now() - 1200000).toISOString(),
+          algorithm: "Smart Distance + Rating",
+          score: 92.1,
+          distance: 1.8,
+          responseTime: 32,
+          status: "accepted"
+        }
+      ];
+      
+      res.json(logs);
+    } catch (error) {
+      console.error("Error fetching assignment logs:", error);
+      res.status(500).json({ error: "Failed to fetch assignment logs" });
+    }
+  });
+
+  // Toggle auto-assignment
+  app.post("/api/auto-assignment/toggle", async (req, res) => {
+    try {
+      const { enabled } = req.body;
+      
+      // In real implementation, update system settings
+      res.json({ success: true, enabled });
+    } catch (error) {
+      console.error("Error toggling auto-assignment:", error);
+      res.status(500).json({ error: "Failed to toggle auto-assignment" });
+    }
+  });
+
+  // Get assignment statistics
+  app.get("/api/auto-assignment/stats", async (req, res) => {
+    try {
+      const stats = {
+        totalAssignments: 1247,
+        successRate: 92.5,
+        avgResponseTime: 1.8,
+        autoAssignments: 1152,
+        manualAssignments: 95,
+        efficiency: 95.2
+      };
+      
+      res.json(stats);
+    } catch (error) {
+      console.error("Error fetching assignment stats:", error);
+      res.status(500).json({ error: "Failed to fetch assignment stats" });
+    }
+  });
+
   // === PETA REAL-TIME DRIVER TRACKING ===
 
   // Live GPS Tracking API

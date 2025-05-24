@@ -16,6 +16,8 @@ import DriverSafety from "@/pages/driver-safety";
 import HeatMap from "@/pages/heat-map";
 import DriverMap from "@/pages/driver-map";
 import LiveTracking from "@/pages/live-tracking";
+import PushNotifications from "@/pages/push-notifications";
+import AutoAssignment from "@/pages/auto-assignment";
 import Vehicles from "@/pages/vehicles";
 import Pricing from "@/pages/pricing";
 import Reports from "@/pages/reports";
@@ -43,6 +45,8 @@ function Router() {
       <Route path="/heat-map" component={HeatMap} />
       <Route path="/driver-map" component={DriverMap} />
       <Route path="/live-tracking" component={LiveTracking} />
+      <Route path="/push-notifications" component={PushNotifications} />
+      <Route path="/auto-assignment" component={AutoAssignment} />
       <Route path="/vehicles" component={Vehicles} />
       <Route path="/pricing" component={Pricing} />
       <Route path="/reports" component={Reports} />

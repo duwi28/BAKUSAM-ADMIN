@@ -19,7 +19,9 @@ import {
   BookOpen,
   Shield,
   TrendingUp,
-  Navigation
+  Navigation,
+  Zap,
+  Send
 } from "lucide-react";
 
 const navigation = [
@@ -35,6 +37,8 @@ const navigation = [
   { name: "Heat Map Area Ramai", href: "/heat-map", icon: TrendingUp },
   { name: "Peta Real-Time Driver", href: "/driver-map", icon: MapPin },
   { name: "Live GPS Tracking", href: "/live-tracking", icon: Navigation },
+  { name: "Push Notifications", href: "/push-notifications", icon: Send },
+  { name: "Auto-Assignment", href: "/auto-assignment", icon: Zap },
   { name: "Kendaraan", href: "/vehicles", icon: Car },
   { name: "Tracking & Assignment", href: "/tracking", icon: MapPin },
   { name: "Tarif & Promo", href: "/pricing", icon: Tags },
