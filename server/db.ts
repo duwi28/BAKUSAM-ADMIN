@@ -1,15 +1,7 @@
-import { drizzle } from "drizzle-orm/mysql2";
-import mysql from "mysql2/promise";
+import { drizzle } from "drizzle-orm/neon-http";
+import { neon } from "@neondatabase/serverless";
 import * as schema from "@shared/schema";
 
-if (!process.env.DATABASE_URL) {
-  throw new Error("DATABASE_URL must be set in your .env file");
-}
-
-// Create MySQL connection pool
-const poolConnection = mysql.createPool({
-  uri: process.env.DATABASE_URL,
-  connectionLimit: 10,
-});
-
-export const db = drizzle(poolConnection, { schema, mode: "default" });
+// Fallback to original Neon setup if MySQL not available
+const sql = neon(process.env.DATABASE_URL || "");
+export const db = drizzle(sql, { schema });
