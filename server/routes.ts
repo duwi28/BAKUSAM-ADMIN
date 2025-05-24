@@ -3438,7 +3438,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Authentication API
   app.post("/api/auth/login", async (req, res) => {
     try {
+      console.log("Login request received:", req.body);
       const { username, password } = req.body;
+
+      if (!username || !password) {
+        return res.status(400).json({ error: "Username dan password harus diisi" });
+      }
 
       // Demo users for authentication
       const demoUsers = {
@@ -3466,9 +3471,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
         }
       };
 
+      console.log("Looking for user with username:", username);
       const user = Object.values(demoUsers).find(u => u.username === username && u.password === password);
+      console.log("Found user:", user ? "Yes" : "No");
 
       if (!user) {
+        console.log("Login failed for username:", username);
         return res.status(401).json({ error: "Username atau password tidak valid" });
       }
 
@@ -3478,13 +3486,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Remove password from response
       const { password: _, ...userResponse } = user;
 
-      res.json({
+      const response = {
         success: true,
         message: "Login berhasil",
         token,
         user: userResponse
-      });
+      };
+
+      console.log("Sending login response:", response);
+      res.json(response);
     } catch (error) {
+      console.error("Login error:", error);
       res.status(500).json({ error: "Internal server error" });
     }
   });
