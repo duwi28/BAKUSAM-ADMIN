@@ -18,7 +18,8 @@ import {
   Brain,
   BookOpen,
   Shield,
-  TrendingUp
+  TrendingUp,
+  Navigation
 } from "lucide-react";
 
 const navigation = [
@@ -33,6 +34,7 @@ const navigation = [
   { name: "Keselamatan Driver", href: "/driver-safety", icon: Shield },
   { name: "Heat Map Area Ramai", href: "/heat-map", icon: TrendingUp },
   { name: "Peta Real-Time Driver", href: "/driver-map", icon: MapPin },
+  { name: "Live GPS Tracking", href: "/live-tracking", icon: Navigation },
   { name: "Kendaraan", href: "/vehicles", icon: Car },
   { name: "Tracking & Assignment", href: "/tracking", icon: MapPin },
   { name: "Tarif & Promo", href: "/pricing", icon: Tags },

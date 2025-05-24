@@ -1537,6 +1537,62 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   // === PETA REAL-TIME DRIVER TRACKING ===
 
+  // Live GPS Tracking API
+  app.get("/api/drivers/live-locations", async (req, res) => {
+    try {
+      const drivers = await storage.getDrivers();
+      const orders = await storage.getOrders();
+      
+      const liveLocations = drivers.map(driver => {
+        // Find current order for this driver
+        const currentOrder = orders.find(order => 
+          order.driverId === driver.id && 
+          (order.status === 'assigned' || order.status === 'in_progress')
+        );
+
+        // Generate realistic Jakarta coordinates
+        const jakartaAreas = [
+          { lat: -6.2088, lng: 106.8456, area: "Jakarta Pusat" },
+          { lat: -6.1944, lng: 106.8229, area: "Jakarta Barat" },
+          { lat: -6.2297, lng: 106.8467, area: "Jakarta Selatan" },
+          { lat: -6.1754, lng: 106.8272, area: "Jakarta Utara" },
+          { lat: -6.2146, lng: 106.8451, area: "Jakarta Timur" }
+        ];
+        
+        const randomArea = jakartaAreas[Math.floor(Math.random() * jakartaAreas.length)];
+        
+        return {
+          id: driver.id,
+          driverId: driver.id,
+          fullName: driver.fullName,
+          phone: driver.phone,
+          vehicleType: driver.vehicleType,
+          priority: driver.priority,
+          currentLat: randomArea.lat + (Math.random() - 0.5) * 0.02,
+          currentLng: randomArea.lng + (Math.random() - 0.5) * 0.02,
+          lastUpdate: new Date(Date.now() - Math.random() * 300000).toISOString(),
+          status: driver.status,
+          currentSpeed: driver.status === 'busy' ? Math.floor(Math.random() * 50) + 15 : 
+                       driver.status === 'online' ? Math.floor(Math.random() * 20) : 0,
+          batteryLevel: Math.floor(Math.random() * 40) + 60,
+          currentOrder: currentOrder ? {
+            id: currentOrder.id,
+            pickupAddress: currentOrder.pickupAddress,
+            deliveryAddress: currentOrder.deliveryAddress,
+            customerName: `Customer-${currentOrder.customerId}`,
+            eta: `${Math.floor(Math.random() * 30) + 10} menit`,
+            progress: Math.floor(Math.random() * 80) + 20
+          } : undefined
+        };
+      });
+
+      res.json(liveLocations);
+    } catch (error) {
+      console.error("Error fetching live driver locations:", error);
+      res.status(500).json({ error: "Failed to fetch live driver locations" });
+    }
+  });
+
   // Driver Locations API
   app.get("/api/driver-locations", async (req, res) => {
     try {
