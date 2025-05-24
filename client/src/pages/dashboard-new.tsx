@@ -141,21 +141,21 @@ export default function Dashboard() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {stats_data.map((stat, index) => (
             <Card key={index} className="bg-white/80 backdrop-blur-lg border-0 shadow-xl hover:shadow-2xl hover:scale-105 transition-all duration-300 overflow-hidden group">
-              <div className={`absolute inset-0 bg-gradient-to-br ${stat.bgGradient} opacity-0 group-hover:opacity-50 transition-opacity duration-300`}></div>
+              <div className={`absolute inset-0 bg-gradient-to-br ${safeStats.bgGradient} opacity-0 group-hover:opacity-50 transition-opacity duration-300`}></div>
               <CardContent className="relative p-6">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm font-medium text-gray-600 mb-1">{stat.title}</p>
-                    <p className={`text-3xl font-bold bg-gradient-to-r ${stat.gradient} bg-clip-text text-transparent`}>
-                      {stat.value}
+                    <p className="text-sm font-medium text-gray-600 mb-1">{safeStats.title}</p>
+                    <p className={`text-3xl font-bold bg-gradient-to-r ${safeStats.gradient} bg-clip-text text-transparent`}>
+                      {safeStats.value}
                     </p>
-                    <p className={`text-sm ${stat.positive ? 'text-green-600' : 'text-red-600'} flex items-center mt-2`}>
-                      {stat.positive ? <TrendingUp className="h-4 w-4 mr-1" /> : <TrendingDown className="h-4 w-4 mr-1" />}
-                      {stat.change}
+                    <p className={`text-sm ${safeStats.positive ? 'text-green-600' : 'text-red-600'} flex items-center mt-2`}>
+                      {safeStats.positive ? <TrendingUp className="h-4 w-4 mr-1" /> : <TrendingDown className="h-4 w-4 mr-1" />}
+                      {safeStats.change}
                     </p>
                   </div>
-                  <div className={`w-12 h-12 bg-gradient-to-br ${stat.gradient} rounded-xl flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300`}>
-                    <stat.icon className="h-6 w-6 text-white" />
+                  <div className={`w-12 h-12 bg-gradient-to-br ${safeStats.gradient} rounded-xl flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300`}>
+                    <safeStats.icon className="h-6 w-6 text-white" />
                   </div>
                 </div>
               </CardContent>
@@ -259,7 +259,7 @@ export default function Dashboard() {
             <CardContent>
               <div className="space-y-3">
                 <div className="text-center p-3 bg-gradient-to-br from-blue-50 to-blue-100 rounded-lg">
-                  <div className="text-xl font-bold text-blue-800">{formatCurrency(stats?.revenue?.thisMonth || 0)}</div>
+                  <div className="text-xl font-bold text-blue-800">{formatCurrency(safeStats.revenue.thisMonth || 0)}</div>
                   <div className="text-sm text-blue-600">Revenue Bulan Ini</div>
                 </div>
                 <Button className="w-full" variant="outline" size="sm">
