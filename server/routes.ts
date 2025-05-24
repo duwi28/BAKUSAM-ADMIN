@@ -2786,6 +2786,220 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // === DRIVER APP API ENDPOINTS ===
+
+  // Driver Authentication
+  app.post("/api/driver/login", async (req, res) => {
+    try {
+      const { phone, password } = req.body;
+      
+      // Find driver by phone
+      const drivers = await storage.getDrivers();
+      const driver = drivers.find(d => d.phone === phone);
+      
+      if (!driver) {
+        return res.status(401).json({ error: "Driver tidak ditemukan" });
+      }
+      
+      // Simple password check (in production, use proper hashing)
+      if (password !== "driver123") {
+        return res.status(401).json({ error: "Password salah" });
+      }
+      
+      // Create session (simplified)
+      const sessionId = Date.now().toString();
+      
+      res.json({
+        success: true,
+        driver: {
+          id: driver.id,
+          fullName: driver.fullName,
+          phone: driver.phone,
+          vehicleType: driver.vehicleType,
+          status: driver.status,
+          balance: driver.balance || 0
+        },
+        sessionId
+      });
+    } catch (error) {
+      console.error("Driver login error:", error);
+      res.status(500).json({ error: "Login gagal" });
+    }
+  });
+
+  // Get available orders for driver
+  app.get("/api/driver/orders/available", async (req, res) => {
+    try {
+      const orders = await storage.getOrders();
+      const availableOrders = orders.filter(order => 
+        order.status === 'pending' && !order.driverId
+      );
+      
+      res.json(availableOrders.map(order => ({
+        id: order.id,
+        pickupAddress: order.pickupAddress,
+        deliveryAddress: order.deliveryAddress,
+        totalAmount: order.totalAmount,
+        distance: order.distance,
+        hasAdvancePayment: order.vehicleType === 'motor' && order.advancePayment > 0,
+        advanceAmount: order.advancePayment || 0,
+        priority: order.priority || 'normal',
+        estimatedTime: Math.round((order.distance || 10) * 3), // 3 minutes per km
+        createdAt: order.createdAt
+      })));
+    } catch (error) {
+      console.error("Error fetching available orders:", error);
+      res.status(500).json({ error: "Gagal mengambil order tersedia" });
+    }
+  });
+
+  // Accept order by driver
+  app.post("/api/driver/orders/:orderId/accept", async (req, res) => {
+    try {
+      const { orderId } = req.params;
+      const { driverId } = req.body;
+      
+      const order = await storage.updateOrder(parseInt(orderId), {
+        driverId: parseInt(driverId),
+        status: 'assigned',
+        assignedAt: new Date()
+      });
+      
+      if (!order) {
+        return res.status(404).json({ error: "Order tidak ditemukan" });
+      }
+      
+      res.json({
+        success: true,
+        message: "Order berhasil diterima",
+        order: {
+          id: order.id,
+          status: order.status,
+          pickupAddress: order.pickupAddress,
+          deliveryAddress: order.deliveryAddress,
+          totalAmount: order.totalAmount
+        }
+      });
+    } catch (error) {
+      console.error("Error accepting order:", error);
+      res.status(500).json({ error: "Gagal menerima order" });
+    }
+  });
+
+  // Update order status (pickup, in-transit, delivered)
+  app.post("/api/driver/orders/:orderId/status", async (req, res) => {
+    try {
+      const { orderId } = req.params;
+      const { status, notes, photoUrl } = req.body;
+      
+      const updateData: any = { status };
+      
+      if (status === 'picked_up') {
+        updateData.pickedUpAt = new Date();
+        updateData.pickupPhotoUrl = photoUrl;
+      } else if (status === 'delivered') {
+        updateData.deliveredAt = new Date();
+        updateData.deliveryPhotoUrl = photoUrl;
+        updateData.driverNotes = notes;
+      }
+      
+      const order = await storage.updateOrder(parseInt(orderId), updateData);
+      
+      if (!order) {
+        return res.status(404).json({ error: "Order tidak ditemukan" });
+      }
+      
+      res.json({
+        success: true,
+        message: `Order berhasil diupdate ke ${status}`,
+        order
+      });
+    } catch (error) {
+      console.error("Error updating order status:", error);
+      res.status(500).json({ error: "Gagal update status order" });
+    }
+  });
+
+  // Update driver location
+  app.post("/api/driver/location/update", async (req, res) => {
+    try {
+      const { driverId, latitude, longitude, speed, heading } = req.body;
+      
+      // Update driver location (simplified - in production use proper location tracking table)
+      const driver = await storage.updateDriver(parseInt(driverId), {
+        lastActive: new Date(),
+        // Note: You'll need to add location fields to driver schema
+      });
+      
+      res.json({
+        success: true,
+        message: "Lokasi berhasil diupdate",
+        timestamp: new Date()
+      });
+    } catch (error) {
+      console.error("Error updating location:", error);
+      res.status(500).json({ error: "Gagal update lokasi" });
+    }
+  });
+
+  // Get driver balance and earnings
+  app.get("/api/driver/:driverId/balance", async (req, res) => {
+    try {
+      const { driverId } = req.params;
+      const driver = await storage.getDriver(parseInt(driverId));
+      
+      if (!driver) {
+        return res.status(404).json({ error: "Driver tidak ditemukan" });
+      }
+      
+      const orders = await storage.getOrders();
+      const driverOrders = orders.filter(o => o.driverId === driver.id && o.status === 'delivered');
+      
+      const totalEarnings = driverOrders.reduce((sum, order) => sum + (order.totalAmount * 0.8), 0); // 80% for driver
+      const todayEarnings = driverOrders
+        .filter(o => new Date(o.deliveredAt!).toDateString() === new Date().toDateString())
+        .reduce((sum, order) => sum + (order.totalAmount * 0.8), 0);
+      
+      res.json({
+        currentBalance: driver.balance || 0,
+        totalEarnings,
+        todayEarnings,
+        totalOrders: driverOrders.length,
+        completionRate: driver.completionRate || 0,
+        rating: driver.rating || 0
+      });
+    } catch (error) {
+      console.error("Error fetching driver balance:", error);
+      res.status(500).json({ error: "Gagal mengambil data balance" });
+    }
+  });
+
+  // Get driver notifications
+  app.get("/api/driver/:driverId/notifications", async (req, res) => {
+    try {
+      const { driverId } = req.params;
+      const notifications = await storage.getNotifications();
+      
+      const driverNotifications = notifications.filter(n => 
+        n.targetType === 'all_drivers' || 
+        (n.targetType === 'specific_driver' && n.targetId === parseInt(driverId))
+      );
+      
+      res.json(driverNotifications.map(n => ({
+        id: n.id,
+        title: n.title,
+        message: n.message,
+        type: n.type,
+        priority: n.priority,
+        createdAt: n.createdAt,
+        isRead: !!n.readAt
+      })));
+    } catch (error) {
+      console.error("Error fetching notifications:", error);
+      res.status(500).json({ error: "Gagal mengambil notifikasi" });
+    }
+  });
+
   // === DRIVER FEATURES ===
 
   // Get current active order for driver
