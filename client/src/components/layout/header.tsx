@@ -8,6 +8,8 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { ThemeToggle } from "@/components/ui/theme-toggle";
+import { LanguageSelector } from "@/components/ui/language-selector";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 interface HeaderProps {
   onMenuClick?: () => void;
