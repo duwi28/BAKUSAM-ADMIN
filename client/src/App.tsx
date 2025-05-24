@@ -14,7 +14,7 @@ import Customers from "@/pages/customers";
 import Orders from "@/pages/orders";
 import ManualOrder from "@/pages/manual-order";
 
-import LiveTracking from "@/pages/live-tracking";
+import LiveTrackingEnhanced from "@/pages/live-tracking-enhanced";
 import PushNotifications from "@/pages/push-notifications";
 import AutoAssignment from "@/pages/auto-assignment";
 
@@ -59,7 +59,7 @@ function DashboardLayout() {
             <Route path="/orders" component={Orders} />
             <Route path="/manual-order" component={ManualOrder} />
 
-            <Route path="/live-tracking" component={LiveTracking} />
+            <Route path="/live-tracking" component={LiveTrackingEnhanced} />
             <Route path="/push-notifications" component={PushNotifications} />
             <Route path="/auto-assignment" component={AutoAssignment} />
 
