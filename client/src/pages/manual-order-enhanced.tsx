@@ -56,7 +56,7 @@ export default function ManualOrderEnhanced() {
       customerId: 0,
       pickupAddress: "",
       deliveryAddress: "",
-      distance: "",
+      distance: "1", // Default distance
       baseFare: "",
       totalFare: "",
       notes: "",
@@ -72,14 +72,21 @@ export default function ManualOrderEnhanced() {
     queryKey: ['/api/drivers'],
   });
 
-  // Quick templates for faster order creation
+  // State untuk form fields baru
+  const [pickupPhone, setPickupPhone] = useState('');
+  const [deliveryPhone, setDeliveryPhone] = useState('');
+  const [advanceAmount, setAdvanceAmount] = useState('');
+  const [shippingCost, setShippingCost] = useState('');
+
+  // Quick templates untuk pembuatan order cepat
   const quickTemplates = [
     { 
       name: "Bandara - Kota", 
       pickup: "Bandara Husein Sastranegara", 
       delivery: "Pusat Kota Bandung", 
-      distance: "8", 
-      baseFare: "25000",
+      pickupPhone: "081234567890",
+      deliveryPhone: "081234567891",
+      shippingCost: "25000",
       vehicleType: "motor",
       icon: "✈️"
     },
@@ -87,8 +94,9 @@ export default function ManualOrderEnhanced() {
       name: "Stasiun - Mall", 
       pickup: "Stasiun Bandung", 
       delivery: "Trans Studio Mall", 
-      distance: "5", 
-      baseFare: "18000",
+      pickupPhone: "081234567892",
+      deliveryPhone: "081234567893",
+      shippingCost: "18000",
       vehicleType: "motor",
       icon: "🚉"
     },
@@ -96,8 +104,9 @@ export default function ManualOrderEnhanced() {
       name: "Kampus - RS", 
       pickup: "ITB Ganesha", 
       delivery: "RS Borromeus", 
-      distance: "12", 
-      baseFare: "35000",
+      pickupPhone: "081234567894",
+      deliveryPhone: "081234567895",
+      shippingCost: "35000",
       vehicleType: "mobil",
       icon: "🏥"
     },
@@ -105,8 +114,9 @@ export default function ManualOrderEnhanced() {
       name: "Hotel - Wisata", 
       pickup: "Hotel Hilton", 
       delivery: "Kawah Putih", 
-      distance: "45", 
-      baseFare: "120000",
+      pickupPhone: "081234567896",
+      deliveryPhone: "081234567897",
+      shippingCost: "120000",
       vehicleType: "mobil",
       icon: "🏨"
     },
@@ -114,8 +124,9 @@ export default function ManualOrderEnhanced() {
       name: "Rumah - Kantor", 
       pickup: "Perumahan Setrasari", 
       delivery: "Gedung Sate", 
-      distance: "15", 
-      baseFare: "40000",
+      pickupPhone: "081234567898",
+      deliveryPhone: "081234567899",
+      shippingCost: "40000",
       vehicleType: "motor",
       icon: "🏢"
     },
@@ -123,8 +134,9 @@ export default function ManualOrderEnhanced() {
       name: "Pasar - Rumah", 
       pickup: "Pasar Baru", 
       delivery: "Jl. Dago", 
-      distance: "7", 
-      baseFare: "22000",
+      pickupPhone: "081234567800",
+      deliveryPhone: "081234567801",
+      shippingCost: "22000",
       vehicleType: "motor",
       icon: "🛒"
     }
@@ -179,10 +191,13 @@ export default function ManualOrderEnhanced() {
   const applyTemplate = (template: any) => {
     form.setValue('pickupAddress', template.pickup);
     form.setValue('deliveryAddress', template.delivery);
-    form.setValue('distance', template.distance);
-    form.setValue('baseFare', template.baseFare);
-    form.setValue('totalFare', template.baseFare);
-    setEstimatedPrice(parseInt(template.baseFare));
+    form.setValue('distance', "1"); // Default distance
+    form.setValue('baseFare', template.shippingCost);
+    form.setValue('totalFare', template.shippingCost);
+    setPickupPhone(template.pickupPhone);
+    setDeliveryPhone(template.deliveryPhone);
+    setShippingCost(template.shippingCost);
+    setEstimatedPrice(parseInt(template.shippingCost));
     
     toast({
       title: "Template Applied",
@@ -321,9 +336,9 @@ export default function ManualOrderEnhanced() {
                           <p><MapPin className="h-3 w-3 inline mr-1" />{template.pickup}</p>
                           <p><Target className="h-3 w-3 inline mr-1" />{template.delivery}</p>
                           <div className="flex items-center justify-between mt-2">
-                            <span className="text-blue-600">{template.distance} km</span>
+                            <span className="text-blue-600">📞 {template.pickupPhone}</span>
                             <span className="font-semibold text-green-600">
-                              {formatCurrency(parseInt(template.baseFare))}
+                              {formatCurrency(parseInt(template.shippingCost))}
                             </span>
                           </div>
                         </div>
@@ -522,13 +537,13 @@ export default function ManualOrderEnhanced() {
                   )}
                 />
 
-                {/* Pickup Address */}
+                {/* Alamat Pengambilan */}
                 <FormField
                   control={form.control}
                   name="pickupAddress"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Pickup Address</FormLabel>
+                      <FormLabel>Alamat Pengambilan</FormLabel>
                       <FormControl>
                         <Input 
                           placeholder="Alamat penjemputan"
@@ -540,13 +555,25 @@ export default function ManualOrderEnhanced() {
                   )}
                 />
 
-                {/* Delivery Address */}
+                {/* No HP Pengambilan */}
+                <FormItem>
+                  <FormLabel>No HP Pengambilan</FormLabel>
+                  <FormControl>
+                    <Input 
+                      placeholder="Nomor HP pengirim"
+                      value={pickupPhone}
+                      onChange={(e) => setPickupPhone(e.target.value)}
+                    />
+                  </FormControl>
+                </FormItem>
+
+                {/* Alamat Penerima */}
                 <FormField
                   control={form.control}
                   name="deliveryAddress"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Delivery Address</FormLabel>
+                      <FormLabel>Alamat Penerima</FormLabel>
                       <FormControl>
                         <Input 
                           placeholder="Alamat pengiriman"
@@ -558,45 +585,49 @@ export default function ManualOrderEnhanced() {
                   )}
                 />
 
-                {/* Distance */}
-                <FormField
-                  control={form.control}
-                  name="distance"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Distance (KM)</FormLabel>
-                      <FormControl>
-                        <Input 
-                          type="number"
-                          placeholder="Jarak dalam kilometer"
-                          {...field}
-                          onChange={(e) => {
-                            field.onChange(e);
-                            // Auto calculate price when distance changes
-                            if (e.target.value) {
-                              calculatePrice(e.target.value, 'motor');
-                            }
-                          }}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+                {/* No HP Penerima */}
+                <FormItem>
+                  <FormLabel>No HP Penerima</FormLabel>
+                  <FormControl>
+                    <Input 
+                      placeholder="Nomor HP penerima"
+                      value={deliveryPhone}
+                      onChange={(e) => setDeliveryPhone(e.target.value)}
+                    />
+                  </FormControl>
+                </FormItem>
 
-                {/* Total Fare */}
+                {/* Jumlah Talangan */}
+                <FormItem>
+                  <FormLabel>Jumlah Talangan</FormLabel>
+                  <FormControl>
+                    <Input 
+                      type="number"
+                      placeholder="Jumlah uang talangan"
+                      value={advanceAmount}
+                      onChange={(e) => setAdvanceAmount(e.target.value)}
+                    />
+                  </FormControl>
+                </FormItem>
+
+                {/* Ongkir */}
                 <FormField
                   control={form.control}
                   name="totalFare"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Total Fare</FormLabel>
+                      <FormLabel>Ongkir</FormLabel>
                       <FormControl>
                         <Input 
-                          placeholder="Total biaya"
-                          {...field}
-                          readOnly
-                          className="bg-gray-50"
+                          type="number"
+                          placeholder="Ongkos kirim"
+                          value={shippingCost}
+                          onChange={(e) => {
+                            setShippingCost(e.target.value);
+                            field.onChange(e.target.value);
+                            form.setValue('baseFare', e.target.value);
+                            setEstimatedPrice(parseInt(e.target.value) || 0);
+                          }}
                         />
                       </FormControl>
                       <FormMessage />
@@ -624,32 +655,7 @@ export default function ManualOrderEnhanced() {
                 )}
               />
 
-              {/* Advance Payment Section */}
-              {showAdvancePayment && (
-                <div className="p-4 bg-yellow-50 rounded-lg border border-yellow-200">
-                  <div className="flex items-center space-x-2 mb-3">
-                    <CreditCard className="h-5 w-5 text-yellow-600" />
-                    <h4 className="font-semibold text-yellow-800">Advance Payment (Talangan)</h4>
-                  </div>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                      <label className="text-sm font-medium text-yellow-700">Amount</label>
-                      <Input 
-                        type="number"
-                        placeholder="Jumlah talangan"
-                        className="mt-1"
-                      />
-                    </div>
-                    <div>
-                      <label className="text-sm font-medium text-yellow-700">Reason</label>
-                      <Input 
-                        placeholder="Alasan talangan"
-                        className="mt-1"
-                      />
-                    </div>
-                  </div>
-                </div>
-              )}
+
 
               {/* Submit Button */}
               <div className="flex justify-end space-x-4">
