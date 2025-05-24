@@ -1,6 +1,9 @@
 -- =====================================================
 -- BAKUSAM EXPRESS DATABASE SCHEMA
 -- Platform Logistik Indonesia dengan Sistem Multi-Language
+-- 
+-- LOKASI FILE: /database/bakusam_express_database.sql
+-- CARA INSTALL: mysql -u root -p < database/bakusam_express_database.sql
 -- =====================================================
 
 -- Database Setup
