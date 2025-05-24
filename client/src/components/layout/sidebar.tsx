@@ -46,14 +46,10 @@ const navigation = [
   { name: "Live GPS Tracking", href: "/live-tracking", icon: Navigation },
   { name: "Push Notifications", href: "/push-notifications", icon: Send },
   { name: "Auto-Assignment", href: "/auto-assignment", icon: Zap },
-  { name: "Smart Route Optimization", href: "/smart-route-optimization", icon: Route },
   { name: "Multi-City & Franchise", href: "/integrated-city-franchise", icon: Globe },
   { name: "Smart AI Operations", href: "/smart-ai-operations", icon: Brain },
   { name: "Orders & Bulk Management", href: "/orders-bulk-management", icon: Package },
-  { name: "Tarif & Promo", href: "/pricing", icon: Tags },
-  { name: "Laporan", href: "/reports", icon: BarChart3 },
-  { name: "Notifikasi", href: "/notifications", icon: Bell },
-  { name: "Pengaturan", href: "/settings", icon: Settings },
+  { name: "System Management", href: "/system-management", icon: Settings },
 ];
 
 export default function Sidebar() {

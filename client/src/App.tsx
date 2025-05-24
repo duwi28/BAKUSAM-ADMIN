@@ -18,15 +18,11 @@ import LiveTracking from "@/pages/live-tracking";
 import PushNotifications from "@/pages/push-notifications";
 import AutoAssignment from "@/pages/auto-assignment";
 
-import SmartRouteOptimization from "@/pages/smart-route-optimization";
 import OrdersBulkManagement from "@/pages/orders-bulk-management";
+import SystemManagement from "@/pages/system-management";
 
 import IntegratedCityFranchise from "@/pages/integrated-city-franchise";
 import SmartAIOperations from "@/pages/smart-ai-operations";
-import Pricing from "@/pages/pricing";
-import Reports from "@/pages/reports";
-import Notifications from "@/pages/notifications";
-import Settings from "@/pages/settings";
 import Tracking from "@/pages/tracking";
 import NotFound from "@/pages/not-found";
 
@@ -68,13 +64,9 @@ function DashboardLayout() {
             <Route path="/auto-assignment" component={AutoAssignment} />
 
             <Route path="/orders-bulk-management" component={OrdersBulkManagement} />
-            <Route path="/smart-route-optimization" component={SmartRouteOptimization} />
+            <Route path="/system-management" component={SystemManagement} />
             <Route path="/integrated-city-franchise" component={IntegratedCityFranchise} />
             <Route path="/smart-ai-operations" component={SmartAIOperations} />
-            <Route path="/pricing" component={Pricing} />
-            <Route path="/reports" component={Reports} />
-            <Route path="/notifications" component={Notifications} />
-            <Route path="/settings" component={Settings} />
             <Route path="/tracking" component={Tracking} />
             <Route component={NotFound} />
           </Switch>
