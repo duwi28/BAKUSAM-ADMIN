@@ -43,8 +43,6 @@ const navigation = [
   { name: "Customer", href: "/customers", icon: UserCheck },
   { name: "Order", href: "/orders", icon: Package },
   { name: "Order Manual", href: "/manual-order", icon: PlusCircle },
-  { name: "Heat Map Area Ramai", href: "/heat-map", icon: TrendingUp },
-  { name: "Peta Real-Time Driver", href: "/driver-map", icon: MapPin },
   { name: "Live GPS Tracking", href: "/live-tracking", icon: Navigation },
   { name: "Push Notifications", href: "/push-notifications", icon: Send },
   { name: "Auto-Assignment", href: "/auto-assignment", icon: Zap },

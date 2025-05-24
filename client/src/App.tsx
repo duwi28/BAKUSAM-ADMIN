@@ -13,8 +13,7 @@ import DriverBalance from "@/pages/driver-balance";
 import Customers from "@/pages/customers";
 import Orders from "@/pages/orders";
 import ManualOrder from "@/pages/manual-order";
-import HeatMap from "@/pages/heat-map";
-import DriverMap from "@/pages/driver-map";
+
 import LiveTracking from "@/pages/live-tracking";
 import PushNotifications from "@/pages/push-notifications";
 import AutoAssignment from "@/pages/auto-assignment";
@@ -72,8 +71,6 @@ function DashboardLayout() {
             <Route path="/orders" component={Orders} />
             <Route path="/manual-order" component={ManualOrder} />
 
-            <Route path="/heat-map" component={HeatMap} />
-            <Route path="/driver-map" component={DriverMap} />
             <Route path="/live-tracking" component={LiveTracking} />
             <Route path="/push-notifications" component={PushNotifications} />
             <Route path="/auto-assignment" component={AutoAssignment} />
