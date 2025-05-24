@@ -11,7 +11,6 @@ import Customers from "@/pages/customers";
 import Orders from "@/pages/orders";
 import ManualOrder from "@/pages/manual-order";
 import DriverApp from "@/pages/driver-app";
-import DriverRecommendations from "@/pages/driver-recommendations";
 import HeatMap from "@/pages/heat-map";
 import DriverMap from "@/pages/driver-map";
 import LiveTracking from "@/pages/live-tracking";
@@ -45,7 +44,6 @@ function Router() {
       <Route path="/orders" component={Orders} />
       <Route path="/manual-order" component={ManualOrder} />
       <Route path="/driver-app" component={DriverApp} />
-      <Route path="/driver-recommendations" component={DriverRecommendations} />
       <Route path="/heat-map" component={HeatMap} />
       <Route path="/driver-map" component={DriverMap} />
       <Route path="/live-tracking" component={LiveTracking} />
