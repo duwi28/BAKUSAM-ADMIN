@@ -126,7 +126,14 @@ export default function RealtimeRouteOptimization() {
 
   // Initialize map
   useEffect(() => {
-    if (!mapRef.current || !window.google) return;
+    if (!mapRef.current) return;
+    
+    // Set Google Maps API key from environment
+    if (!window.GOOGLE_MAPS_API_KEY && import.meta.env.VITE_GOOGLE_MAPS_API_KEY) {
+      window.GOOGLE_MAPS_API_KEY = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
+    }
+    
+    if (!window.google) return;
 
     const map = new window.google.maps.Map(mapRef.current, {
       center: { lat: -6.2088, lng: 106.8456 }, // Jakarta center

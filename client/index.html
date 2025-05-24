@@ -3,6 +3,33 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1" />
+    <title>Bakusam Express - Platform Logistik Terdepan</title>
+    <meta name="description" content="Platform logistik inovatif dengan real-time tracking, route optimization, dan manajemen driver terintegrasi untuk efisiensi maksimal.">
+    
+    <!-- Google Maps API Integration -->
+    <script>
+      // Load Google Maps API when API key is available
+      function loadGoogleMaps() {
+        const apiKey = window.GOOGLE_MAPS_API_KEY || '';
+        if (apiKey) {
+          const script = document.createElement('script');
+          script.src = `https://maps.googleapis.com/maps/api/js?key=${apiKey}&libraries=geometry,places,visualization&callback=initMap`;
+          script.async = true;
+          script.defer = true;
+          document.head.appendChild(script);
+        }
+      }
+      
+      // Initialize map callback
+      window.initMap = function() {
+        window.googleMapsLoaded = true;
+        // Trigger custom event for React components
+        window.dispatchEvent(new CustomEvent('googleMapsLoaded'));
+      };
+      
+      // Load maps on page load
+      document.addEventListener('DOMContentLoaded', loadGoogleMaps);
+    </script>
   </head>
   <body>
     <div id="root"></div>
