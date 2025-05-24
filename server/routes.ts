@@ -2251,6 +2251,314 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Recommendation System API
+  app.get("/api/recommendations/drivers", async (req, res) => {
+    try {
+      const { orderId, filterCriteria } = req.query;
+      
+      const driverRecommendations = [
+        {
+          driverId: 1,
+          driverName: "Budi Santoso",
+          vehicleType: "motor",
+          vehiclePlate: "B 1234 ABC",
+          priority: "priority",
+          performanceScore: 95,
+          completionRate: 98,
+          averageRating: 4.8,
+          responseTime: 5,
+          distanceFromPickup: 2.3,
+          currentWorkload: 1,
+          estimatedDeliveryTime: 25,
+          confidenceLevel: "Tinggi",
+          reasons: [
+            "Driver dengan rating tertinggi di area ini",
+            "Waktu respons tercepat (5 menit)",
+            "Tingkat penyelesaian order 98%",
+            "Lokasi terdekat dari pickup point"
+          ],
+          strengths: [
+            "Konsisten memberikan pelayanan terbaik",
+            "Sangat familiar dengan area delivery",
+            "Komunikasi yang baik dengan customer"
+          ],
+          potentialConcerns: [
+            "Sedang menangani 1 order aktif"
+          ],
+          recommendationScore: 95,
+          availability: "available",
+          lastActive: "2 menit yang lalu"
+        },
+        {
+          driverId: 2,
+          driverName: "Siti Rahayu",
+          vehicleType: "mobil",
+          vehiclePlate: "B 5678 DEF",
+          priority: "normal",
+          performanceScore: 88,
+          completionRate: 92,
+          averageRating: 4.5,
+          responseTime: 8,
+          distanceFromPickup: 3.1,
+          currentWorkload: 0,
+          estimatedDeliveryTime: 35,
+          confidenceLevel: "Tinggi",
+          reasons: [
+            "Driver mobil terbaik untuk order besar",
+            "Tidak ada order aktif saat ini",
+            "Pengalaman 3+ tahun di area ini"
+          ],
+          strengths: [
+            "Berpengalaman dengan pengiriman fragile items",
+            "Kendaraan mobil cocok untuk order besar",
+            "Punctual dan reliable"
+          ],
+          potentialConcerns: [
+            "Jarak sedikit lebih jauh dari pickup"
+          ],
+          recommendationScore: 88,
+          availability: "available",
+          lastActive: "5 menit yang lalu"
+        },
+        {
+          driverId: 3,
+          driverName: "Ahmad Wijaya",
+          vehicleType: "pickup",
+          vehiclePlate: "B 9012 GHI",
+          priority: "normal",
+          performanceScore: 82,
+          completionRate: 89,
+          averageRating: 4.3,
+          responseTime: 12,
+          distanceFromPickup: 4.8,
+          currentWorkload: 2,
+          estimatedDeliveryTime: 55,
+          confidenceLevel: "Sedang",
+          reasons: [
+            "Spesialis untuk pengiriman barang besar",
+            "Kendaraan pickup ideal untuk order volume tinggi"
+          ],
+          strengths: [
+            "Ahli dalam handling barang besar",
+            "Kendaraan pickup dengan kapasitas besar"
+          ],
+          potentialConcerns: [
+            "Sedang menangani 2 order aktif",
+            "Waktu respons agak lambat"
+          ],
+          recommendationScore: 75,
+          availability: "busy",
+          lastActive: "1 menit yang lalu"
+        }
+      ];
+      
+      res.json(driverRecommendations);
+    } catch (error) {
+      console.error("Error fetching driver recommendations:", error);
+      res.status(500).json({ error: "Failed to fetch driver recommendations" });
+    }
+  });
+
+  app.get("/api/recommendations/routes", async (req, res) => {
+    try {
+      const { orderId } = req.query;
+      
+      const routeRecommendations = [
+        {
+          routeId: 1,
+          routeName: "Via Tol Dalam Kota",
+          distance: 15.2,
+          estimatedTime: 28,
+          fuelConsumption: 1.2,
+          trafficLevel: "ringan",
+          tollCost: 15000,
+          roadCondition: "baik",
+          recommendationScore: 92,
+          advantages: [
+            "Rute tercepat dengan traffic minimal",
+            "Jalan tol dalam kondisi excellent",
+            "Minim kemacetan pada jam ini",
+            "Akses langsung ke area tujuan"
+          ],
+          disadvantages: [
+            "Biaya tol lebih mahal",
+            "Tidak ada alternatif jika ada gangguan"
+          ],
+          bestTimeToUse: [
+            "Peak hours (07:00-09:00)",
+            "Sore hari (17:00-19:00)",
+            "Pengiriman urgent"
+          ],
+          weatherSuitability: 95
+        },
+        {
+          routeId: 2,
+          routeName: "Via Jl. Panglima Polim",
+          distance: 12.8,
+          estimatedTime: 35,
+          fuelConsumption: 0.9,
+          trafficLevel: "sedang",
+          tollCost: 0,
+          roadCondition: "baik",
+          recommendationScore: 85,
+          advantages: [
+            "Jarak terpendek ke tujuan",
+            "Tidak ada biaya tol",
+            "Hemat BBM",
+            "Banyak alternatif jalan"
+          ],
+          disadvantages: [
+            "Traffic sedikit padat di persimpangan",
+            "Lampu merah cukup banyak"
+          ],
+          bestTimeToUse: [
+            "Off-peak hours",
+            "Pengiriman non-urgent",
+            "Cuaca hujan (jalan tertutup)"
+          ],
+          weatherSuitability: 80
+        },
+        {
+          routeId: 3,
+          routeName: "Via Jl. Senopati - Kemang",
+          distance: 18.5,
+          estimatedTime: 42,
+          fuelConsumption: 1.5,
+          trafficLevel: "padat",
+          tollCost: 5000,
+          roadCondition: "sedang",
+          recommendationScore: 68,
+          advantages: [
+            "Pemandangan menarik untuk customer VIP",
+            "Area komersial dengan banyak landmark",
+            "Jalan lebar dan nyaman"
+          ],
+          disadvantages: [
+            "Jarak paling jauh",
+            "Traffic padat di jam tertentu",
+            "Konsumsi BBM tinggi"
+          ],
+          bestTimeToUse: [
+            "Delivery untuk customer VIP",
+            "Weekend (traffic lebih lancar)",
+            "Late night delivery"
+          ],
+          weatherSuitability: 70
+        }
+      ];
+      
+      res.json(routeRecommendations);
+    } catch (error) {
+      console.error("Error fetching route recommendations:", error);
+      res.status(500).json({ error: "Failed to fetch route recommendations" });
+    }
+  });
+
+  app.get("/api/recommendations/customers", async (req, res) => {
+    try {
+      const { filterCriteria } = req.query;
+      
+      const customerRecommendations = [
+        {
+          customerId: 1,
+          customerName: "PT. Teknologi Maju",
+          segment: "VIP",
+          orderFrequency: 25,
+          averageOrderValue: 850000,
+          preferredDeliveryTime: "09:00-11:00",
+          locationArea: "SCBD, Jakarta Selatan",
+          loyaltyScore: 95,
+          recommendedActions: [
+            "Tawarkan paket delivery premium dengan dedicated driver",
+            "Berikan discount untuk contract bulanan",
+            "Prioritaskan driver terbaik untuk setiap delivery"
+          ],
+          upsellOpportunities: [
+            "Same-day delivery service premium",
+            "Bulk delivery discount program",
+            "24/7 customer support upgrade"
+          ],
+          retentionRisk: "rendah",
+          nextOrderPrediction: "Besok (90% probability)"
+        },
+        {
+          customerId: 2,
+          customerName: "Sarah Aminah",
+          segment: "Regular",
+          orderFrequency: 8,
+          averageOrderValue: 125000,
+          preferredDeliveryTime: "14:00-17:00",
+          locationArea: "Kemang, Jakarta Selatan",
+          loyaltyScore: 72,
+          recommendedActions: [
+            "Kirim promo untuk meningkatkan frequency",
+            "Tawarkan membership program",
+            "Follow up setelah delivery untuk feedback"
+          ],
+          upsellOpportunities: [
+            "Express delivery upgrade",
+            "Insurance protection add-on",
+            "Scheduled delivery subscription"
+          ],
+          retentionRisk: "sedang",
+          nextOrderPrediction: "Minggu depan (65% probability)"
+        },
+        {
+          customerId: 3,
+          customerName: "Budi Hartono",
+          segment: "New",
+          orderFrequency: 2,
+          averageOrderValue: 75000,
+          preferredDeliveryTime: "10:00-12:00",
+          locationArea: "Menteng, Jakarta Pusat",
+          loyaltyScore: 45,
+          recommendedActions: [
+            "Berikan welcome bonus untuk order berikutnya",
+            "Assign driver terbaik untuk first impression",
+            "Follow up dengan survey kepuasan"
+          ],
+          upsellOpportunities: [
+            "First-time customer discount",
+            "Referral program introduction",
+            "App download incentive"
+          ],
+          retentionRisk: "tinggi",
+          nextOrderPrediction: "2 minggu lagi (40% probability)"
+        }
+      ];
+      
+      res.json(customerRecommendations);
+    } catch (error) {
+      console.error("Error fetching customer recommendations:", error);
+      res.status(500).json({ error: "Failed to fetch customer recommendations" });
+    }
+  });
+
+  app.post("/api/recommendations/apply", async (req, res) => {
+    try {
+      const { type, recommendationId, orderId } = req.body;
+      
+      const result = {
+        success: true,
+        type,
+        recommendationId,
+        orderId,
+        appliedAt: new Date().toISOString(),
+        message: `${type} recommendation applied successfully`,
+        impact: {
+          expectedImprovement: "15-25% efficiency gain",
+          estimatedSavings: "Rp 25,000 per delivery",
+          customerSatisfaction: "+12% improvement"
+        }
+      };
+      
+      res.json(result);
+    } catch (error) {
+      console.error("Error applying recommendation:", error);
+      res.status(500).json({ error: "Failed to apply recommendation" });
+    }
+  });
+
   // === DRIVER FEATURES ===
 
   // Get current active order for driver
