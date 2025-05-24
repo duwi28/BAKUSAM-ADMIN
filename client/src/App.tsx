@@ -22,13 +22,9 @@ import BulkOperations from "@/pages/bulk-operations";
 import RevenueCalculator from "@/pages/revenue-calculator";
 import SmartRouteOptimization from "@/pages/smart-route-optimization";
 
-import RecommendationSystem from "@/pages/recommendation-system";
 import DriverCommunityChat from "@/pages/driver-community-chat";
 import IntegratedCityFranchise from "@/pages/integrated-city-franchise";
-import DriverCreditScoring from "@/pages/driver-credit-scoring";
-import SmartDemandPrediction from "@/pages/smart-demand-prediction";
-import DynamicRouteLearning from "@/pages/dynamic-route-learning";
-import Vehicles from "@/pages/vehicles";
+import SmartAIOperations from "@/pages/smart-ai-operations";
 import Pricing from "@/pages/pricing";
 import Reports from "@/pages/reports";
 import Notifications from "@/pages/notifications";
@@ -76,13 +72,9 @@ function DashboardLayout() {
             <Route path="/bulk-operations" component={BulkOperations} />
             <Route path="/revenue-calculator" component={RevenueCalculator} />
             <Route path="/smart-route-optimization" component={SmartRouteOptimization} />
-            <Route path="/recommendation-system" component={RecommendationSystem} />
             <Route path="/driver-community-chat" component={DriverCommunityChat} />
             <Route path="/integrated-city-franchise" component={IntegratedCityFranchise} />
-            <Route path="/driver-credit-scoring" component={DriverCreditScoring} />
-            <Route path="/smart-demand-prediction" component={SmartDemandPrediction} />
-            <Route path="/dynamic-route-learning" component={DynamicRouteLearning} />
-            <Route path="/vehicles" component={Vehicles} />
+            <Route path="/smart-ai-operations" component={SmartAIOperations} />
             <Route path="/pricing" component={Pricing} />
             <Route path="/reports" component={Reports} />
             <Route path="/notifications" component={Notifications} />
