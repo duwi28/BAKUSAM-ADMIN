@@ -13,6 +13,7 @@ import DriverApp from "@/pages/driver-app";
 import DriverRecommendations from "@/pages/driver-recommendations";
 import DriverStories from "@/pages/driver-stories";
 import DriverSafety from "@/pages/driver-safety";
+import HeatMap from "@/pages/heat-map";
 import Vehicles from "@/pages/vehicles";
 import Pricing from "@/pages/pricing";
 import Reports from "@/pages/reports";
@@ -37,6 +38,7 @@ function Router() {
       <Route path="/driver-recommendations" component={DriverRecommendations} />
       <Route path="/driver-stories" component={DriverStories} />
       <Route path="/driver-safety" component={DriverSafety} />
+      <Route path="/heat-map" component={HeatMap} />
       <Route path="/vehicles" component={Vehicles} />
       <Route path="/pricing" component={Pricing} />
       <Route path="/reports" component={Reports} />

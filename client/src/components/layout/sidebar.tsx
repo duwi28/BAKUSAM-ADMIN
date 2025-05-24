@@ -17,7 +17,8 @@ import {
   Smartphone,
   Brain,
   BookOpen,
-  Shield
+  Shield,
+  TrendingUp
 } from "lucide-react";
 
 const navigation = [
@@ -30,6 +31,7 @@ const navigation = [
   { name: "Rekomendasi Driver", href: "/driver-recommendations", icon: Brain },
   { name: "Cerita Driver", href: "/driver-stories", icon: BookOpen },
   { name: "Keselamatan Driver", href: "/driver-safety", icon: Shield },
+  { name: "Heat Map Area Ramai", href: "/heat-map", icon: TrendingUp },
   { name: "Kendaraan", href: "/vehicles", icon: Car },
   { name: "Tracking & Assignment", href: "/tracking", icon: MapPin },
   { name: "Tarif & Promo", href: "/pricing", icon: Tags },
