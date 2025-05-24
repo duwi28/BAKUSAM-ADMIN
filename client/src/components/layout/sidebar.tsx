@@ -49,8 +49,6 @@ const navigation = [
   { name: "Bulk Operations", href: "/bulk-operations", icon: Edit },
   { name: "Revenue Calculator", href: "/revenue-calculator", icon: Calculator },
   { name: "Smart Route Optimization", href: "/smart-route-optimization", icon: Route },
-  { name: "Real-Time Route Map", href: "/real-time-route-optimization", icon: MapPin },
-  { name: "Weather Route Optimization", href: "/weather-route-optimization", icon: Cloud },
   { name: "Sistem Rekomendasi AI", href: "/recommendation-system", icon: Brain },
   { name: "Driver Community Chat", href: "/driver-community-chat", icon: MessageSquare },
   { name: "Multi-City Management", href: "/multi-city-management", icon: Globe },
