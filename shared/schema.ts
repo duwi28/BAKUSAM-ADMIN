@@ -217,6 +217,71 @@ export const driverBalanceTransactions = pgTable("driver_balance_transactions", 
   createdBy: integer("created_by"), // admin user id
 });
 
+// Driver Safety Alert System
+export const safetyAlerts = pgTable("safety_alerts", {
+  id: serial("id").primaryKey(),
+  driverId: integer("driver_id").notNull().references(() => drivers.id),
+  alertType: text("alert_type").notNull(), // weather, traffic, area_risk, speed, fatigue, emergency
+  severity: text("severity").notNull().default("medium"), // low, medium, high, critical
+  title: text("title").notNull(),
+  message: text("message").notNull(),
+  location: text("location"), // GPS coordinates or address
+  isActive: boolean("is_active").default(true),
+  isAcknowledged: boolean("is_acknowledged").default(false),
+  acknowledgedAt: timestamp("acknowledged_at"),
+  createdAt: timestamp("created_at").defaultNow(),
+  expiresAt: timestamp("expires_at"),
+  metadata: jsonb("metadata"), // Additional data like weather info, traffic data, etc
+});
+
+export const driverSafetyStatus = pgTable("driver_safety_status", {
+  id: serial("id").primaryKey(),
+  driverId: integer("driver_id").notNull().references(() => drivers.id),
+  currentLocation: text("current_location"), // GPS coordinates
+  speed: integer("speed").default(0), // km/h
+  isOnDuty: boolean("is_on_duty").default(false),
+  lastActiveTime: timestamp("last_active_time").defaultNow(),
+  batteryLevel: integer("battery_level"), // 0-100%
+  signalStrength: integer("signal_strength"), // 0-100%
+  safetyScore: integer("safety_score").default(100), // 0-100, decreases with violations
+  emergencyContact: text("emergency_contact"),
+  isInEmergency: boolean("is_in_emergency").default(false),
+  lastEmergencyAlert: timestamp("last_emergency_alert"),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+export const safetyIncidents = pgTable("safety_incidents", {
+  id: serial("id").primaryKey(),
+  driverId: integer("driver_id").notNull().references(() => drivers.id),
+  incidentType: text("incident_type").notNull(), // accident, emergency, breakdown, harassment, theft
+  severity: text("severity").notNull(), // minor, moderate, severe, critical
+  description: text("description").notNull(),
+  location: text("location"),
+  reportedAt: timestamp("reported_at").defaultNow(),
+  resolvedAt: timestamp("resolved_at"),
+  status: text("status").default("reported"), // reported, investigating, resolved, closed
+  witnessContact: text("witness_contact"),
+  policeReport: text("police_report"),
+  insuranceClaim: text("insurance_claim"),
+  actionsTaken: text("actions_taken").array(),
+  followUpRequired: boolean("follow_up_required").default(false),
+});
+
+export const safetyZones = pgTable("safety_zones", {
+  id: serial("id").primaryKey(),
+  name: text("name").notNull(),
+  description: text("description"),
+  zoneType: text("zone_type").notNull(), // safe_zone, high_risk, restricted, emergency_only
+  coordinates: text("coordinates").notNull(), // JSON string of polygon coordinates
+  riskLevel: text("risk_level").default("low"), // low, medium, high, extreme
+  activeHours: text("active_hours"), // Time ranges when zone rules apply
+  speedLimit: integer("speed_limit"), // km/h
+  specialInstructions: text("special_instructions"),
+  isActive: boolean("is_active").default(true),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
 // Insert schemas
 export const insertUserSchema = createInsertSchema(users).omit({ id: true });
 export const insertDriverSchema = createInsertSchema(drivers).omit({ 
@@ -291,3 +356,21 @@ export type InsertDriverTip = z.infer<typeof insertDriverTipSchema>;
 
 export type TipRating = typeof tipRatings.$inferSelect;
 export type InsertTipRating = z.infer<typeof insertTipRatingSchema>;
+
+// Safety System Schema Types
+export const insertSafetyAlertSchema = createInsertSchema(safetyAlerts).omit({ id: true, createdAt: true });
+export const insertDriverSafetyStatusSchema = createInsertSchema(driverSafetyStatus).omit({ id: true, updatedAt: true });
+export const insertSafetyIncidentSchema = createInsertSchema(safetyIncidents).omit({ id: true, reportedAt: true });
+export const insertSafetyZoneSchema = createInsertSchema(safetyZones).omit({ id: true, createdAt: true, updatedAt: true });
+
+export type SafetyAlert = typeof safetyAlerts.$inferSelect;
+export type InsertSafetyAlert = z.infer<typeof insertSafetyAlertSchema>;
+
+export type DriverSafetyStatus = typeof driverSafetyStatus.$inferSelect;
+export type InsertDriverSafetyStatus = z.infer<typeof insertDriverSafetyStatusSchema>;
+
+export type SafetyIncident = typeof safetyIncidents.$inferSelect;
+export type InsertSafetyIncident = z.infer<typeof insertSafetyIncidentSchema>;
+
+export type SafetyZone = typeof safetyZones.$inferSelect;
+export type InsertSafetyZone = z.infer<typeof insertSafetyZoneSchema>;

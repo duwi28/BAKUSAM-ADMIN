@@ -16,7 +16,8 @@ import {
   PlusCircle,
   Smartphone,
   Brain,
-  BookOpen
+  BookOpen,
+  Shield
 } from "lucide-react";
 
 const navigation = [
@@ -28,6 +29,7 @@ const navigation = [
   { name: "Aplikasi Driver", href: "/driver-app", icon: Smartphone },
   { name: "Rekomendasi Driver", href: "/driver-recommendations", icon: Brain },
   { name: "Cerita Driver", href: "/driver-stories", icon: BookOpen },
+  { name: "Keselamatan Driver", href: "/driver-safety", icon: Shield },
   { name: "Kendaraan", href: "/vehicles", icon: Car },
   { name: "Tracking & Assignment", href: "/tracking", icon: MapPin },
   { name: "Tarif & Promo", href: "/pricing", icon: Tags },
