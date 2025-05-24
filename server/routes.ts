@@ -3435,6 +3435,116 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Driver Balance & Commission APIs
+  app.get("/api/driver-transactions", async (req, res) => {
+    try {
+      const mockTransactions = [
+        {
+          id: 1,
+          driverId: 1,
+          driverName: "Budi Santoso",
+          type: "topup",
+          amount: 500000,
+          description: "Top up saldo untuk talangan bensin",
+          createdAt: "2024-01-20 10:30:00",
+          status: "completed"
+        },
+        {
+          id: 2,
+          driverId: 2,
+          driverName: "Siti Aminah",
+          type: "commission",
+          amount: 75000,
+          description: "Komisi dari 5 order hari ini",
+          createdAt: "2024-01-20 15:45:00",
+          status: "completed"
+        },
+        {
+          id: 3,
+          driverId: 3,
+          driverName: "Rafi Dafa",
+          type: "withdraw",
+          amount: 200000,
+          description: "Penarikan saldo ke rekening",
+          createdAt: "2024-01-20 14:20:00",
+          status: "pending"
+        },
+        {
+          id: 4,
+          driverId: 1,
+          driverName: "Budi Santoso",
+          type: "bonus",
+          amount: 100000,
+          description: "Bonus pencapaian target bulanan",
+          createdAt: "2024-01-19 16:00:00",
+          status: "completed"
+        },
+        {
+          id: 5,
+          driverId: 2,
+          driverName: "Siti Aminah",
+          type: "penalty",
+          amount: 25000,
+          description: "Denda keterlambatan pengiriman",
+          createdAt: "2024-01-19 09:15:00",
+          status: "completed"
+        }
+      ];
+
+      res.json(mockTransactions);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch driver transactions" });
+    }
+  });
+
+  app.post("/api/driver-balance", async (req, res) => {
+    try {
+      const { driverId, type, amount, description } = req.body;
+
+      if (!driverId || !type || !amount || !description) {
+        return res.status(400).json({ error: "Missing required fields" });
+      }
+
+      // Get current driver data
+      const drivers = await storage.getDrivers();
+      const driver = drivers.find(d => d.id === driverId);
+      
+      if (!driver) {
+        return res.status(404).json({ error: "Driver tidak ditemukan" });
+      }
+
+      // Calculate new balance
+      let newBalance = driver.balance || 0;
+      if (type === 'topup' || type === 'bonus' || type === 'commission') {
+        newBalance += amount;
+      } else if (type === 'withdraw' || type === 'penalty') {
+        if (newBalance < amount) {
+          return res.status(400).json({ error: "Saldo tidak mencukupi" });
+        }
+        newBalance -= amount;
+      }
+
+      // Update driver balance
+      await storage.updateDriver(driverId, { balance: newBalance });
+
+      res.json({
+        success: true,
+        message: "Saldo driver berhasil diperbarui",
+        newBalance,
+        transaction: {
+          driverId,
+          type,
+          amount,
+          description,
+          createdAt: new Date().toISOString()
+        }
+      });
+    } catch (error) {
+      console.error("Balance update error:", error);
+      res.status(500).json({ error: "Gagal memperbarui saldo driver" });
+    }
+  });
+
   // Authentication API
   app.post("/api/auth/login", async (req, res) => {
     try {

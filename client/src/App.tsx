@@ -9,6 +9,7 @@ import ProtectedRoute from "@/components/ProtectedRoute";
 
 import Dashboard from "@/pages/dashboard";
 import Drivers from "@/pages/drivers";
+import DriverBalance from "@/pages/driver-balance";
 import Customers from "@/pages/customers";
 import Orders from "@/pages/orders";
 import ManualOrder from "@/pages/manual-order";
@@ -66,6 +67,7 @@ function DashboardLayout() {
             <Route path="/" component={Dashboard} />
             <Route path="/dashboard" component={Dashboard} />
             <Route path="/drivers" component={Drivers} />
+            <Route path="/driver-balance" component={DriverBalance} />
             <Route path="/customers" component={Customers} />
             <Route path="/orders" component={Orders} />
             <Route path="/manual-order" component={ManualOrder} />

@@ -39,6 +39,7 @@ import {
 const navigation = [
   { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
   { name: "Driver", href: "/drivers", icon: Users },
+  { name: "Saldo & Komisi Driver", href: "/driver-balance", icon: CreditCard },
   { name: "Customer", href: "/customers", icon: UserCheck },
   { name: "Order", href: "/orders", icon: Package },
   { name: "Order Manual", href: "/manual-order", icon: PlusCircle },
