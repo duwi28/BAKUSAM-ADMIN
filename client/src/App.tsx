@@ -23,6 +23,7 @@ import BulkOperations from "@/pages/bulk-operations";
 import RevenueCalculator from "@/pages/revenue-calculator";
 import SmartRouteOptimization from "@/pages/smart-route-optimization";
 import RealtimeRouteOptimization from "@/pages/real-time-route-optimization";
+import WeatherRouteOptimization from "@/pages/weather-route-optimization";
 import RecommendationSystem from "@/pages/recommendation-system";
 import DriverCommunityChat from "@/pages/driver-community-chat";
 import Vehicles from "@/pages/vehicles";
@@ -58,6 +59,7 @@ function Router() {
       <Route path="/revenue-calculator" component={RevenueCalculator} />
       <Route path="/smart-route-optimization" component={SmartRouteOptimization} />
       <Route path="/real-time-route-optimization" component={RealtimeRouteOptimization} />
+      <Route path="/weather-route-optimization" component={WeatherRouteOptimization} />
       <Route path="/recommendation-system" component={RecommendationSystem} />
       <Route path="/driver-community-chat" component={DriverCommunityChat} />
       <Route path="/vehicles" component={Vehicles} />

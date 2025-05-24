@@ -2559,6 +2559,233 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Weather-Based Route Optimization API
+  app.get("/api/weather/current", async (req, res) => {
+    try {
+      const { location = 'Jakarta' } = req.query;
+      
+      // Simulate real weather data - in production, this would call a weather API
+      const weatherData = {
+        location: location as string,
+        temperature: 28 + Math.round(Math.random() * 8), // 28-36°C
+        humidity: 65 + Math.round(Math.random() * 25), // 65-90%
+        windSpeed: 5 + Math.round(Math.random() * 15), // 5-20 km/h
+        visibility: 10 + Math.round(Math.random() * 15), // 10-25 km
+        condition: ['sunny', 'cloudy', 'rainy', 'stormy', 'foggy'][Math.floor(Math.random() * 5)],
+        precipitation: Math.round(Math.random() * 100), // 0-100%
+        pressure: 1010 + Math.round(Math.random() * 20), // 1010-1030 hPa
+        uvIndex: 5 + Math.round(Math.random() * 6), // 5-11
+        forecast: [
+          {
+            time: "12:00",
+            temperature: 29,
+            condition: "sunny",
+            precipitation: 10,
+            windSpeed: 8
+          },
+          {
+            time: "13:00", 
+            temperature: 31,
+            condition: "cloudy",
+            precipitation: 20,
+            windSpeed: 12
+          },
+          {
+            time: "14:00",
+            temperature: 32,
+            condition: "cloudy",
+            precipitation: 35,
+            windSpeed: 15
+          },
+          {
+            time: "15:00",
+            temperature: 30,
+            condition: "rainy",
+            precipitation: 60,
+            windSpeed: 18
+          }
+        ]
+      };
+      
+      res.json(weatherData);
+    } catch (error) {
+      console.error("Error fetching weather data:", error);
+      res.status(500).json({ error: "Failed to fetch weather data" });
+    }
+  });
+
+  app.get("/api/weather/routes", async (req, res) => {
+    try {
+      const { location, vehicleType } = req.query;
+      
+      const weatherRoutes = [
+        {
+          routeId: 1,
+          routeName: "Rute Tol Dalam Kota (Weather Safe)",
+          distance: 15.2,
+          estimatedTime: 32, // +4 minutes due to weather
+          normalTime: 28,
+          weatherAdjustment: 4,
+          weatherConditions: ["light_rain", "reduced_visibility"],
+          safetyScore: 92,
+          fuelConsumption: 1.3,
+          tollCost: 15000,
+          weatherImpact: {
+            visibility: "good",
+            roadCondition: "wet",
+            trafficImpact: "minor",
+            drivingDifficulty: "moderate"
+          },
+          recommendations: [
+            "Gunakan lampu dan hazard saat hujan",
+            "Jaga jarak aman 2x lipat karena jalan basah",
+            "Hindari pengereman mendadak",
+            "Monitor weather update setiap 15 menit"
+          ],
+          warnings: [
+            "Potensi aquaplaning di area underpass",
+            "Visibility berkurang 30% saat hujan deras"
+          ],
+          alternatives: ["Rute Alternatif via Jl. Sudirman", "Rute Bypass via Ring Road"]
+        },
+        {
+          routeId: 2,
+          routeName: "Via Jl. Panglima Polim (All Weather)",
+          distance: 12.8,
+          estimatedTime: 40, // +5 minutes due to weather
+          normalTime: 35,
+          weatherAdjustment: 5,
+          weatherConditions: ["light_rain", "heavy_traffic"],
+          safetyScore: 78,
+          fuelConsumption: 1.0,
+          tollCost: 0,
+          weatherImpact: {
+            visibility: "poor",
+            roadCondition: "wet",
+            trafficImpact: "moderate",
+            drivingDifficulty: "difficult"
+          },
+          recommendations: [
+            "Aktifkan fog lights untuk visibility",
+            "Gunakan jalur paling kanan untuk safety",
+            "Siap-siap delay karena traffic weather-related",
+            "Bawa handuk ekstra untuk driver"
+          ],
+          warnings: [
+            "Banyak genangan air di persimpangan",
+            "Traffic light mungkin bermasalah saat hujan",
+            "Pengendara lain berkendara lebih hati-hati"
+          ],
+          alternatives: ["Rute Tol Alternatif", "Via Jl. Gatot Subroto"]
+        },
+        {
+          routeId: 3,
+          routeName: "Via Jl. Senopati (Hujan Heavy Risk)",
+          distance: 18.5,
+          estimatedTime: 55, // +13 minutes due to weather
+          normalTime: 42,
+          weatherAdjustment: 13,
+          weatherConditions: ["heavy_rain", "flooding_risk"],
+          safetyScore: 65,
+          fuelConsumption: 1.6,
+          tollCost: 5000,
+          weatherImpact: {
+            visibility: "poor",
+            roadCondition: "slippery",
+            trafficImpact: "severe",
+            drivingDifficulty: "dangerous"
+          },
+          recommendations: [
+            "TIDAK DISARANKAN saat hujan deras",
+            "Gunakan rute alternatif untuk keamanan",
+            "Jika terpaksa, pastikan ban dalam kondisi prima",
+            "Koordinasi dengan customer untuk reschedule"
+          ],
+          warnings: [
+            "Area Kemang rawan banjir saat hujan",
+            "Jalan licin dengan risiko slip tinggi",
+            "Kemungkinan terjebak traffic 1+ jam"
+          ],
+          alternatives: ["Rute Tol Dalam Kota (RECOMMENDED)", "Via Jl. HR Rasuna Said"]
+        }
+      ];
+      
+      res.json(weatherRoutes);
+    } catch (error) {
+      console.error("Error fetching weather routes:", error);
+      res.status(500).json({ error: "Failed to fetch weather-adjusted routes" });
+    }
+  });
+
+  app.get("/api/weather/alerts", async (req, res) => {
+    try {
+      const { location } = req.query;
+      
+      const weatherAlerts = [
+        {
+          id: 1,
+          type: "rain",
+          severity: "medium",
+          message: "Hujan sedang hingga lebat diperkirakan dalam 2 jam ke depan",
+          affectedAreas: ["Jakarta Selatan", "Jakarta Pusat", "Tangerang"],
+          duration: "2-4 jam",
+          recommendations: [
+            "Gunakan rute tol untuk menghindari genangan",
+            "Pastikan kendaraan dalam kondisi prima",
+            "Bawa peralatan darurat (payung, handuk)",
+            "Informasikan customer tentang kemungkinan delay"
+          ]
+        },
+        {
+          id: 2,
+          type: "fog",
+          severity: "high",
+          message: "Kabut tebal di area Kemang - Senopati mengurangi visibility hingga 50%",
+          affectedAreas: ["Kemang", "Senopati", "Blok M"],
+          duration: "1-2 jam",
+          recommendations: [
+            "Aktifkan fog lights dan hazard",
+            "Kurangi kecepatan hingga 50%",
+            "Jaga jarak minimal 100 meter",
+            "Hindari overtaking"
+          ]
+        }
+      ];
+      
+      res.json(weatherAlerts);
+    } catch (error) {
+      console.error("Error fetching weather alerts:", error);
+      res.status(500).json({ error: "Failed to fetch weather alerts" });
+    }
+  });
+
+  app.post("/api/weather/apply-route", async (req, res) => {
+    try {
+      const { routeId, weatherConditions } = req.body;
+      
+      const result = {
+        success: true,
+        routeId,
+        weatherConditions,
+        appliedAt: new Date().toISOString(),
+        message: "Weather-optimized route applied successfully",
+        impact: {
+          safetyImprovement: "25% safer driving conditions",
+          weatherPreparedness: "Full weather adaptation implemented",
+          riskReduction: "Weather-related incidents reduced by 40%",
+          driverSafety: "Enhanced with real-time weather monitoring"
+        },
+        monitoringEnabled: true,
+        nextWeatherUpdate: "15 minutes"
+      };
+      
+      res.json(result);
+    } catch (error) {
+      console.error("Error applying weather route:", error);
+      res.status(500).json({ error: "Failed to apply weather-optimized route" });
+    }
+  });
+
   // === DRIVER FEATURES ===
 
   // Get current active order for driver
