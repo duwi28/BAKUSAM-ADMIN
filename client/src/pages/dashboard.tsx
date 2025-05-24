@@ -28,6 +28,9 @@ import {
   Gauge,
   FileText,
   PieChart,
+  Bell,
+  Edit,
+  MapPin,
   Calendar,
   Download
 } from "lucide-react";
@@ -86,13 +89,31 @@ export default function Dashboard() {
       action: () => setIsDriverModalOpen(true),
     },
     {
+      title: "Push Notification",
+      description: "Kirim notifikasi instan",
+      icon: Bell,
+      gradient: "from-red-500 to-red-600",
+      bgColor: "bg-red-50 hover:bg-red-100",
+      textColor: "text-red-700",
+      action: () => window.location.href = "/push-notifications",
+    },
+    {
+      title: "Bulk Operations",
+      description: "Operasi massal data",
+      icon: Edit,
+      gradient: "from-indigo-500 to-indigo-600",
+      bgColor: "bg-indigo-50 hover:bg-indigo-100",
+      textColor: "text-indigo-700",
+      action: () => window.location.href = "/bulk-operations",
+    },
+    {
       title: "Sistem Rekomendasi",
       description: "AI driver matching",
       icon: Sparkles,
       gradient: "from-purple-500 to-purple-600",
       bgColor: "bg-purple-50 hover:bg-purple-100",
       textColor: "text-purple-700",
-      action: () => window.location.href = "/driver-recommendations",
+      action: () => window.location.href = "/smart-ai-operations",
     },
     {
       title: "Buat Promo",
@@ -104,13 +125,13 @@ export default function Dashboard() {
       action: () => window.location.href = "/pricing",
     },
     {
-      title: "Kirim Notifikasi",
-      description: "Broadcast ke semua user",
-      icon: Megaphone,
+      title: "Live Tracking",
+      description: "Monitor driver real-time",
+      icon: MapPin,
       gradient: "from-green-500 to-green-600",
       bgColor: "bg-green-50 hover:bg-green-100",
       textColor: "text-green-700",
-      action: () => window.location.href = "/notifications",
+      action: () => window.location.href = "/live-tracking",
     },
   ];
 
@@ -272,7 +293,7 @@ export default function Dashboard() {
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {quickActions.map((action, index) => (
                   <div
                     key={index}
