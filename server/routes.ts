@@ -3545,6 +3545,371 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Multi-City Management APIs
+  app.get("/api/cities", async (req, res) => {
+    try {
+      const cities = [
+        {
+          id: 1,
+          name: "Jakarta",
+          province: "DKI Jakarta",
+          country: "Indonesia",
+          status: "active",
+          adminName: "Ahmad Supriyanto",
+          adminPhone: "081234567890",
+          totalDrivers: 150,
+          activeDrivers: 142,
+          totalOrders: 2850,
+          monthlyRevenue: 425000000,
+          operationalSince: "2022-01-15",
+          coordinates: { lat: -6.2088, lng: 106.8456 },
+          priceMultiplier: 1.0,
+          marketPotential: "high"
+        },
+        {
+          id: 2,
+          name: "Surabaya",
+          province: "Jawa Timur",
+          country: "Indonesia",
+          status: "active",
+          adminName: "Siti Rahayu",
+          adminPhone: "081298765432",
+          totalDrivers: 85,
+          activeDrivers: 78,
+          totalOrders: 1650,
+          monthlyRevenue: 245000000,
+          operationalSince: "2022-03-20",
+          coordinates: { lat: -7.2575, lng: 112.7521 },
+          priceMultiplier: 0.85,
+          marketPotential: "high"
+        },
+        {
+          id: 3,
+          name: "Bandung",
+          province: "Jawa Barat",
+          country: "Indonesia",
+          status: "active",
+          adminName: "Rudi Hartono",
+          adminPhone: "081345678901",
+          totalDrivers: 92,
+          activeDrivers: 85,
+          totalOrders: 1890,
+          monthlyRevenue: 285000000,
+          operationalSince: "2022-05-10",
+          coordinates: { lat: -6.9175, lng: 107.6191 },
+          priceMultiplier: 0.9,
+          marketPotential: "medium"
+        },
+        {
+          id: 4,
+          name: "Medan",
+          province: "Sumatera Utara",
+          country: "Indonesia",
+          status: "pending",
+          adminName: "Dewi Sartika",
+          adminPhone: "081456789012",
+          totalDrivers: 45,
+          activeDrivers: 38,
+          totalOrders: 850,
+          monthlyRevenue: 128000000,
+          operationalSince: "2023-11-01",
+          coordinates: { lat: 3.5952, lng: 98.6722 },
+          priceMultiplier: 0.8,
+          marketPotential: "medium"
+        },
+        {
+          id: 5,
+          name: "Makassar",
+          province: "Sulawesi Selatan",
+          country: "Indonesia",
+          status: "pending",
+          adminName: "Bambang Susilo",
+          adminPhone: "081567890123",
+          totalDrivers: 28,
+          activeDrivers: 22,
+          totalOrders: 520,
+          monthlyRevenue: 78000000,
+          operationalSince: "2024-01-15",
+          coordinates: { lat: -5.1477, lng: 119.4327 },
+          priceMultiplier: 0.75,
+          marketPotential: "low"
+        }
+      ];
+
+      res.json(cities);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch cities data" });
+    }
+  });
+
+  app.get("/api/regional-admins", async (req, res) => {
+    try {
+      const regionalAdmins = [
+        {
+          id: 1,
+          fullName: "Ahmad Supriyanto",
+          phone: "081234567890",
+          email: "ahmad.jakarta@bakusamexpress.com",
+          cityId: 1,
+          cityName: "Jakarta",
+          status: "active",
+          permissions: ["manage_drivers", "view_analytics", "handle_complaints", "pricing_adjustment"],
+          performanceScore: 95,
+          totalManaged: {
+            drivers: 150,
+            orders: 2850,
+            revenue: 425000000
+          }
+        },
+        {
+          id: 2,
+          fullName: "Siti Rahayu",
+          phone: "081298765432",
+          email: "siti.surabaya@bakusamexpress.com",
+          cityId: 2,
+          cityName: "Surabaya",
+          status: "active",
+          permissions: ["manage_drivers", "view_analytics", "handle_complaints"],
+          performanceScore: 88,
+          totalManaged: {
+            drivers: 85,
+            orders: 1650,
+            revenue: 245000000
+          }
+        },
+        {
+          id: 3,
+          fullName: "Rudi Hartono",
+          phone: "081345678901",
+          email: "rudi.bandung@bakusamexpress.com",
+          cityId: 3,
+          cityName: "Bandung",
+          status: "active",
+          permissions: ["manage_drivers", "view_analytics"],
+          performanceScore: 92,
+          totalManaged: {
+            drivers: 92,
+            orders: 1890,
+            revenue: 285000000
+          }
+        },
+        {
+          id: 4,
+          fullName: "Dewi Sartika",
+          phone: "081456789012",
+          email: "dewi.medan@bakusamexpress.com",
+          cityId: 4,
+          cityName: "Medan",
+          status: "active",
+          permissions: ["manage_drivers", "view_analytics"],
+          performanceScore: 75,
+          totalManaged: {
+            drivers: 45,
+            orders: 850,
+            revenue: 128000000
+          }
+        },
+        {
+          id: 5,
+          fullName: "Bambang Susilo",
+          phone: "081567890123",
+          email: "bambang.makassar@bakusamexpress.com",
+          cityId: 5,
+          cityName: "Makassar",
+          status: "inactive",
+          permissions: ["manage_drivers"],
+          performanceScore: 68,
+          totalManaged: {
+            drivers: 28,
+            orders: 520,
+            revenue: 78000000
+          }
+        }
+      ];
+
+      res.json(regionalAdmins);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch regional admins data" });
+    }
+  });
+
+  // Franchise System APIs
+  app.get("/api/franchise-partners", async (req, res) => {
+    try {
+      const franchisePartners = [
+        {
+          id: 1,
+          partnerName: "Express Logistics Jatim",
+          ownerName: "Hendra Wijaya",
+          phone: "081234567890",
+          email: "hendra@expressjatim.com",
+          city: "Malang",
+          province: "Jawa Timur",
+          status: "active",
+          franchiseType: "premium",
+          joinDate: "2023-02-15",
+          contractEndDate: "2026-02-15",
+          investmentAmount: 500000000,
+          monthlyFee: 15000000,
+          revenueShare: 12,
+          performance: {
+            totalOrders: 1250,
+            monthlyRevenue: 185000000,
+            driverCount: 45,
+            customerSatisfaction: 4.6,
+            marketShare: 35
+          },
+          territory: {
+            coverage: ["Malang Kota", "Malang Kabupaten", "Batu"],
+            exclusiveArea: 25,
+            population: 850000
+          }
+        },
+        {
+          id: 2,
+          partnerName: "Bali Quick Delivery",
+          ownerName: "Made Santika",
+          phone: "081987654321",
+          email: "made@baliquick.com",
+          city: "Denpasar",
+          province: "Bali",
+          status: "active",
+          franchiseType: "standard",
+          joinDate: "2023-06-10",
+          contractEndDate: "2026-06-10",
+          investmentAmount: 300000000,
+          monthlyFee: 10000000,
+          revenueShare: 15,
+          performance: {
+            totalOrders: 980,
+            monthlyRevenue: 142000000,
+            driverCount: 32,
+            customerSatisfaction: 4.4,
+            marketShare: 28
+          },
+          territory: {
+            coverage: ["Denpasar", "Badung", "Gianyar"],
+            exclusiveArea: 20,
+            population: 1200000
+          }
+        },
+        {
+          id: 3,
+          partnerName: "Sumut Express Partner",
+          ownerName: "Robert Simanjuntak",
+          phone: "081345678901",
+          email: "robert@sumutexpress.com",
+          city: "Pematangsiantar",
+          province: "Sumatera Utara",
+          status: "pending",
+          franchiseType: "basic",
+          joinDate: "2024-01-20",
+          contractEndDate: "2027-01-20",
+          investmentAmount: 150000000,
+          monthlyFee: 5000000,
+          revenueShare: 18,
+          performance: {
+            totalOrders: 420,
+            monthlyRevenue: 65000000,
+            driverCount: 18,
+            customerSatisfaction: 4.2,
+            marketShare: 15
+          },
+          territory: {
+            coverage: ["Pematangsiantar", "Simalungun"],
+            exclusiveArea: 15,
+            population: 450000
+          }
+        },
+        {
+          id: 4,
+          partnerName: "Kalimantan Logistics Hub",
+          ownerName: "Andi Kurniawan",
+          phone: "081456789012",
+          email: "andi@kalimantanhub.com",
+          city: "Balikpapan",
+          province: "Kalimantan Timur",
+          status: "active",
+          franchiseType: "standard",
+          joinDate: "2023-09-05",
+          contractEndDate: "2026-09-05",
+          investmentAmount: 350000000,
+          monthlyFee: 12000000,
+          revenueShare: 14,
+          performance: {
+            totalOrders: 1150,
+            monthlyRevenue: 168000000,
+            driverCount: 38,
+            customerSatisfaction: 4.5,
+            marketShare: 32
+          },
+          territory: {
+            coverage: ["Balikpapan", "Samarinda", "Kutai Kartanegara"],
+            exclusiveArea: 30,
+            population: 950000
+          }
+        }
+      ];
+
+      res.json(franchisePartners);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch franchise partners data" });
+    }
+  });
+
+  app.get("/api/franchise-applications", async (req, res) => {
+    try {
+      const applications = [
+        {
+          id: 1,
+          applicantName: "PT Nusantara Express",
+          ownerName: "Budi Santoso",
+          phone: "081234567890",
+          email: "budi@nusantaraexpress.com",
+          targetCity: "Yogyakarta",
+          targetProvince: "DI Yogyakarta",
+          requestedType: "premium",
+          proposedInvestment: 450000000,
+          businessPlan: "Fokus pada segmen mahasiswa dan wisatawan",
+          status: "under_review",
+          submissionDate: "2024-01-15",
+          expectedRevenue: 150000000,
+          estimatedDrivers: 40,
+          marketAnalysis: {
+            population: 400000,
+            competition: "medium",
+            marketPotential: "high"
+          }
+        },
+        {
+          id: 2,
+          applicantName: "CV Sulawesi Maju",
+          ownerName: "Sari Indah",
+          phone: "081987654321",
+          email: "sari@sulawesimaju.com",
+          targetCity: "Manado",
+          targetProvince: "Sulawesi Utara",
+          requestedType: "standard",
+          proposedInvestment: 280000000,
+          businessPlan: "Layanan ekspres untuk area perkantoran dan pariwisata",
+          status: "pending_interview",
+          submissionDate: "2024-01-22",
+          expectedRevenue: 95000000,
+          estimatedDrivers: 25,
+          marketAnalysis: {
+            population: 430000,
+            competition: "low",
+            marketPotential: "medium"
+          }
+        }
+      ];
+
+      res.json(applications);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch franchise applications" });
+    }
+  });
+
   // Authentication API
   app.post("/api/auth/login", async (req, res) => {
     try {
