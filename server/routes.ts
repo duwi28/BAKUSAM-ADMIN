@@ -3438,6 +3438,666 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Driver API routes
   app.use("/api/driver", driverApi);
 
+  // === FITUR ADVANCED BARU ===
+  
+  // Multi-City Management APIs
+  app.get("/api/cities", async (req, res) => {
+    try {
+      const mockCities = [
+        {
+          id: 1,
+          name: "Jakarta Pusat",
+          province: "DKI Jakarta",
+          country: "Indonesia",
+          status: "active",
+          adminName: "Ahmad Supriyadi",
+          adminPhone: "081234567890",
+          totalDrivers: 45,
+          activeDrivers: 38,
+          totalOrders: 1250,
+          monthlyRevenue: 75000000,
+          operationalSince: "2023-01-15",
+          coordinates: { lat: -6.2088, lng: 106.8456 },
+          priceMultiplier: 1.0,
+          marketPotential: "high"
+        },
+        {
+          id: 2,
+          name: "Bandung",
+          province: "Jawa Barat",
+          country: "Indonesia",
+          status: "active",
+          adminName: "Siti Nurhaliza",
+          adminPhone: "081298765432",
+          totalDrivers: 32,
+          activeDrivers: 28,
+          totalOrders: 890,
+          monthlyRevenue: 52000000,
+          operationalSince: "2023-03-20",
+          coordinates: { lat: -6.9175, lng: 107.6191 },
+          priceMultiplier: 0.9,
+          marketPotential: "medium"
+        },
+        {
+          id: 3,
+          name: "Surabaya",
+          province: "Jawa Timur",
+          country: "Indonesia",
+          status: "pending",
+          adminName: "Budi Hartono",
+          adminPhone: "081365478923",
+          totalDrivers: 0,
+          activeDrivers: 0,
+          totalOrders: 0,
+          monthlyRevenue: 0,
+          operationalSince: "2024-01-10",
+          coordinates: { lat: -7.2575, lng: 112.7521 },
+          priceMultiplier: 0.85,
+          marketPotential: "high"
+        }
+      ];
+      res.json(mockCities);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch cities" });
+    }
+  });
+
+  app.get("/api/regional-admins", async (req, res) => {
+    try {
+      const mockAdmins = [
+        {
+          id: 1,
+          fullName: "Ahmad Supriyadi",
+          phone: "081234567890",
+          email: "ahmad@bakusamexpress.com",
+          cityId: 1,
+          cityName: "Jakarta Pusat",
+          status: "active",
+          permissions: ["driver_management", "order_tracking", "reporting"],
+          performanceScore: 95,
+          totalManaged: {
+            drivers: 45,
+            orders: 1250,
+            revenue: 75000000
+          }
+        },
+        {
+          id: 2,
+          fullName: "Siti Nurhaliza",
+          phone: "081298765432",
+          email: "siti@bakusamexpress.com",
+          cityId: 2,
+          cityName: "Bandung",
+          status: "active",
+          permissions: ["driver_management", "order_tracking"],
+          performanceScore: 88,
+          totalManaged: {
+            drivers: 32,
+            orders: 890,
+            revenue: 52000000
+          }
+        }
+      ];
+      res.json(mockAdmins);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch regional admins" });
+    }
+  });
+
+  // Franchise System APIs
+  app.get("/api/franchise/partners", async (req, res) => {
+    try {
+      const mockPartners = [
+        {
+          id: 1,
+          partnerName: "Bakusam Express Jakarta Selatan",
+          ownerName: "Rahmat Hidayat",
+          phone: "081234567890",
+          email: "rahmat@franchise.com",
+          city: "Jakarta Selatan",
+          province: "DKI Jakarta",
+          status: "active",
+          franchiseType: "premium",
+          joinDate: "2023-02-15",
+          contractEndDate: "2026-02-15",
+          investmentAmount: 250000000,
+          monthlyFee: 5000000,
+          revenueShare: 15,
+          performance: {
+            totalOrders: 2100,
+            monthlyRevenue: 125000000,
+            driverCount: 28,
+            customerSatisfaction: 92,
+            marketShare: 18
+          },
+          territory: {
+            coverage: ["Kebayoran", "Cilandak", "Pondok Indah"],
+            exclusiveArea: 15,
+            populationServed: 450000
+          }
+        },
+        {
+          id: 2,
+          partnerName: "Bakusam Express Bekasi",
+          ownerName: "Maria Susanti",
+          phone: "081298765432",
+          email: "maria@franchise.com",
+          city: "Bekasi",
+          province: "Jawa Barat",
+          status: "active",
+          franchiseType: "standard",
+          joinDate: "2023-05-10",
+          contractEndDate: "2026-05-10",
+          investmentAmount: 150000000,
+          monthlyFee: 3000000,
+          revenueShare: 12,
+          performance: {
+            totalOrders: 1450,
+            monthlyRevenue: 87000000,
+            driverCount: 22,
+            customerSatisfaction: 89,
+            marketShare: 12
+          },
+          territory: {
+            coverage: ["Bekasi Timur", "Bekasi Selatan"],
+            exclusiveArea: 12,
+            populationServed: 320000
+          }
+        }
+      ];
+      res.json(mockPartners);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch franchise partners" });
+    }
+  });
+
+  app.get("/api/franchise/applications", async (req, res) => {
+    try {
+      const mockApplications = [
+        {
+          id: 1,
+          applicantName: "Budi Santoso",
+          businessName: "Bakusam Express Tangerang",
+          phone: "081365478923",
+          email: "budi@email.com",
+          city: "Tangerang",
+          requestedTerritory: "Tangerang Kota",
+          investmentCapacity: 200000000,
+          experience: "3 tahun di bisnis logistik",
+          businessPlan: "Fokus pada area residential dan perkantoran",
+          status: "pending",
+          submittedDate: "2024-01-15"
+        },
+        {
+          id: 2,
+          applicantName: "Indira Sari",
+          businessName: "Bakusam Express Depok",
+          phone: "081456789012",
+          email: "indira@email.com",
+          city: "Depok",
+          requestedTerritory: "Depok Tengah",
+          investmentCapacity: 180000000,
+          experience: "Mantan regional manager delivery",
+          businessPlan: "Target mahasiswa dan keluarga muda",
+          status: "approved",
+          submittedDate: "2024-01-08",
+          reviewedBy: "Admin Pusat",
+          reviewNotes: "Proposal sangat baik, pengalaman relevan"
+        }
+      ];
+      res.json(mockApplications);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch franchise applications" });
+    }
+  });
+
+  // Driver Credit Scoring APIs
+  app.get("/api/driver-credit/scores", async (req, res) => {
+    try {
+      const mockCreditScores = [
+        {
+          driverId: 1,
+          driverName: "Budi Santoso",
+          phone: "087784862783",
+          vehicleType: "Motor",
+          creditScore: 850,
+          creditGrade: "A",
+          riskLevel: "Low",
+          maxTalanganAmount: 2000000,
+          currentTalanganUsed: 500000,
+          availableCredit: 1500000,
+          factors: {
+            paymentHistory: 95,
+            orderFrequency: 88,
+            completionRate: 92,
+            customerRating: 96,
+            experienceLevel: 85,
+            vehicleOwnership: 90
+          },
+          riskFactors: [],
+          strengthFactors: ["Payment history excellent", "High completion rate", "Customer rating superior"],
+          lastAssessment: "2024-01-20",
+          nextReview: "2024-04-20",
+          talanganHistory: {
+            totalRequests: 12,
+            approvedRequests: 12,
+            rejectedRequests: 0,
+            averageAmount: 750000,
+            onTimePayments: 12,
+            latePayments: 0
+          }
+        },
+        {
+          driverId: 2,
+          driverName: "Sari Wahyuni",
+          phone: "081234567890",
+          vehicleType: "Motor",
+          creditScore: 720,
+          creditGrade: "B",
+          riskLevel: "Medium",
+          maxTalanganAmount: 1500000,
+          currentTalanganUsed: 800000,
+          availableCredit: 700000,
+          factors: {
+            paymentHistory: 82,
+            orderFrequency: 75,
+            completionRate: 88,
+            customerRating: 85,
+            experienceLevel: 70,
+            vehicleOwnership: 80
+          },
+          riskFactors: ["Lower order frequency", "Some late payments"],
+          strengthFactors: ["Good completion rate", "Reliable service"],
+          lastAssessment: "2024-01-18",
+          nextReview: "2024-04-18",
+          talanganHistory: {
+            totalRequests: 8,
+            approvedRequests: 7,
+            rejectedRequests: 1,
+            averageAmount: 600000,
+            onTimePayments: 6,
+            latePayments: 2
+          }
+        }
+      ];
+      res.json(mockCreditScores);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch credit scores" });
+    }
+  });
+
+  app.get("/api/driver-credit/applications", async (req, res) => {
+    try {
+      const mockApplications = [
+        {
+          id: 1,
+          driverId: 3,
+          driverName: "Agus Pratama",
+          requestedAmount: 1000000,
+          purpose: "Perbaikan motor untuk meningkatkan service",
+          urgencyLevel: "Medium",
+          status: "pending",
+          submittedDate: "2024-01-22"
+        },
+        {
+          id: 2,
+          driverId: 1,
+          driverName: "Budi Santoso",
+          requestedAmount: 1500000,
+          purpose: "Modal tambahan untuk ekspansi area",
+          urgencyLevel: "High",
+          status: "approved",
+          submittedDate: "2024-01-20",
+          reviewedBy: "Credit Manager",
+          reviewNotes: "Approved based on excellent credit history",
+          approvedAmount: 1500000,
+          repaymentTerms: {
+            dailyDeduction: 214285,
+            totalDays: 7,
+            interestRate: 0
+          }
+        }
+      ];
+      res.json(mockApplications);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch credit applications" });
+    }
+  });
+
+  // Smart Demand Prediction APIs
+  app.get("/api/demand-prediction/forecasts", async (req, res) => {
+    try {
+      const { timeframe = 'today', area = 'all' } = req.query;
+      
+      const mockPredictions = [
+        {
+          timeSlot: "08:00 - 10:00",
+          predictedOrders: 45,
+          confidenceLevel: 92,
+          factors: {
+            weather: "Sunny, 28°C",
+            events: ["Morning Rush", "Office Workers"],
+            historicalPattern: 88,
+            seasonalTrend: 95,
+            dayOfWeek: 85
+          },
+          recommendations: [
+            "Deploy 8-10 drivers in CBD area",
+            "Focus on breakfast delivery spots",
+            "Prepare for high demand until 10 AM"
+          ],
+          requiredDrivers: 9,
+          estimatedRevenue: 2250000
+        },
+        {
+          timeSlot: "12:00 - 14:00",
+          predictedOrders: 65,
+          confidenceLevel: 96,
+          factors: {
+            weather: "Partly Cloudy, 30°C",
+            events: ["Lunch Rush", "Office Break"],
+            historicalPattern: 94,
+            seasonalTrend: 92,
+            dayOfWeek: 90
+          },
+          recommendations: [
+            "Maximum driver deployment needed",
+            "Focus on restaurant clusters",
+            "Extended lunch service preparation"
+          ],
+          requiredDrivers: 12,
+          estimatedRevenue: 3250000
+        },
+        {
+          timeSlot: "19:00 - 21:00",
+          predictedOrders: 38,
+          confidenceLevel: 88,
+          factors: {
+            weather: "Clear, 26°C",
+            events: ["Dinner Time", "Family Dining"],
+            historicalPattern: 82,
+            seasonalTrend: 88,
+            dayOfWeek: 75
+          },
+          recommendations: [
+            "Deploy 7-8 drivers in residential areas",
+            "Focus on family restaurants",
+            "Prepare for moderate evening demand"
+          ],
+          requiredDrivers: 7,
+          estimatedRevenue: 1900000
+        }
+      ];
+      
+      res.json(mockPredictions);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch demand predictions" });
+    }
+  });
+
+  app.get("/api/demand-prediction/weather-impact", async (req, res) => {
+    try {
+      const mockWeatherImpact = [
+        {
+          condition: "Partly Cloudy",
+          temperature: 30,
+          humidity: 75,
+          precipitation: 20,
+          demandMultiplier: 1.15,
+          affectedAreas: ["Jakarta Pusat", "Jakarta Selatan", "Tangerang"],
+          recommendations: [
+            "Increase driver availability by 15%",
+            "Monitor rainfall probability",
+            "Prepare rain gear distribution"
+          ]
+        }
+      ];
+      res.json(mockWeatherImpact);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch weather impact" });
+    }
+  });
+
+  app.get("/api/demand-prediction/events", async (req, res) => {
+    try {
+      const { timeframe = 'today' } = req.query;
+      
+      const mockEvents = [
+        {
+          eventName: "Jakarta Food Festival",
+          eventType: "festival",
+          location: "Senayan Park",
+          startTime: "10:00",
+          endTime: "22:00",
+          expectedAttendees: 15000,
+          demandIncrease: 35,
+          hotspotAreas: ["Senayan", "Sudirman", "Blok M"],
+          peakTimes: ["12:00-14:00", "18:00-20:00"]
+        },
+        {
+          eventName: "Indonesia vs Thailand Match",
+          eventType: "sports",
+          location: "GBK Stadium",
+          startTime: "19:30",
+          endTime: "21:30",
+          expectedAttendees: 25000,
+          demandIncrease: 50,
+          hotspotAreas: ["Senayan", "Kebayoran", "Menteng"],
+          peakTimes: ["17:30-19:30", "21:30-23:00"]
+        }
+      ];
+      
+      res.json(mockEvents);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch event predictions" });
+    }
+  });
+
+  // Dynamic Route Learning APIs
+  app.get("/api/route-learning/patterns", async (req, res) => {
+    try {
+      const mockPatterns = [
+        {
+          id: 1,
+          patternName: "CBD to Residential Fast Route",
+          fromArea: "Sudirman",
+          toArea: "Kemang",
+          learnedRoutes: 15,
+          avgTimeReduction: 8,
+          confidenceScore: 94,
+          usageCount: 127,
+          lastUsed: "2024-01-22 15:30",
+          driverContributions: [
+            {
+              driverId: 1,
+              driverName: "Budi Santoso",
+              routeCount: 8,
+              avgRating: 4.9,
+              experienceLevel: "Expert"
+            },
+            {
+              driverId: 2,
+              driverName: "Sari Wahyuni",
+              routeCount: 5,
+              avgRating: 4.7,
+              experienceLevel: "Intermediate"
+            }
+          ],
+          routeVariations: [
+            {
+              variationId: 1,
+              description: "Via Gatot Subroto bypass",
+              timeSpent: 18,
+              fuelEfficiency: 92,
+              trafficAvoidance: 88,
+              successRate: 94
+            },
+            {
+              variationId: 2,
+              description: "Through Senopati alternative",
+              timeSpent: 22,
+              fuelEfficiency: 88,
+              trafficAvoidance: 95,
+              successRate: 91
+            }
+          ]
+        },
+        {
+          id: 2,
+          patternName: "Airport Express Route",
+          fromArea: "Soekarno-Hatta",
+          toArea: "Jakarta Pusat",
+          learnedRoutes: 22,
+          avgTimeReduction: 12,
+          confidenceScore: 96,
+          usageCount: 89,
+          lastUsed: "2024-01-22 14:15",
+          driverContributions: [
+            {
+              driverId: 3,
+              driverName: "Agus Pratama",
+              routeCount: 12,
+              avgRating: 4.8,
+              experienceLevel: "Expert"
+            }
+          ],
+          routeVariations: [
+            {
+              variationId: 3,
+              description: "Express toll direct",
+              timeSpent: 35,
+              fuelEfficiency: 85,
+              trafficAvoidance: 92,
+              successRate: 96
+            }
+          ]
+        }
+      ];
+      res.json(mockPatterns);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch route patterns" });
+    }
+  });
+
+  app.get("/api/route-learning/driver-experiences", async (req, res) => {
+    try {
+      const mockExperiences = [
+        {
+          driverId: 1,
+          driverName: "Budi Santoso",
+          phone: "087784862783",
+          experienceLevel: "Expert",
+          totalRoutes: 245,
+          routesShared: 18,
+          averageTimeReduction: 9,
+          knowledgeScore: 92,
+          specialtyAreas: ["Jakarta Pusat", "Sudirman", "Kemang"],
+          contributions: {
+            routePatternsCreated: 5,
+            improvementsSuggested: 12,
+            trafficReportsSubmitted: 34,
+            fuelSavingsGenerated: 150
+          },
+          achievements: ["Route Master", "Traffic Reporter", "Fuel Saver Champion"],
+          lastActive: "2024-01-22"
+        },
+        {
+          driverId: 2,
+          driverName: "Sari Wahyuni",
+          phone: "081234567890",
+          experienceLevel: "Intermediate",
+          totalRoutes: 156,
+          routesShared: 8,
+          averageTimeReduction: 6,
+          knowledgeScore: 78,
+          specialtyAreas: ["Bandung", "Cimahi"],
+          contributions: {
+            routePatternsCreated: 2,
+            improvementsSuggested: 7,
+            trafficReportsSubmitted: 18,
+            fuelSavingsGenerated: 95
+          },
+          achievements: ["Consistent Contributor", "Regional Expert"],
+          lastActive: "2024-01-21"
+        },
+        {
+          driverId: 3,
+          driverName: "Agus Pratama",
+          phone: "081298765432",
+          experienceLevel: "Master",
+          totalRoutes: 389,
+          routesShared: 28,
+          averageTimeReduction: 11,
+          knowledgeScore: 98,
+          specialtyAreas: ["Airport Routes", "Express Highways", "Night Deliveries"],
+          contributions: {
+            routePatternsCreated: 8,
+            improvementsSuggested: 22,
+            trafficReportsSubmitted: 67,
+            fuelSavingsGenerated: 280
+          },
+          achievements: ["Master Navigator", "Innovation Leader", "Top Contributor", "Knowledge Guru"],
+          lastActive: "2024-01-22"
+        }
+      ];
+      res.json(mockExperiences);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch driver experiences" });
+    }
+  });
+
+  app.get("/api/route-learning/optimizations", async (req, res) => {
+    try {
+      const mockOptimizations = [
+        {
+          routeId: 1,
+          fromLocation: "Blok M Plaza",
+          toLocation: "Pondok Indah Mall",
+          originalTime: 25,
+          optimizedTime: 18,
+          timeSaved: 7,
+          algorithm: "AI-Learned",
+          confidenceLevel: 94,
+          factors: {
+            trafficPatterns: 88,
+            driverExperience: 92,
+            roadConditions: 85,
+            weatherImpact: 78
+          },
+          recommendations: [
+            "Use Senopati route during peak hours",
+            "Avoid Kebayoran Lama intersection",
+            "Consider alternative via Radio Dalam"
+          ]
+        },
+        {
+          routeId: 2,
+          fromLocation: "Thamrin City",
+          toLocation: "Kelapa Gading Mall",
+          originalTime: 35,
+          optimizedTime: 28,
+          timeSaved: 7,
+          algorithm: "Hybrid",
+          confidenceLevel: 91,
+          factors: {
+            trafficPatterns: 85,
+            driverExperience: 89,
+            roadConditions: 92,
+            weatherImpact: 88
+          },
+          recommendations: [
+            "Take toll road for faster route",
+            "Use expert driver knowledge",
+            "Monitor traffic real-time"
+          ]
+        }
+      ];
+      res.json(mockOptimizations);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch route optimizations" });
+    }
+  });
+
   const httpServer = createServer(app);
   return httpServer;
 }

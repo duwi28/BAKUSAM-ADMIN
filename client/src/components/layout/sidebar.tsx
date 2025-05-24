@@ -28,7 +28,12 @@ import {
   Edit,
   Calculator,
   MessageSquare,
-  Zap
+  Zap,
+  Building2,
+  Handshake,
+  CreditCard,
+  Target,
+  Globe
 } from "lucide-react";
 
 const navigation = [
@@ -53,6 +58,11 @@ const navigation = [
   { name: "Weather Route Optimization", href: "/weather-route-optimization", icon: Cloud },
   { name: "Sistem Rekomendasi AI", href: "/recommendation-system", icon: Brain },
   { name: "Driver Community Chat", href: "/driver-community-chat", icon: MessageSquare },
+  { name: "Multi-City Management", href: "/multi-city-management", icon: Globe },
+  { name: "Franchise System", href: "/franchise-system", icon: Handshake },
+  { name: "Driver Credit Scoring", href: "/driver-credit-scoring", icon: CreditCard },
+  { name: "Smart Demand Prediction", href: "/smart-demand-prediction", icon: Target },
+  { name: "Dynamic Route Learning", href: "/dynamic-route-learning", icon: Brain },
   { name: "Kendaraan", href: "/vehicles", icon: Car },
   { name: "Tracking & Assignment", href: "/tracking", icon: MapPin },
   { name: "Tarif & Promo", href: "/pricing", icon: Tags },
