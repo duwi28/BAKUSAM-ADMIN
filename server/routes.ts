@@ -1535,6 +1535,212 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // === PETA REAL-TIME DRIVER TRACKING ===
+
+  // Driver Locations API
+  app.get("/api/driver-locations", async (req, res) => {
+    try {
+      // Data lokasi driver real-time berdasarkan area Jakarta
+      const driverLocations = [
+        {
+          id: 1,
+          driverId: 1,
+          fullName: "Budi Santoso",
+          phone: "081234567890",
+          vehicleType: "motor",
+          vehicleNumber: "B 1234 ABC",
+          currentLocation: {
+            lat: -6.2088,
+            lng: 106.8456,
+            address: "Jl. Sudirman, Jakarta Pusat"
+          },
+          status: 'busy',
+          isOnDuty: true,
+          currentOrderId: 12345,
+          speed: 25,
+          heading: 45,
+          batteryLevel: 85,
+          signalStrength: 95,
+          lastUpdated: new Date(Date.now() - 30000).toISOString(),
+          distanceFromBase: 3.2,
+          totalDistanceToday: 87.5,
+          ordersCompleted: 12,
+          rating: 4.8,
+          estimatedArrival: "5 menit",
+          destination: {
+            lat: -6.2144,
+            lng: 106.8294,
+            address: "Plaza Indonesia, Jakarta"
+          }
+        },
+        {
+          id: 2,
+          driverId: 2,
+          fullName: "Siti Rahayu",
+          phone: "082345678901",
+          vehicleType: "mobil",
+          vehicleNumber: "B 5678 DEF",
+          currentLocation: {
+            lat: -6.2444,
+            lng: 106.7991,
+            address: "Blok M, Jakarta Selatan"
+          },
+          status: 'online',
+          isOnDuty: true,
+          speed: 0,
+          heading: 0,
+          batteryLevel: 42,
+          signalStrength: 78,
+          lastUpdated: new Date(Date.now() - 60000).toISOString(),
+          distanceFromBase: 5.8,
+          totalDistanceToday: 125.3,
+          ordersCompleted: 18,
+          rating: 4.6
+        },
+        {
+          id: 3,
+          driverId: 3,
+          fullName: "Ahmad Rizki",
+          phone: "083456789012",
+          vehicleType: "motor",
+          vehicleNumber: "B 9012 GHI",
+          currentLocation: {
+            lat: -6.1675,
+            lng: 106.7853,
+            address: "Grogol, Jakarta Barat"
+          },
+          status: 'break',
+          isOnDuty: true,
+          speed: 0,
+          heading: 180,
+          batteryLevel: 68,
+          signalStrength: 65,
+          lastUpdated: new Date(Date.now() - 120000).toISOString(),
+          distanceFromBase: 8.1,
+          totalDistanceToday: 156.7,
+          ordersCompleted: 15,
+          rating: 4.4
+        },
+        {
+          id: 4,
+          driverId: 4,
+          fullName: "Dedi Kurniawan",
+          phone: "084567890123",
+          vehicleType: "mobil",
+          vehicleNumber: "B 3456 JKL",
+          currentLocation: {
+            lat: -6.2383,
+            lng: 106.8742,
+            address: "Cawang, Jakarta Timur"
+          },
+          status: 'online',
+          isOnDuty: true,
+          speed: 0,
+          heading: 270,
+          batteryLevel: 91,
+          signalStrength: 88,
+          lastUpdated: new Date(Date.now() - 45000).toISOString(),
+          distanceFromBase: 12.5,
+          totalDistanceToday: 203.8,
+          ordersCompleted: 22,
+          rating: 4.7
+        },
+        {
+          id: 5,
+          driverId: 5,
+          fullName: "Rina Wati",
+          phone: "085678901234",
+          vehicleType: "motor",
+          vehicleNumber: "B 7890 MNO",
+          currentLocation: {
+            lat: -6.1562,
+            lng: 106.9096,
+            address: "Kelapa Gading, Jakarta Utara"
+          },
+          status: 'busy',
+          isOnDuty: true,
+          currentOrderId: 12346,
+          speed: 35,
+          heading: 90,
+          batteryLevel: 76,
+          signalStrength: 82,
+          lastUpdated: new Date(Date.now() - 15000).toISOString(),
+          distanceFromBase: 15.3,
+          totalDistanceToday: 178.9,
+          ordersCompleted: 19,
+          rating: 4.5,
+          estimatedArrival: "8 menit",
+          destination: {
+            lat: -6.1444,
+            lng: 106.9194,
+            address: "Mall Kelapa Gading, Jakarta Utara"
+          }
+        }
+      ];
+
+      res.json(driverLocations);
+    } catch (error) {
+      console.error("Error fetching driver locations:", error);
+      res.status(500).json({ error: "Failed to fetch driver locations" });
+    }
+  });
+
+  // Traffic Conditions API
+  app.get("/api/traffic-conditions", async (req, res) => {
+    try {
+      const trafficConditions = [
+        { area: "Jakarta Pusat", condition: 'heavy', averageSpeed: 15, estimatedDelay: 12 },
+        { area: "Jakarta Selatan", condition: 'moderate', averageSpeed: 25, estimatedDelay: 5 },
+        { area: "Jakarta Barat", condition: 'smooth', averageSpeed: 40, estimatedDelay: 0 },
+        { area: "Jakarta Timur", condition: 'moderate', averageSpeed: 30, estimatedDelay: 3 },
+        { area: "Jakarta Utara", condition: 'heavy', averageSpeed: 18, estimatedDelay: 8 }
+      ];
+
+      res.json(trafficConditions);
+    } catch (error) {
+      console.error("Error fetching traffic conditions:", error);
+      res.status(500).json({ error: "Failed to fetch traffic conditions" });
+    }
+  });
+
+  // Driver Tracking History API
+  app.get("/api/driver-tracking/:driverId", async (req, res) => {
+    try {
+      const driverId = parseInt(req.params.driverId);
+      
+      // Sample tracking history untuk driver tertentu
+      const trackingHistory = [
+        {
+          timestamp: new Date(Date.now() - 3600000).toISOString(),
+          location: { lat: -6.2000, lng: 106.8200, address: "Jl. Thamrin, Jakarta Pusat" },
+          speed: 20,
+          status: 'busy'
+        },
+        {
+          timestamp: new Date(Date.now() - 1800000).toISOString(),
+          location: { lat: -6.2050, lng: 106.8300, address: "Bundaran HI, Jakarta Pusat" },
+          speed: 15,
+          status: 'busy'
+        },
+        {
+          timestamp: new Date(Date.now() - 900000).toISOString(),
+          location: { lat: -6.2088, lng: 106.8456, address: "Jl. Sudirman, Jakarta Pusat" },
+          speed: 25,
+          status: 'busy'
+        }
+      ];
+
+      res.json({
+        driverId,
+        trackingHistory,
+        totalPoints: trackingHistory.length
+      });
+    } catch (error) {
+      console.error("Error fetching driver tracking history:", error);
+      res.status(500).json({ error: "Failed to fetch driver tracking history" });
+    }
+  });
+
   // Driver API routes
   app.use("/api/driver", driverApi);
 

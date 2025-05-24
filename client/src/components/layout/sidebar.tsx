@@ -32,6 +32,7 @@ const navigation = [
   { name: "Cerita Driver", href: "/driver-stories", icon: BookOpen },
   { name: "Keselamatan Driver", href: "/driver-safety", icon: Shield },
   { name: "Heat Map Area Ramai", href: "/heat-map", icon: TrendingUp },
+  { name: "Peta Real-Time Driver", href: "/driver-map", icon: MapPin },
   { name: "Kendaraan", href: "/vehicles", icon: Car },
   { name: "Tracking & Assignment", href: "/tracking", icon: MapPin },
   { name: "Tarif & Promo", href: "/pricing", icon: Tags },
