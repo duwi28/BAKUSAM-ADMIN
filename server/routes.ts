@@ -1635,6 +1635,56 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // === DRIVER FEATURES ===
+
+  // Get current active order for driver
+  app.get("/api/driver/current-order", async (req, res) => {
+    try {
+      const currentOrder = {
+        id: 12345,
+        pickupAddress: "Jl. Sudirman No. 1, Jakarta Pusat",
+        pickupLat: -6.2088,
+        pickupLng: 106.8456,
+        deliveryAddress: "Jl. Thamrin No. 15, Jakarta Pusat", 
+        deliveryLat: -6.1944,
+        deliveryLng: 106.8229,
+        customerName: "Budi Santoso",
+        customerPhone: "081234567890",
+        estimatedDistance: 3.2,
+        estimatedTime: 18,
+        status: "pickup",
+        orderValue: 45000
+      };
+      
+      res.json(currentOrder);
+    } catch (error) {
+      console.error("Error fetching current order:", error);
+      res.status(500).json({ error: "Failed to fetch current order" });
+    }
+  });
+
+  // Upload photo evidence
+  app.post("/api/driver/upload-photos", async (req, res) => {
+    try {
+      // In real implementation, handle multipart/form-data upload
+      // Save photos to storage (AWS S3, Google Cloud, etc.)
+      // Save metadata to database
+      
+      const uploadResult = {
+        success: true,
+        uploadedPhotos: 3,
+        orderId: req.body.orderId || 12345,
+        timestamp: new Date().toISOString(),
+        message: "Photos uploaded successfully"
+      };
+      
+      res.json(uploadResult);
+    } catch (error) {
+      console.error("Error uploading photos:", error);
+      res.status(500).json({ error: "Failed to upload photos" });
+    }
+  });
+
   // === AUTO-ASSIGNMENT SYSTEM ===
 
   // Get auto-assignment rules

@@ -21,7 +21,9 @@ import {
   TrendingUp,
   Navigation,
   Zap,
-  Send
+  Send,
+  Camera,
+  Route
 } from "lucide-react";
 
 const navigation = [
@@ -39,6 +41,8 @@ const navigation = [
   { name: "Live GPS Tracking", href: "/live-tracking", icon: Navigation },
   { name: "Push Notifications", href: "/push-notifications", icon: Send },
   { name: "Auto-Assignment", href: "/auto-assignment", icon: Zap },
+  { name: "Driver Navigation", href: "/driver-navigation", icon: Route },
+  { name: "Upload Foto Bukti", href: "/photo-upload", icon: Camera },
   { name: "Kendaraan", href: "/vehicles", icon: Car },
   { name: "Tracking & Assignment", href: "/tracking", icon: MapPin },
   { name: "Tarif & Promo", href: "/pricing", icon: Tags },

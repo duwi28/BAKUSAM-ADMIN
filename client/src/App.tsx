@@ -18,6 +18,8 @@ import DriverMap from "@/pages/driver-map";
 import LiveTracking from "@/pages/live-tracking";
 import PushNotifications from "@/pages/push-notifications";
 import AutoAssignment from "@/pages/auto-assignment";
+import DriverNavigation from "@/pages/driver-navigation";
+import PhotoUpload from "@/pages/photo-upload";
 import Vehicles from "@/pages/vehicles";
 import Pricing from "@/pages/pricing";
 import Reports from "@/pages/reports";
@@ -47,6 +49,8 @@ function Router() {
       <Route path="/live-tracking" component={LiveTracking} />
       <Route path="/push-notifications" component={PushNotifications} />
       <Route path="/auto-assignment" component={AutoAssignment} />
+      <Route path="/driver-navigation" component={DriverNavigation} />
+      <Route path="/photo-upload" component={PhotoUpload} />
       <Route path="/vehicles" component={Vehicles} />
       <Route path="/pricing" component={Pricing} />
       <Route path="/reports" component={Reports} />
