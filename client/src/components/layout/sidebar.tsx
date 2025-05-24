@@ -37,8 +37,6 @@ const navigation = [
   { name: "Order Manual", href: "/manual-order", icon: PlusCircle },
   { name: "Aplikasi Driver", href: "/driver-app", icon: Smartphone },
   { name: "Rekomendasi Driver", href: "/driver-recommendations", icon: Brain },
-  { name: "Cerita Driver", href: "/driver-stories", icon: BookOpen },
-  { name: "Keselamatan Driver", href: "/driver-safety", icon: Shield },
   { name: "Heat Map Area Ramai", href: "/heat-map", icon: TrendingUp },
   { name: "Peta Real-Time Driver", href: "/driver-map", icon: MapPin },
   { name: "Live GPS Tracking", href: "/live-tracking", icon: Navigation },
