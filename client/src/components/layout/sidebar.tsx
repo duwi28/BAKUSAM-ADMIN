@@ -20,12 +20,13 @@ import {
   Shield,
   TrendingUp,
   Navigation,
-  Zap,
   Send,
   Camera,
   Route,
   Edit,
-  Calculator
+  Calculator,
+  MessageSquare,
+  Zap
 } from "lucide-react";
 
 const navigation = [
@@ -48,6 +49,8 @@ const navigation = [
   { name: "Analytics & Reports", href: "/analytics-reports", icon: BarChart3 },
   { name: "Bulk Operations", href: "/bulk-operations", icon: Edit },
   { name: "Revenue Calculator", href: "/revenue-calculator", icon: Calculator },
+  { name: "Smart Route Optimization", href: "/smart-route-optimization", icon: Route },
+  { name: "Driver Community Chat", href: "/driver-community-chat", icon: MessageSquare },
   { name: "Kendaraan", href: "/vehicles", icon: Car },
   { name: "Tracking & Assignment", href: "/tracking", icon: MapPin },
   { name: "Tarif & Promo", href: "/pricing", icon: Tags },

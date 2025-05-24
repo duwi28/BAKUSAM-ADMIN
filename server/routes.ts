@@ -1782,6 +1782,267 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Route Optimization API
+  app.get("/api/route-optimization", async (req, res) => {
+    try {
+      const { driverId, mode } = req.query;
+      
+      const routeOptimizations = [
+        {
+          id: 1,
+          driverId: 1,
+          driverName: "Budi Santoso",
+          vehicleType: "motor",
+          currentLocation: {
+            lat: -6.2088,
+            lng: 106.8456,
+            address: "Jl. Sudirman, Jakarta Pusat"
+          },
+          assignedOrders: [
+            {
+              id: 1001,
+              pickupAddress: "Mall Grand Indonesia",
+              deliveryAddress: "Kemang Village",
+              priority: "urgent",
+              estimatedTime: 45
+            },
+            {
+              id: 1002,
+              pickupAddress: "Plaza Indonesia",
+              deliveryAddress: "Senayan City",
+              priority: "normal",
+              estimatedTime: 35
+            }
+          ],
+          optimizedRoute: {
+            totalDistance: 28.5,
+            totalTime: 85,
+            fuelConsumption: 1.8,
+            fuelCost: 18000,
+            co2Emission: 4.2,
+            stops: [
+              {
+                orderId: 1001,
+                type: "pickup",
+                address: "Mall Grand Indonesia",
+                arrivalTime: "14:30",
+                sequence: 1
+              },
+              {
+                orderId: 1002,
+                type: "pickup", 
+                address: "Plaza Indonesia",
+                arrivalTime: "14:45",
+                sequence: 2
+              },
+              {
+                orderId: 1001,
+                type: "delivery",
+                address: "Kemang Village",
+                arrivalTime: "15:20",
+                sequence: 3
+              },
+              {
+                orderId: 1002,
+                type: "delivery",
+                address: "Senayan City",
+                arrivalTime: "15:50",
+                sequence: 4
+              }
+            ]
+          },
+          savings: {
+            distanceSaved: 8.2,
+            timeSaved: 25,
+            fuelSaved: 0.6,
+            costSaved: 6000
+          }
+        }
+      ];
+      
+      res.json(routeOptimizations);
+    } catch (error) {
+      console.error("Error fetching route optimization:", error);
+      res.status(500).json({ error: "Failed to fetch route optimization" });
+    }
+  });
+
+  app.post("/api/optimize-routes", async (req, res) => {
+    try {
+      const { driverIds, mode } = req.body;
+      
+      // Simulate route optimization process
+      const result = {
+        success: true,
+        optimizedRoutes: driverIds?.length || 3,
+        mode,
+        totalSavings: {
+          distance: 15.8,
+          time: 45,
+          fuel: 1.2,
+          cost: 12000
+        }
+      };
+      
+      res.json(result);
+    } catch (error) {
+      console.error("Error optimizing routes:", error);
+      res.status(500).json({ error: "Failed to optimize routes" });
+    }
+  });
+
+  // Driver Community Chat API
+  app.get("/api/driver-chat", async (req, res) => {
+    try {
+      const { channel, filter } = req.query;
+      
+      const messages = [
+        {
+          id: 1,
+          senderId: 1,
+          senderName: "Budi Santoso",
+          senderVehicle: "motor",
+          message: "Hati-hati di Jl. Sudirman depan Plaza Indonesia, macet parah nih! Estimasi delay 15 menit",
+          type: "traffic",
+          trafficInfo: {
+            severity: "sedang",
+            estimatedDelay: 15,
+            road: "Jl. Sudirman (depan Plaza Indonesia)"
+          },
+          timestamp: new Date(Date.now() - 5 * 60 * 1000).toISOString(),
+          likes: 8,
+          isLiked: false,
+          channel: "traffic"
+        },
+        {
+          id: 2,
+          senderId: 2,
+          senderName: "Siti Rahayu",
+          senderVehicle: "mobil",
+          message: "Tips: kalau delivery ke area Kemang, lebih cepat lewat Jl. Panglima Polim daripada Jl. Kemang Raya",
+          type: "tip",
+          timestamp: new Date(Date.now() - 10 * 60 * 1000).toISOString(),
+          likes: 12,
+          isLiked: true,
+          channel: "tips"
+        },
+        {
+          id: 3,
+          senderId: 3,
+          senderName: "Ahmad Wijaya",
+          senderVehicle: "pickup",
+          message: "Ada yang tau bengkel motor 24 jam di area Jaksel? Motor gw mogok nih di Blok M",
+          type: "text",
+          timestamp: new Date(Date.now() - 2 * 60 * 1000).toISOString(),
+          likes: 3,
+          isLiked: false,
+          channel: "general"
+        },
+        {
+          id: 4,
+          senderId: 4,
+          senderName: "Rina Sari",
+          senderVehicle: "motor",
+          message: "Update: Jl. Casablanca arah Kuningan udah lancar lagi guys! 👍",
+          type: "traffic",
+          trafficInfo: {
+            severity: "ringan",
+            estimatedDelay: 0,
+            road: "Jl. Casablanca (arah Kuningan)"
+          },
+          timestamp: new Date().toISOString(),
+          likes: 15,
+          isLiked: false,
+          channel: "traffic"
+        }
+      ];
+      
+      res.json(messages);
+    } catch (error) {
+      console.error("Error fetching chat messages:", error);
+      res.status(500).json({ error: "Failed to fetch chat messages" });
+    }
+  });
+
+  app.get("/api/drivers/online", async (req, res) => {
+    try {
+      const onlineDrivers = [
+        {
+          id: 1,
+          name: "Budi Santoso",
+          vehicleType: "motor",
+          location: "Sudirman, Jakarta Pusat",
+          status: "online",
+          lastSeen: "Baru saja"
+        },
+        {
+          id: 2,
+          name: "Siti Rahayu", 
+          vehicleType: "mobil",
+          location: "Kemang, Jakarta Selatan",
+          status: "busy",
+          lastSeen: "2 menit yang lalu"
+        },
+        {
+          id: 3,
+          name: "Ahmad Wijaya",
+          vehicleType: "pickup",
+          location: "Blok M, Jakarta Selatan",
+          status: "break",
+          lastSeen: "5 menit yang lalu"
+        },
+        {
+          id: 4,
+          name: "Rina Sari",
+          vehicleType: "motor",
+          location: "Kuningan, Jakarta Selatan",
+          status: "online",
+          lastSeen: "1 menit yang lalu"
+        }
+      ];
+      
+      res.json(onlineDrivers);
+    } catch (error) {
+      console.error("Error fetching online drivers:", error);
+      res.status(500).json({ error: "Failed to fetch online drivers" });
+    }
+  });
+
+  app.post("/api/driver-chat/send", async (req, res) => {
+    try {
+      const { message, type, channel } = req.body;
+      
+      const newMessage = {
+        id: Date.now(),
+        senderId: 1, // Current user
+        senderName: "Anda",
+        senderVehicle: "motor",
+        message,
+        type,
+        timestamp: new Date().toISOString(),
+        likes: 0,
+        isLiked: false,
+        channel
+      };
+      
+      res.json(newMessage);
+    } catch (error) {
+      console.error("Error sending message:", error);
+      res.status(500).json({ error: "Failed to send message" });
+    }
+  });
+
+  app.post("/api/driver-chat/like", async (req, res) => {
+    try {
+      const { messageId } = req.body;
+      
+      res.json({ success: true, messageId });
+    } catch (error) {
+      console.error("Error liking message:", error);
+      res.status(500).json({ error: "Failed to like message" });
+    }
+  });
+
   // === DRIVER FEATURES ===
 
   // Get current active order for driver
