@@ -197,12 +197,12 @@ export default function RecommendationSystem() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div className="space-y-2">
               <label className="text-sm font-medium">Order untuk Rekomendasi</label>
-              <Select value={selectedOrder?.toString() || ''} onValueChange={(value) => setSelectedOrder(value ? parseInt(value) : null)}>
+              <Select value={selectedOrder?.toString() || 'all'} onValueChange={(value) => setSelectedOrder(value === 'all' ? null : parseInt(value))}>
                 <SelectTrigger>
                   <SelectValue placeholder="Pilih order..." />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">Semua Order</SelectItem>
+                  <SelectItem value="all">Semua Order</SelectItem>
                   {orders.map((order: any) => (
                     <SelectItem key={order.id} value={order.id.toString()}>
                       Order #{order.id} - {order.pickupAddress}
