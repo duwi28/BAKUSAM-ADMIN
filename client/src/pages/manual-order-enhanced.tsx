@@ -72,6 +72,13 @@ export default function ManualOrderEnhanced() {
     queryKey: ['/api/drivers'],
   });
 
+  // Auto-refresh recent orders setiap 5 detik
+  const { data: recentOrders } = useQuery<Order[]>({
+    queryKey: ['/api/orders'],
+    refetchInterval: 5000, // Refresh setiap 5 detik
+    refetchIntervalInBackground: true, // Tetap refresh di background
+  });
+
   // State untuk form fields baru
   const [pickupPhone, setPickupPhone] = useState('');
   const [deliveryPhone, setDeliveryPhone] = useState('');
