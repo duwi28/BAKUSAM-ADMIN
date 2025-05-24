@@ -192,23 +192,23 @@ export default function OrdersBulkManagement() {
 
   return (
     <div className="space-y-6 p-6">
-      {/* Header */}
+      {/* Header - Simplified */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900 flex items-center">
-            <Package className="h-8 w-8 mr-3 text-blue-600" />
+          <h1 className="text-2xl font-bold text-gray-900 flex items-center">
+            <Package className="h-6 w-6 mr-2 text-blue-600" />
             Orders & Bulk Management
           </h1>
-          <p className="text-gray-600 mt-2">
-            Kelola order dan lakukan operasi massal dengan mudah
+          <p className="text-gray-600 text-sm">
+            Kelola order dan operasi massal (max 10 order)
           </p>
         </div>
-        <div className="flex space-x-3">
-          <Button variant="outline">
+        <div className="flex space-x-2">
+          <Button variant="outline" size="sm">
             <Download className="h-4 w-4 mr-2" />
-            Export Data
+            Export
           </Button>
-          <Button>
+          <Button size="sm">
             <Plus className="h-4 w-4 mr-2" />
             Order Baru
           </Button>
