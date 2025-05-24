@@ -22,6 +22,7 @@ import AnalyticsReports from "@/pages/analytics-reports";
 import BulkOperations from "@/pages/bulk-operations";
 import RevenueCalculator from "@/pages/revenue-calculator";
 import SmartRouteOptimization from "@/pages/smart-route-optimization";
+import RealtimeRouteOptimization from "@/pages/real-time-route-optimization";
 import DriverCommunityChat from "@/pages/driver-community-chat";
 import Vehicles from "@/pages/vehicles";
 import Pricing from "@/pages/pricing";
@@ -55,6 +56,7 @@ function Router() {
       <Route path="/bulk-operations" component={BulkOperations} />
       <Route path="/revenue-calculator" component={RevenueCalculator} />
       <Route path="/smart-route-optimization" component={SmartRouteOptimization} />
+      <Route path="/real-time-route-optimization" component={RealtimeRouteOptimization} />
       <Route path="/driver-community-chat" component={DriverCommunityChat} />
       <Route path="/vehicles" component={Vehicles} />
       <Route path="/pricing" component={Pricing} />

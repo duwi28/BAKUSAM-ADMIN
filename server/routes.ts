@@ -2043,6 +2043,214 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Real-time Route Optimization API
+  app.get("/api/realtime-routes", async (req, res) => {
+    try {
+      const { driverId, showTraffic } = req.query;
+      
+      const realtimeRoutes = [
+        {
+          id: 1,
+          driverId: 1,
+          driverName: "Budi Santoso",
+          vehicleType: "motor",
+          vehiclePlate: "B 1234 ABC",
+          currentLocation: {
+            lat: -6.2088,
+            lng: 106.8456
+          },
+          routePoints: [
+            {
+              id: 1,
+              type: "pickup",
+              orderId: 1001,
+              lat: -6.2146,
+              lng: 106.8451,
+              address: "Mall Grand Indonesia",
+              estimatedTime: "14:30",
+              status: "current",
+              priority: "urgent"
+            },
+            {
+              id: 2,
+              type: "pickup",
+              orderId: 1002,
+              lat: -6.2176,
+              lng: 106.8467,
+              address: "Plaza Indonesia",
+              estimatedTime: "14:45",
+              status: "pending",
+              priority: "normal"
+            },
+            {
+              id: 3,
+              type: "delivery",
+              orderId: 1001,
+              lat: -6.2615,
+              lng: 106.8106,
+              address: "Kemang Village",
+              estimatedTime: "15:20",
+              status: "pending",
+              priority: "urgent"
+            }
+          ],
+          optimization: {
+            totalDistance: 28.5,
+            totalTime: 85,
+            fuelConsumption: 1.8,
+            estimatedCost: 25000,
+            co2Emission: 4.2,
+            efficiency: 92
+          },
+          trafficConditions: {
+            severity: "moderate",
+            affectedSegments: 2,
+            delayMinutes: 12
+          },
+          alternatives: [
+            {
+              id: 1,
+              name: "Via Jl. Panglima Polim",
+              distanceDiff: -2.1,
+              timeDiff: -8,
+              fuelDiff: -0.3,
+              score: 85
+            },
+            {
+              id: 2,
+              name: "Via Jl. Senopati",
+              distanceDiff: 1.5,
+              timeDiff: -5,
+              fuelDiff: 0.2,
+              score: 78
+            }
+          ],
+          isActive: true,
+          lastUpdated: new Date().toISOString()
+        },
+        {
+          id: 2,
+          driverId: 2,
+          driverName: "Siti Rahayu",
+          vehicleType: "mobil",
+          vehiclePlate: "B 5678 DEF",
+          currentLocation: {
+            lat: -6.2615,
+            lng: 106.8106
+          },
+          routePoints: [
+            {
+              id: 4,
+              type: "pickup",
+              orderId: 1003,
+              lat: -6.2297,
+              lng: 106.8230,
+              address: "Senayan City",
+              estimatedTime: "15:00",
+              status: "current",
+              priority: "normal"
+            },
+            {
+              id: 5,
+              type: "delivery",
+              orderId: 1003,
+              lat: -6.1944,
+              lng: 106.8229,
+              address: "Central Park Mall",
+              estimatedTime: "15:45",
+              status: "pending",
+              priority: "normal"
+            }
+          ],
+          optimization: {
+            totalDistance: 15.2,
+            totalTime: 45,
+            fuelConsumption: 1.2,
+            estimatedCost: 18000,
+            co2Emission: 2.8,
+            efficiency: 88
+          },
+          trafficConditions: {
+            severity: "light",
+            affectedSegments: 0,
+            delayMinutes: 0
+          },
+          alternatives: [
+            {
+              id: 3,
+              name: "Via Tol Dalam Kota",
+              distanceDiff: 3.2,
+              timeDiff: -12,
+              fuelDiff: 0.5,
+              score: 92
+            }
+          ],
+          isActive: true,
+          lastUpdated: new Date().toISOString()
+        }
+      ];
+      
+      res.json(realtimeRoutes);
+    } catch (error) {
+      console.error("Error fetching realtime routes:", error);
+      res.status(500).json({ error: "Failed to fetch realtime routes" });
+    }
+  });
+
+  app.post("/api/optimize-realtime-route", async (req, res) => {
+    try {
+      const { driverId, options } = req.body;
+      
+      // Simulate real-time optimization
+      const result = {
+        success: true,
+        driverId,
+        optimizedAt: new Date().toISOString(),
+        improvements: {
+          timeSaved: 15,
+          fuelSaved: 0.8,
+          distanceReduced: 3.2,
+          efficiencyGain: 7
+        },
+        newRoute: {
+          totalDistance: 25.3,
+          totalTime: 70,
+          fuelConsumption: 1.0,
+          estimatedCost: 20000
+        }
+      };
+      
+      res.json(result);
+    } catch (error) {
+      console.error("Error optimizing realtime route:", error);
+      res.status(500).json({ error: "Failed to optimize realtime route" });
+    }
+  });
+
+  app.post("/api/apply-alternative-route", async (req, res) => {
+    try {
+      const { driverId, alternativeId } = req.body;
+      
+      const result = {
+        success: true,
+        driverId,
+        alternativeId,
+        appliedAt: new Date().toISOString(),
+        notificationSent: true,
+        estimatedImpact: {
+          timeSaved: 8,
+          fuelSaved: 0.3,
+          distanceChange: -2.1
+        }
+      };
+      
+      res.json(result);
+    } catch (error) {
+      console.error("Error applying alternative route:", error);
+      res.status(500).json({ error: "Failed to apply alternative route" });
+    }
+  });
+
   // === DRIVER FEATURES ===
 
   // Get current active order for driver
