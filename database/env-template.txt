@@ -1,0 +1,17 @@
+
+# Bakusam Express Database Configuration
+# Copy these settings to your .env file
+
+DATABASE_URL="mysql://bakusam_app:BakusamApp2024!@localhost:3306/bakusam_express"
+PGDATABASE=bakusam_express
+PGHOST=localhost
+PGPORT=3306
+PGUSER=bakusam_app
+PGPASSWORD=BakusamApp2024!
+
+# Google Maps API (if you have one)
+GOOGLE_MAPS_API_KEY=your_google_maps_api_key_here
+
+# Application Settings
+NODE_ENV=development
+PORT=5000
