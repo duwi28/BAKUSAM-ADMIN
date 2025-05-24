@@ -68,10 +68,9 @@ function DashboardLayout() {
             <Route path="/push-notifications" component={PushNotifications} />
             <Route path="/auto-assignment" component={AutoAssignment} />
 
-            <Route path="/bulk-operations" component={BulkOperations} />
+            <Route path="/orders-bulk-management" component={OrdersBulkManagement} />
             <Route path="/revenue-calculator" component={RevenueCalculator} />
             <Route path="/smart-route-optimization" component={SmartRouteOptimization} />
-            <Route path="/driver-community-chat" component={DriverCommunityChat} />
             <Route path="/integrated-city-franchise" component={IntegratedCityFranchise} />
             <Route path="/smart-ai-operations" component={SmartAIOperations} />
             <Route path="/pricing" component={Pricing} />
