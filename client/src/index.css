@@ -131,3 +131,105 @@
     background-color: hsl(var(--error));
   }
 }
+
+/* Dark mode enhancements */
+* {
+  @apply transition-colors duration-300 ease-in-out;
+}
+
+/* Custom scrollbar dengan dark mode support */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  @apply bg-muted/50;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-muted-foreground/30 rounded-full;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  @apply bg-muted-foreground/50;
+}
+
+/* Glassmorphism effect yang responsif terhadap dark mode */
+.glass-effect {
+  backdrop-filter: blur(12px);
+  @apply bg-background/80 border border-border/50;
+}
+
+.dark .glass-effect {
+  @apply bg-background/40 border-border/30;
+}
+
+/* Enhanced card dengan better contrast untuk dark mode */
+.enhanced-card {
+  @apply bg-card/90 backdrop-blur-sm border border-border/50 shadow-lg;
+}
+
+.dark .enhanced-card {
+  @apply bg-card/50 border-border/30 shadow-2xl;
+}
+
+/* Better focus states untuk accessibility */
+.focus-ring {
+  @apply focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 focus:ring-offset-background;
+}
+
+/* Smooth theme transition */
+html {
+  @apply transition-colors duration-300 ease-in-out;
+}
+
+/* Dark mode specific improvements untuk charts dan graphs */
+.dark .recharts-surface {
+  background-color: transparent !important;
+}
+
+.dark .recharts-cartesian-grid-horizontal line,
+.dark .recharts-cartesian-grid-vertical line {
+  stroke: hsl(var(--border)) !important;
+  opacity: 0.3;
+}
+
+.dark .recharts-text {
+  fill: hsl(var(--muted-foreground)) !important;
+}
+
+/* Loading skeleton improvements untuk dark mode */
+.skeleton {
+  @apply animate-pulse bg-muted;
+}
+
+.dark .skeleton {
+  @apply bg-muted/50;
+}
+
+/* Table improvements untuk dark mode */
+.dark table {
+  @apply border-border/30;
+}
+
+.dark table th {
+  @apply bg-muted/30 border-border/30;
+}
+
+.dark table td {
+  @apply border-border/20;
+}
+
+/* Modal dan overlay improvements */
+.dark .modal-overlay {
+  @apply bg-background/80 backdrop-blur-sm;
+}
+
+/* Button hover states yang lebih baik untuk dark mode */
+.dark .btn-primary:hover {
+  @apply bg-primary/80 shadow-lg;
+}
+
+.dark .btn-secondary:hover {
+  @apply bg-secondary/60;
+}
