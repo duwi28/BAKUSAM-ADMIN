@@ -12,6 +12,7 @@ import { Truck, Lock, User, Eye, EyeOff, Shield } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
 import { useLocation } from "wouter";
+import { useAuth } from "@/contexts/AuthContext";
 
 const loginSchema = z.object({
   username: z.string().min(1, "Username harus diisi"),
@@ -25,6 +26,7 @@ export default function Login() {
   const [showPassword, setShowPassword] = useState(false);
   const [, setLocation] = useLocation();
   const { toast } = useToast();
+  const { login } = useAuth();
 
   const form = useForm<LoginForm>({
     resolver: zodResolver(loginSchema),
@@ -38,9 +40,10 @@ export default function Login() {
   const loginMutation = useMutation({
     mutationFn: (data: LoginForm) => apiRequest("POST", "/api/auth/login", data),
     onSuccess: (response: any) => {
-      // Store auth token
-      localStorage.setItem("authToken", response.token);
-      localStorage.setItem("adminUser", JSON.stringify(response.user));
+      console.log("Login response:", response);
+      
+      // Use auth context login method
+      login(response.token, response.user);
       
       toast({
         title: "🎉 Login Berhasil!",
