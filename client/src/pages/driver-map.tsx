@@ -35,6 +35,7 @@ import {
   Signal
 } from "lucide-react";
 import { formatDateTime } from "@/lib/utils";
+import GoogleMap from "@/components/GoogleMap";
 
 interface DriverLocation {
   id: number;
@@ -475,30 +476,14 @@ export default function DriverMap() {
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                {/* Simulated Map View */}
-                <div className="relative w-full h-96 bg-gradient-to-br from-blue-100 to-green-100 rounded-lg border-2 border-dashed border-gray-300 flex items-center justify-center">
-                  <div className="text-center">
-                    <Navigation className="h-16 w-16 text-gray-400 mx-auto mb-4 animate-spin" style={{ animationDuration: '3s' }} />
-                    <p className="text-gray-600 text-lg font-medium">Peta Real-Time Driver</p>
-                    <p className="text-gray-500 text-sm mt-2">
-                      Integrasi dengan Google Maps atau Mapbox untuk tracking posisi driver secara real-time
-                    </p>
-                    <div className="grid grid-cols-2 gap-4 mt-6 max-w-md mx-auto">
-                      {filteredDrivers.slice(0, 4).map((driver, index) => (
-                        <div key={driver.id} className="flex items-center space-x-2 p-2 bg-white rounded-lg shadow-sm">
-                          <div className={`w-3 h-3 rounded-full ${
-                            driver.status === 'online' ? 'bg-green-500' :
-                            driver.status === 'busy' ? 'bg-orange-500' :
-                            driver.status === 'break' ? 'bg-yellow-500' : 'bg-gray-500'
-                          } animate-pulse`}></div>
-                          <div className="text-left">
-                            <div className="text-xs font-medium text-gray-800">{driver.fullName}</div>
-                            <div className="text-xs text-gray-500">{driver.currentLocation.address}</div>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
+                {/* Google Maps Integration */}
+                <div className="relative w-full h-96 rounded-lg overflow-hidden shadow-lg">
+                  <GoogleMap 
+                    drivers={filteredDrivers}
+                    selectedDriver={selectedDriver ? filteredDrivers.find(d => d.id === selectedDriver) : null}
+                    onDriverSelect={(driver) => setSelectedDriver(driver?.id || null)}
+                    showTraffic={true}
+                  />
                 </div>
 
                 {/* Traffic Conditions */}
