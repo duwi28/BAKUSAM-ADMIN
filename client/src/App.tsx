@@ -49,7 +49,7 @@ function Router() {
   return (
     <Switch>
       <Route path="/login" component={Login} />
-      <Route path="/">
+      <Route path="/*">
         <ProtectedRoute>
           <DashboardLayout />
         </ProtectedRoute>
