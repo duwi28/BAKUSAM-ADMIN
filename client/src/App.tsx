@@ -12,14 +12,12 @@ import Drivers from "@/pages/drivers";
 import Customers from "@/pages/customers";
 import Orders from "@/pages/orders";
 import ManualOrder from "@/pages/manual-order";
-import DriverApp from "@/pages/driver-app";
 import HeatMap from "@/pages/heat-map";
 import DriverMap from "@/pages/driver-map";
 import LiveTracking from "@/pages/live-tracking";
 import PushNotifications from "@/pages/push-notifications";
 import AutoAssignment from "@/pages/auto-assignment";
 import DriverNavigation from "@/pages/driver-navigation";
-import PhotoUpload from "@/pages/photo-upload";
 import AnalyticsReports from "@/pages/analytics-reports";
 import BulkOperations from "@/pages/bulk-operations";
 import RevenueCalculator from "@/pages/revenue-calculator";
@@ -72,14 +70,14 @@ function DashboardLayout() {
             <Route path="/customers" component={Customers} />
             <Route path="/orders" component={Orders} />
             <Route path="/manual-order" component={ManualOrder} />
-            <Route path="/driver-app" component={DriverApp} />
+
             <Route path="/heat-map" component={HeatMap} />
             <Route path="/driver-map" component={DriverMap} />
             <Route path="/live-tracking" component={LiveTracking} />
             <Route path="/push-notifications" component={PushNotifications} />
             <Route path="/auto-assignment" component={AutoAssignment} />
             <Route path="/driver-navigation" component={DriverNavigation} />
-            <Route path="/photo-upload" component={PhotoUpload} />
+
             <Route path="/analytics-reports" component={AnalyticsReports} />
             <Route path="/bulk-operations" component={BulkOperations} />
             <Route path="/revenue-calculator" component={RevenueCalculator} />
