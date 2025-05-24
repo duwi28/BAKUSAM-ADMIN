@@ -16,6 +16,8 @@ interface HeaderProps {
 }
 
 export default function Header({ onMenuClick }: HeaderProps) {
+  const { t } = useLanguage();
+  
   return (
     <header className="bg-white dark:bg-gray-900 shadow-sm border-b border-border px-6 py-4">
       <div className="flex items-center justify-between">
@@ -28,10 +30,11 @@ export default function Header({ onMenuClick }: HeaderProps) {
           >
             <Menu className="h-5 w-5" />
           </Button>
-          <h2 className="text-2xl font-semibold text-foreground">Dashboard</h2>
+          <h2 className="text-2xl font-semibold text-foreground">{t('dashboard.title')}</h2>
         </div>
         
         <div className="flex items-center space-x-4">
+          <LanguageSelector />
           <ThemeToggle />
           
           <Button variant="ghost" size="sm" className="relative">
@@ -55,8 +58,8 @@ export default function Header({ onMenuClick }: HeaderProps) {
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
               <DropdownMenuItem>Profile</DropdownMenuItem>
-              <DropdownMenuItem>Pengaturan</DropdownMenuItem>
-              <DropdownMenuItem>Keluar</DropdownMenuItem>
+              <DropdownMenuItem>{t('nav.settings')}</DropdownMenuItem>
+              <DropdownMenuItem>{t('nav.logout')}</DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
