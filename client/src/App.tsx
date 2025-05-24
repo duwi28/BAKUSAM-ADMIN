@@ -20,6 +20,9 @@ import PushNotifications from "@/pages/push-notifications";
 import AutoAssignment from "@/pages/auto-assignment";
 import DriverNavigation from "@/pages/driver-navigation";
 import PhotoUpload from "@/pages/photo-upload";
+import AnalyticsReports from "@/pages/analytics-reports";
+import BulkOperations from "@/pages/bulk-operations";
+import RevenueCalculator from "@/pages/revenue-calculator";
 import Vehicles from "@/pages/vehicles";
 import Pricing from "@/pages/pricing";
 import Reports from "@/pages/reports";
@@ -51,6 +54,9 @@ function Router() {
       <Route path="/auto-assignment" component={AutoAssignment} />
       <Route path="/driver-navigation" component={DriverNavigation} />
       <Route path="/photo-upload" component={PhotoUpload} />
+      <Route path="/analytics-reports" component={AnalyticsReports} />
+      <Route path="/bulk-operations" component={BulkOperations} />
+      <Route path="/revenue-calculator" component={RevenueCalculator} />
       <Route path="/vehicles" component={Vehicles} />
       <Route path="/pricing" component={Pricing} />
       <Route path="/reports" component={Reports} />

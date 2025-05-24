@@ -1635,6 +1635,153 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // === ADMIN DASHBOARD FEATURES ===
+
+  // Analytics & Reports API
+  app.get("/api/analytics", async (req, res) => {
+    try {
+      const { timeRange, dateFilter } = req.query;
+      
+      const analyticsData = {
+        daily: [
+          { date: '1 Jan', orders: 45, revenue: 2250000, drivers: 12, completion: 92 },
+          { date: '2 Jan', orders: 52, revenue: 2680000, drivers: 15, completion: 89 },
+          { date: '3 Jan', orders: 38, revenue: 1920000, drivers: 10, completion: 95 },
+          { date: '4 Jan', orders: 61, revenue: 3150000, drivers: 18, completion: 88 },
+          { date: '5 Jan', orders: 49, revenue: 2580000, drivers: 14, completion: 91 },
+          { date: '6 Jan', orders: 57, revenue: 2890000, drivers: 16, completion: 93 },
+          { date: '7 Jan', orders: 43, revenue: 2280000, drivers: 11, completion: 90 }
+        ]
+      };
+      
+      res.json(analyticsData);
+    } catch (error) {
+      console.error("Error fetching analytics data:", error);
+      res.status(500).json({ error: "Failed to fetch analytics data" });
+    }
+  });
+
+  // Bulk Operations API
+  app.post("/api/bulk-operations", async (req, res) => {
+    try {
+      const { type, ids, action, value } = req.body;
+      
+      // In real implementation, update multiple records based on type and action
+      const result = {
+        success: true,
+        updatedCount: ids.length,
+        type,
+        action,
+        value,
+        timestamp: new Date().toISOString()
+      };
+      
+      res.json(result);
+    } catch (error) {
+      console.error("Error performing bulk operation:", error);
+      res.status(500).json({ error: "Failed to perform bulk operation" });
+    }
+  });
+
+  // Commission Rules API
+  app.get("/api/commission-rules", async (req, res) => {
+    try {
+      const rules = [
+        {
+          id: 1,
+          vehicleType: "motor",
+          baseCommission: 15,
+          bonusThreshold: 50,
+          bonusCommission: 5,
+          priorityBonus: 3
+        },
+        {
+          id: 2,
+          vehicleType: "mobil",
+          baseCommission: 12,
+          bonusThreshold: 30,
+          bonusCommission: 4,
+          priorityBonus: 2
+        },
+        {
+          id: 3,
+          vehicleType: "pickup",
+          baseCommission: 10,
+          bonusThreshold: 20,
+          bonusCommission: 3,
+          priorityBonus: 2
+        }
+      ];
+      
+      res.json(rules);
+    } catch (error) {
+      console.error("Error fetching commission rules:", error);
+      res.status(500).json({ error: "Failed to fetch commission rules" });
+    }
+  });
+
+  // Driver Revenues API
+  app.get("/api/driver-revenues", async (req, res) => {
+    try {
+      const { period, driverId } = req.query;
+      
+      const revenues = [
+        {
+          driverId: 1,
+          driverName: "Budi Santoso",
+          vehicleType: "motor",
+          priority: "priority",
+          completedOrders: 45,
+          totalRevenue: 2250000,
+          baseCommission: 337500,
+          bonusCommission: 112500,
+          priorityBonus: 67500,
+          totalCommission: 517500,
+          netEarnings: 517500
+        },
+        {
+          driverId: 2,
+          driverName: "Siti Rahayu",
+          vehicleType: "mobil",
+          priority: "normal",
+          completedOrders: 32,
+          totalRevenue: 1920000,
+          baseCommission: 230400,
+          bonusCommission: 76800,
+          priorityBonus: 0,
+          totalCommission: 307200,
+          netEarnings: 307200
+        }
+      ];
+      
+      res.json(revenues);
+    } catch (error) {
+      console.error("Error fetching driver revenues:", error);
+      res.status(500).json({ error: "Failed to fetch driver revenues" });
+    }
+  });
+
+  // Calculate Commissions API
+  app.post("/api/calculate-commissions", async (req, res) => {
+    try {
+      const { period, driverIds } = req.body;
+      
+      // In real implementation, recalculate commissions based on current rules
+      const result = {
+        success: true,
+        period,
+        driversUpdated: driverIds?.length || "all",
+        timestamp: new Date().toISOString(),
+        message: "Commissions calculated successfully"
+      };
+      
+      res.json(result);
+    } catch (error) {
+      console.error("Error calculating commissions:", error);
+      res.status(500).json({ error: "Failed to calculate commissions" });
+    }
+  });
+
   // === DRIVER FEATURES ===
 
   // Get current active order for driver

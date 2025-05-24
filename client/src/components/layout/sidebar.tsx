@@ -23,7 +23,9 @@ import {
   Zap,
   Send,
   Camera,
-  Route
+  Route,
+  Edit,
+  Calculator
 } from "lucide-react";
 
 const navigation = [
@@ -43,6 +45,9 @@ const navigation = [
   { name: "Auto-Assignment", href: "/auto-assignment", icon: Zap },
   { name: "Driver Navigation", href: "/driver-navigation", icon: Route },
   { name: "Upload Foto Bukti", href: "/photo-upload", icon: Camera },
+  { name: "Analytics & Reports", href: "/analytics-reports", icon: BarChart3 },
+  { name: "Bulk Operations", href: "/bulk-operations", icon: Edit },
+  { name: "Revenue Calculator", href: "/revenue-calculator", icon: Calculator },
   { name: "Kendaraan", href: "/vehicles", icon: Car },
   { name: "Tracking & Assignment", href: "/tracking", icon: MapPin },
   { name: "Tarif & Promo", href: "/pricing", icon: Tags },
