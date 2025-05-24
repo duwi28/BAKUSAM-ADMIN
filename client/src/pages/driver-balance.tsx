@@ -23,7 +23,8 @@ import {
   CreditCard,
   Banknote,
   ArrowUpRight,
-  ArrowDownRight
+  ArrowDownRight,
+  Search
 } from "lucide-react";
 
 interface Driver {
@@ -56,6 +57,7 @@ export default function DriverBalance() {
   const [amount, setAmount] = useState('');
   const [description, setDescription] = useState('');
   const [newCommission, setNewCommission] = useState('');
+  const [searchQuery, setSearchQuery] = useState('');
   const { toast } = useToast();
 
   // Fetch drivers data
@@ -170,6 +172,20 @@ export default function DriverBalance() {
     return drivers.reduce((total: number, driver: Driver) => total + (driver.totalEarnings || 0), 0);
   };
 
+  // Filter drivers based on search query
+  const filteredDrivers = (drivers as Driver[]).filter((driver: Driver) => {
+    if (!searchQuery) return true;
+    
+    const query = searchQuery.toLowerCase();
+    return (
+      driver.fullName.toLowerCase().includes(query) ||
+      driver.id.toString().includes(query) ||
+      driver.phone.includes(query) ||
+      (driver as any).registrationNumber?.toLowerCase().includes(query) ||
+      driver.email.toLowerCase().includes(query)
+    );
+  });
+
   const getTransactionIcon = (type: string) => {
     switch (type) {
       case 'topup':
@@ -278,8 +294,28 @@ export default function DriverBalance() {
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
+            {/* Search Input */}
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
+              <Input
+                placeholder="Cari driver berdasarkan nama, ID, atau nomor registrasi..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="pl-10"
+              />
+            </div>
+
             <div className="space-y-4">
-              {drivers.map((driver: Driver) => (
+              {filteredDrivers.length === 0 ? (
+                <div className="text-center py-8 text-muted-foreground">
+                  <Users className="w-12 h-12 mx-auto mb-4 opacity-50" />
+                  <p>Tidak ada driver yang ditemukan</p>
+                  {searchQuery && (
+                    <p className="text-sm mt-2">Coba kata kunci pencarian yang berbeda</p>
+                  )}
+                </div>
+              ) : (
+                filteredDrivers.map((driver: Driver) => (
                 <div key={driver.id} className="flex items-center justify-between p-4 border rounded-lg">
                   <div className="flex-1">
                     <h4 className="font-medium">{driver.fullName}</h4>
@@ -399,7 +435,8 @@ export default function DriverBalance() {
                     </Dialog>
                   </div>
                 </div>
-              ))}
+                ))
+              )}
             </div>
           </CardContent>
         </Card>
