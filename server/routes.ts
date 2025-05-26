@@ -7,6 +7,578 @@ import { insertDriverSchema, insertCustomerSchema, insertVehicleSchema, insertOr
 
 export async function registerRoutes(app: Express): Promise<Server> {
   
+  // ========================================
+  // DRIVER MOBILE APP API ENDPOINTS
+  // ========================================
+  
+  // Driver Login (Mobile)
+  app.post("/api/mobile/driver/login", async (req, res) => {
+    try {
+      const { phone, password } = req.body;
+      
+      // Find driver by phone
+      const drivers = await storage.getDrivers();
+      const driver = drivers.find(d => d.phone === phone);
+      
+      if (!driver) {
+        return res.status(401).json({ 
+          success: false, 
+          message: "Driver tidak ditemukan" 
+        });
+      }
+      
+      // Simple password check (in production, use proper hashing)
+      if (password !== "driver123") {
+        return res.status(401).json({ 
+          success: false, 
+          message: "Password salah" 
+        });
+      }
+      
+      res.json({
+        success: true,
+        driver: {
+          id: driver.id,
+          fullName: driver.fullName,
+          phone: driver.phone,
+          vehicleType: driver.vehicleType,
+          status: driver.status,
+          rating: driver.rating,
+          balance: driver.balance || 0
+        },
+        token: `driver_${driver.id}_${Date.now()}`
+      });
+    } catch (error) {
+      res.status(500).json({ 
+        success: false, 
+        message: "Login gagal" 
+      });
+    }
+  });
+
+  // Driver Profile (Mobile)
+  app.get("/api/mobile/driver/:id/profile", async (req, res) => {
+    try {
+      const driverId = parseInt(req.params.id);
+      const driver = await storage.getDriver(driverId);
+      
+      if (!driver) {
+        return res.status(404).json({ 
+          success: false, 
+          message: "Driver tidak ditemukan" 
+        });
+      }
+      
+      res.json({
+        success: true,
+        data: {
+          id: driver.id,
+          fullName: driver.fullName,
+          phone: driver.phone,
+          email: driver.email,
+          vehicleType: driver.vehicleType,
+          status: driver.status,
+          rating: driver.rating,
+          totalOrders: driver.totalOrders || 0,
+          balance: driver.balance || 0,
+          joinDate: driver.joinDate
+        }
+      });
+    } catch (error) {
+      res.status(500).json({ 
+        success: false, 
+        message: "Gagal mengambil profil driver" 
+      });
+    }
+  });
+
+  // Available Orders for Driver (Mobile)
+  app.get("/api/mobile/driver/:id/available-orders", async (req, res) => {
+    try {
+      const driverId = parseInt(req.params.id);
+      const orders = await storage.getOrders();
+      
+      // Filter orders yang belum ada driver dan status pending
+      const availableOrders = orders.filter(order => 
+        !order.driverId && order.status === 'pending'
+      );
+      
+      res.json({
+        success: true,
+        data: availableOrders.map(order => ({
+          id: order.id,
+          pickupAddress: order.pickupAddress,
+          deliveryAddress: order.deliveryAddress,
+          distance: order.distance,
+          totalFare: order.totalFare,
+          notes: order.notes,
+          orderDate: order.orderDate
+        }))
+      });
+    } catch (error) {
+      res.status(500).json({ 
+        success: false, 
+        message: "Gagal mengambil order tersedia" 
+      });
+    }
+  });
+
+  // Accept Order (Mobile)
+  app.post("/api/mobile/driver/:driverId/accept-order/:orderId", async (req, res) => {
+    try {
+      const driverId = parseInt(req.params.driverId);
+      const orderId = parseInt(req.params.orderId);
+      
+      // Update order dengan driver
+      const updatedOrder = await storage.updateOrder(orderId, {
+        driverId: driverId,
+        status: 'assigned'
+      });
+      
+      if (!updatedOrder) {
+        return res.status(404).json({ 
+          success: false, 
+          message: "Order tidak ditemukan" 
+        });
+      }
+      
+      res.json({
+        success: true,
+        message: "Order berhasil diterima",
+        data: updatedOrder
+      });
+    } catch (error) {
+      res.status(500).json({ 
+        success: false, 
+        message: "Gagal menerima order" 
+      });
+    }
+  });
+
+  // Driver's Active Orders (Mobile)
+  app.get("/api/mobile/driver/:id/active-orders", async (req, res) => {
+    try {
+      const driverId = parseInt(req.params.id);
+      const orders = await storage.getOrders();
+      
+      // Filter orders driver yang sedang aktif
+      const activeOrders = orders.filter(order => 
+        order.driverId === driverId && 
+        ['assigned', 'in_progress'].includes(order.status)
+      );
+      
+      res.json({
+        success: true,
+        data: activeOrders
+      });
+    } catch (error) {
+      res.status(500).json({ 
+        success: false, 
+        message: "Gagal mengambil order aktif" 
+      });
+    }
+  });
+
+  // Update Order Status (Mobile)
+  app.patch("/api/mobile/order/:orderId/status", async (req, res) => {
+    try {
+      const orderId = parseInt(req.params.orderId);
+      const { status, driverId } = req.body;
+      
+      const updatedOrder = await storage.updateOrder(orderId, { status });
+      
+      if (!updatedOrder) {
+        return res.status(404).json({ 
+          success: false, 
+          message: "Order tidak ditemukan" 
+        });
+      }
+      
+      // Jika order completed, update balance driver
+      if (status === 'completed') {
+        const fare = parseInt(updatedOrder.totalFare);
+        const commission = Math.floor(fare * 0.8); // Driver dapat 80%
+        
+        const driver = await storage.getDriver(driverId);
+        if (driver) {
+          await storage.updateDriver(driverId, {
+            balance: (driver.balance || 0) + commission,
+            totalOrders: (driver.totalOrders || 0) + 1
+          });
+        }
+      }
+      
+      res.json({
+        success: true,
+        message: "Status order berhasil diupdate",
+        data: updatedOrder
+      });
+    } catch (error) {
+      res.status(500).json({ 
+        success: false, 
+        message: "Gagal update status order" 
+      });
+    }
+  });
+
+  // Driver Balance & Earnings (Mobile)
+  app.get("/api/mobile/driver/:id/balance", async (req, res) => {
+    try {
+      const driverId = parseInt(req.params.id);
+      const driver = await storage.getDriver(driverId);
+      
+      if (!driver) {
+        return res.status(404).json({ 
+          success: false, 
+          message: "Driver tidak ditemukan" 
+        });
+      }
+      
+      // Get completed orders for earnings calculation
+      const orders = await storage.getOrders();
+      const completedOrders = orders.filter(order => 
+        order.driverId === driverId && order.status === 'completed'
+      );
+      
+      const totalEarnings = completedOrders.reduce((sum, order) => {
+        return sum + Math.floor(parseInt(order.totalFare) * 0.8);
+      }, 0);
+      
+      res.json({
+        success: true,
+        data: {
+          currentBalance: driver.balance || 0,
+          totalEarnings: totalEarnings,
+          totalOrders: completedOrders.length,
+          averagePerOrder: completedOrders.length > 0 ? Math.floor(totalEarnings / completedOrders.length) : 0
+        }
+      });
+    } catch (error) {
+      res.status(500).json({ 
+        success: false, 
+        message: "Gagal mengambil data balance" 
+      });
+    }
+  });
+
+  // ========================================
+  // REAL-TIME LOCATION TRACKING API
+  // ========================================
+  
+  // Update Driver Location - Enhanced Real-time GPS tracking
+  app.post("/api/mobile/driver/:id/location", async (req, res) => {
+    try {
+      const driverId = parseInt(req.params.id);
+      const { latitude, longitude, accuracy, speed, heading, altitude, batteryLevel, signalStrength } = req.body;
+      
+      // Validate required fields
+      if (!latitude || !longitude) {
+        return res.status(400).json({ 
+          success: false, 
+          message: "Latitude dan longitude wajib diisi" 
+        });
+      }
+
+      // Store location data in proper format for better tracking
+      const locationUpdate = {
+        // Store as JSON in notes for now (will create separate table later)
+        notes: JSON.stringify({
+          type: 'location_update',
+          coordinates: { latitude, longitude },
+          accuracy: accuracy || null,
+          speed: speed || null,
+          heading: heading || null,
+          altitude: altitude || null,
+          batteryLevel: batteryLevel || null,
+          signalStrength: signalStrength || null,
+          timestamp: new Date().toISOString(),
+          lastActive: new Date().toISOString()
+        })
+      };
+
+      const driver = await storage.updateDriver(driverId, locationUpdate);
+      
+      res.json({
+        success: true,
+        message: "Lokasi berhasil diperbarui",
+        data: { 
+          latitude, 
+          longitude,
+          accuracy,
+          speed,
+          heading,
+          batteryLevel,
+          timestamp: new Date().toISOString()
+        }
+      });
+    } catch (error) {
+      console.error("Error updating driver location:", error);
+      res.status(500).json({ 
+        success: false, 
+        message: "Gagal memperbarui lokasi driver" 
+      });
+    }
+  });
+
+  // Get real-time locations of all active drivers (for admin dashboard)
+  app.get("/api/admin/drivers/locations", async (req, res) => {
+    try {
+      const drivers = await storage.getDrivers();
+      const activeDrivers = drivers.filter(d => d.status === 'active');
+      
+      const locationsWithDriverInfo = activeDrivers.map(driver => {
+        let locationData = null;
+        try {
+          if (driver.notes) {
+            const parsedNotes = JSON.parse(driver.notes);
+            if (parsedNotes.type === 'location_update') {
+              locationData = parsedNotes;
+            }
+          }
+        } catch (e) {
+          // Fallback for old format
+          locationData = { coordinates: { latitude: 0, longitude: 0 } };
+        }
+        
+        return {
+          driverId: driver.id,
+          driverName: driver.fullName,
+          vehicleType: driver.vehicleType,
+          status: driver.status,
+          priorityLevel: driver.priorityLevel,
+          rating: driver.rating,
+          phone: driver.phone,
+          location: locationData,
+          isOnline: locationData && locationData.timestamp ? 
+            (Date.now() - new Date(locationData.timestamp).getTime()) < 300000 : false // 5 minutes
+        };
+      });
+      
+      res.json({
+        success: true,
+        totalDrivers: activeDrivers.length,
+        onlineDrivers: locationsWithDriverInfo.filter(d => d.isOnline).length,
+        data: locationsWithDriverInfo
+      });
+    } catch (error) {
+      console.error("Error fetching driver locations:", error);
+      res.status(500).json({ 
+        success: false,
+        message: "Gagal mengambil lokasi driver" 
+      });
+    }
+  });
+
+  // Get specific driver's current location
+  app.get("/api/admin/drivers/:id/location", async (req, res) => {
+    try {
+      const driverId = parseInt(req.params.id);
+      const driver = await storage.getDriver(driverId);
+      
+      if (!driver) {
+        return res.status(404).json({ 
+          success: false, 
+          message: "Driver tidak ditemukan" 
+        });
+      }
+
+      let locationData = null;
+      try {
+        if (driver.notes) {
+          const parsedNotes = JSON.parse(driver.notes);
+          if (parsedNotes.type === 'location_update') {
+            locationData = parsedNotes;
+          }
+        }
+      } catch (e) {
+        locationData = { coordinates: { latitude: 0, longitude: 0 } };
+      }
+      
+      res.json({
+        success: true,
+        driver: {
+          id: driver.id,
+          name: driver.fullName,
+          vehicleType: driver.vehicleType,
+          status: driver.status,
+          phone: driver.phone
+        },
+        location: locationData,
+        isOnline: locationData && locationData.timestamp ? 
+          (Date.now() - new Date(locationData.timestamp).getTime()) < 300000 : false
+      });
+    } catch (error) {
+      console.error("Error fetching driver location:", error);
+      res.status(500).json({ 
+        success: false,
+        message: "Gagal mengambil lokasi driver" 
+      });
+    }
+  });
+
+  // ========================================
+  // EMERGENCY & SAFETY ALERTS API
+  // ========================================
+  
+  // Create emergency alert from driver app
+  app.post("/api/mobile/driver/:id/emergency", async (req, res) => {
+    try {
+      const driverId = parseInt(req.params.id);
+      const { alertType, latitude, longitude, description } = req.body;
+      
+      if (!alertType || !latitude || !longitude) {
+        return res.status(400).json({ 
+          success: false, 
+          message: "Data emergency alert tidak lengkap" 
+        });
+      }
+
+      // Store emergency alert in driver notes with special format
+      const emergencyData = {
+        type: 'emergency_alert',
+        alertType,
+        coordinates: { latitude, longitude },
+        description: description || `Alert ${alertType} dari driver`,
+        status: "active",
+        priority: alertType === "emergency" || alertType === "panic" ? "critical" : "high",
+        timestamp: new Date().toISOString(),
+        alertId: `ALERT_${driverId}_${Date.now()}`
+      };
+
+      // Update driver status to indicate emergency
+      await storage.updateDriver(driverId, {
+        status: 'emergency',
+        notes: JSON.stringify(emergencyData)
+      });
+
+      // Create notification for admin
+      await storage.createNotification({
+        title: `🚨 EMERGENCY ALERT - ${alertType.toUpperCase()}`,
+        message: `Driver ${driverId} mengirim emergency alert: ${description}`,
+        type: 'emergency',
+        targetType: 'admin'
+      });
+      
+      res.json({ 
+        success: true, 
+        message: "Emergency alert berhasil dikirim",
+        alertId: emergencyData.alertId,
+        timestamp: emergencyData.timestamp
+      });
+    } catch (error) {
+      console.error("Error creating emergency alert:", error);
+      res.status(500).json({ 
+        success: false, 
+        message: "Gagal mengirim emergency alert" 
+      });
+    }
+  });
+
+  // Get all emergency alerts for admin
+  app.get("/api/admin/emergency-alerts", async (req, res) => {
+    try {
+      const drivers = await storage.getDrivers();
+      const emergencyAlerts = [];
+      
+      drivers.forEach(driver => {
+        try {
+          if (driver.notes) {
+            const parsedNotes = JSON.parse(driver.notes);
+            if (parsedNotes.type === 'emergency_alert') {
+              emergencyAlerts.push({
+                ...parsedNotes,
+                driverId: driver.id,
+                driverName: driver.fullName,
+                driverPhone: driver.phone,
+                vehicleType: driver.vehicleType
+              });
+            }
+          }
+        } catch (e) {
+          // Skip invalid JSON
+        }
+      });
+      
+      // Sort by timestamp (newest first)
+      emergencyAlerts.sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
+      
+      res.json({
+        success: true,
+        totalAlerts: emergencyAlerts.length,
+        activeAlerts: emergencyAlerts.filter(a => a.status === 'active').length,
+        data: emergencyAlerts.slice(0, 50) // Latest 50 alerts
+      });
+    } catch (error) {
+      console.error("Error fetching emergency alerts:", error);
+      res.status(500).json({ 
+        success: false,
+        message: "Gagal mengambil emergency alerts" 
+      });
+    }
+  });
+
+  // Resolve emergency alert
+  app.patch("/api/admin/emergency-alerts/:driverId/resolve", async (req, res) => {
+    try {
+      const driverId = parseInt(req.params.driverId);
+      const { resolvedBy, responseTeam } = req.body;
+      
+      const driver = await storage.getDriver(driverId);
+      if (!driver) {
+        return res.status(404).json({ 
+          success: false, 
+          message: "Driver tidak ditemukan" 
+        });
+      }
+
+      // Update driver status back to active and mark alert as resolved
+      await storage.updateDriver(driverId, {
+        status: 'active',
+        notes: JSON.stringify({
+          type: 'emergency_resolved',
+          resolvedAt: new Date().toISOString(),
+          resolvedBy: resolvedBy || 'Admin',
+          responseTeam: responseTeam || 'Default'
+        })
+      });
+
+      res.json({ 
+        success: true, 
+        message: "Emergency alert berhasil diselesaikan",
+        resolvedAt: new Date().toISOString()
+      });
+    } catch (error) {
+      console.error("Error resolving emergency alert:", error);
+      res.status(500).json({ 
+        success: false,
+        message: "Gagal menyelesaikan emergency alert" 
+      });
+    }
+  });
+
+  // Driver Notifications (Mobile)
+  app.get("/api/mobile/driver/:id/notifications", async (req, res) => {
+    try {
+      const driverId = parseInt(req.params.id);
+      const notifications = await storage.getNotifications();
+      
+      // Filter notifications for this driver
+      const driverNotifications = notifications.filter(notif => 
+        notif.targetType === 'driver' || notif.targetType === 'all'
+      );
+      
+      res.json({
+        success: true,
+        data: driverNotifications.slice(0, 20) // Latest 20 notifications
+      });
+    } catch (error) {
+      res.status(500).json({ 
+        success: false, 
+        message: "Gagal mengambil notifikasi" 
+      });
+    }
+  });
+
   // Dashboard stats
   app.get("/api/dashboard/stats", async (req, res) => {
     try {
@@ -21,6 +593,83 @@ export async function registerRoutes(app: Express): Promise<Server> {
       });
     } catch (error) {
       res.status(500).json({ message: "Failed to fetch dashboard stats" });
+    }
+  });
+
+  // System Settings API - FIXED
+  app.get("/api/system-settings", async (req, res) => {
+    try {
+      const settings = await storage.getSystemSettings();
+      res.json(settings);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to fetch system settings" });
+    }
+  });
+
+  app.post("/api/system-settings", async (req, res) => {
+    try {
+      const { key, value } = req.body;
+      
+      if (!key || !value) {
+        return res.status(400).json({ message: "Key and value are required" });
+      }
+
+      const setting = await storage.updateSystemSetting(key, value);
+      res.json({ 
+        success: true, 
+        message: "System setting updated successfully",
+        setting 
+      });
+    } catch (error) {
+      res.status(500).json({ message: "Failed to update system setting" });
+    }
+  });
+
+  // Route Optimization API - Enhanced
+  app.get("/api/route-optimization", async (req, res) => {
+    try {
+      // Mock route optimization data with real driver integration
+      const drivers = await storage.getDrivers();
+      const activeDrivers = drivers.filter(d => d.status === 'active');
+      const orders = await storage.getOrders();
+      const activeOrders = orders.filter(o => o.status === 'assigned' || o.status === 'in_progress');
+
+      const routeOptimizations = activeDrivers.slice(0, 3).map((driver, index) => ({
+        id: driver.id,
+        driverId: driver.id,
+        driverName: driver.fullName,
+        vehicleType: driver.vehicleType,
+        currentLocation: {
+          lat: -6.2088 + (index * 0.01),
+          lng: 106.8456 + (index * 0.01),
+          address: `Area ${['Jakarta Pusat', 'Jakarta Selatan', 'Jakarta Barat'][index]}`
+        },
+        assignedOrders: activeOrders.filter(o => o.driverId === driver.id).map(order => ({
+          id: order.id,
+          pickupAddress: order.pickupAddress,
+          deliveryAddress: order.deliveryAddress,
+          priority: 'normal',
+          estimatedTime: 30 + Math.floor(Math.random() * 30)
+        })),
+        optimizedRoute: {
+          totalDistance: 15 + Math.floor(Math.random() * 20),
+          totalTime: 45 + Math.floor(Math.random() * 60),
+          fuelConsumption: 1.2 + Math.random() * 1.0,
+          fuelCost: 12000 + Math.floor(Math.random() * 10000),
+          co2Emission: 2.8 + Math.random() * 2.0,
+          stops: []
+        },
+        savings: {
+          distanceSaved: 5 + Math.floor(Math.random() * 10),
+          timeSaved: 15 + Math.floor(Math.random() * 20),
+          fuelSaved: 0.3 + Math.random() * 0.5,
+          costSaved: 3000 + Math.floor(Math.random() * 5000)
+        }
+      }));
+
+      res.json(routeOptimizations);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to fetch route optimization data" });
     }
   });
 

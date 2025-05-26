@@ -45,6 +45,38 @@ export const customers = pgTable("customers", {
   joinDate: timestamp("join_date").defaultNow(),
 });
 
+// Driver Location Tracking Table (Real-time)
+export const driverLocations = pgTable("driver_locations", {
+  id: serial("id").primaryKey(),
+  driverId: integer("driver_id").notNull(),
+  latitude: decimal("latitude", { precision: 10, scale: 8 }).notNull(),
+  longitude: decimal("longitude", { precision: 11, scale: 8 }).notNull(),
+  accuracy: decimal("accuracy", { precision: 6, scale: 2 }), // GPS accuracy in meters
+  speed: decimal("speed", { precision: 5, scale: 2 }), // Speed in km/h
+  heading: decimal("heading", { precision: 5, scale: 2 }), // Direction in degrees
+  altitude: decimal("altitude", { precision: 7, scale: 2 }), // Altitude in meters
+  timestamp: timestamp("timestamp").defaultNow(),
+  isActive: boolean("is_active").default(true), // Current active location
+  batteryLevel: integer("battery_level"), // Driver's phone battery %
+  signalStrength: integer("signal_strength"), // Network signal strength
+});
+
+// Emergency Alerts Table
+export const emergencyAlerts = pgTable("emergency_alerts", {
+  id: serial("id").primaryKey(),
+  driverId: integer("driver_id").notNull(),
+  alertType: text("alert_type").notNull(), // emergency, panic, accident, breakdown
+  latitude: decimal("latitude", { precision: 10, scale: 8 }).notNull(),
+  longitude: decimal("longitude", { precision: 11, scale: 8 }).notNull(),
+  description: text("description"),
+  status: text("status").notNull().default("active"), // active, resolved, false_alarm
+  priority: text("priority").notNull().default("high"), // low, medium, high, critical
+  responseTeam: text("response_team"), // Which team is handling
+  createdAt: timestamp("created_at").defaultNow(),
+  resolvedAt: timestamp("resolved_at"),
+  resolvedBy: text("resolved_by"),
+});
+
 export const vehicles = pgTable("vehicles", {
   id: serial("id").primaryKey(),
   driverId: integer("driver_id").notNull(),
@@ -217,8 +249,8 @@ export const driverBalanceTransactions = pgTable("driver_balance_transactions", 
   createdBy: integer("created_by"), // admin user id
 });
 
-// Driver Safety Alert System
-export const safetyAlerts = pgTable("safety_alerts", {
+// Driver Safety Alert System (Renamed to avoid conflict)
+export const driverSafetyAlerts = pgTable("driver_safety_alerts", {
   id: serial("id").primaryKey(),
   driverId: integer("driver_id").notNull().references(() => drivers.id),
   alertType: text("alert_type").notNull(), // weather, traffic, area_risk, speed, fatigue, emergency
@@ -357,13 +389,23 @@ export type InsertDriverTip = z.infer<typeof insertDriverTipSchema>;
 export type TipRating = typeof tipRatings.$inferSelect;
 export type InsertTipRating = z.infer<typeof insertTipRatingSchema>;
 
+// New Enhanced Tables Schema Types
+export const insertDriverLocationSchema = createInsertSchema(driverLocations).omit({ id: true, timestamp: true });
+export const insertEmergencyAlertSchema = createInsertSchema(emergencyAlerts).omit({ id: true, createdAt: true });
+
+export type DriverLocation = typeof driverLocations.$inferSelect;
+export type InsertDriverLocation = z.infer<typeof insertDriverLocationSchema>;
+
+export type EmergencyAlert = typeof emergencyAlerts.$inferSelect;
+export type InsertEmergencyAlert = z.infer<typeof insertEmergencyAlertSchema>;
+
 // Safety System Schema Types
-export const insertSafetyAlertSchema = createInsertSchema(safetyAlerts).omit({ id: true, createdAt: true });
+export const insertSafetyAlertSchema = createInsertSchema(driverSafetyAlerts).omit({ id: true, createdAt: true });
 export const insertDriverSafetyStatusSchema = createInsertSchema(driverSafetyStatus).omit({ id: true, updatedAt: true });
 export const insertSafetyIncidentSchema = createInsertSchema(safetyIncidents).omit({ id: true, reportedAt: true });
 export const insertSafetyZoneSchema = createInsertSchema(safetyZones).omit({ id: true, createdAt: true, updatedAt: true });
 
-export type SafetyAlert = typeof safetyAlerts.$inferSelect;
+export type SafetyAlert = typeof driverSafetyAlerts.$inferSelect;
 export type InsertSafetyAlert = z.infer<typeof insertSafetyAlertSchema>;
 
 export type DriverSafetyStatus = typeof driverSafetyStatus.$inferSelect;

@@ -34,22 +34,48 @@ import {
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
-interface DriverLocation {
-  id: number;
+interface DriverLocationData {
   driverId: number;
-  fullName: string;
-  phone: string;
+  driverName: string;
   vehicleType: string;
-  latitude: number;
-  longitude: number;
-  lastUpdate: Date;
   status: string;
-  currentOrder?: {
-    id: number;
-    pickup: string;
-    delivery: string;
-    estimatedTime: number;
+  priorityLevel: string;
+  rating: string;
+  phone: string;
+  location: {
+    type: string;
+    coordinates: {
+      latitude: number;
+      longitude: number;
+    };
+    accuracy?: number;
+    speed?: number;
+    heading?: number;
+    altitude?: number;
+    batteryLevel?: number;
+    signalStrength?: number;
+    timestamp: string;
+    lastActive: string;
+  } | null;
+  isOnline: boolean;
+}
+
+interface EmergencyAlert {
+  type: string;
+  alertType: string;
+  coordinates: {
+    latitude: number;
+    longitude: number;
   };
+  description: string;
+  status: string;
+  priority: string;
+  timestamp: string;
+  alertId: string;
+  driverId: number;
+  driverName: string;
+  driverPhone: string;
+  vehicleType: string;
 }
 
 export default function LiveTrackingEnhanced() {
@@ -62,17 +88,27 @@ export default function LiveTrackingEnhanced() {
 
   const { toast } = useToast();
 
-  const { data: locations, isLoading, isError } = useQuery<DriverLocation[]>({
-    queryKey: ['/api/drivers/live-locations'],
+  // Fetch real-time driver locations using the new enhanced API
+  const { data: locationData, isLoading, isError } = useQuery({
+    queryKey: ['/api/admin/drivers/locations'],
     refetchInterval: refreshInterval,
   });
 
-  // Filter locations based on status and search
-  const filteredLocations = locations?.filter(location => {
-    const matchesStatus = filterStatus === 'all' || location.status === filterStatus;
+  // Fetch emergency alerts
+  const { data: alertData } = useQuery({
+    queryKey: ['/api/admin/emergency-alerts'],
+    refetchInterval: 5000, // Check every 5 seconds for emergency alerts
+  });
+
+  const drivers: DriverLocationData[] = locationData?.data || [];
+  const emergencyAlerts: EmergencyAlert[] = alertData?.data || [];
+
+  // Filter drivers based on status and search
+  const filteredDrivers = drivers.filter((driver: DriverLocationData) => {
+    const matchesStatus = filterStatus === 'all' || driver.status === filterStatus;
     const matchesSearch = searchTerm === '' || 
-      location.fullName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      location.phone.includes(searchTerm);
+      driver.driverName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      driver.phone.includes(searchTerm);
     return matchesStatus && matchesSearch;
   }) || [];
 
