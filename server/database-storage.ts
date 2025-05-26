@@ -3,7 +3,7 @@ import { db } from "./db";
 import { 
   users, drivers, customers, vehicles, orders, pricingRules, 
   promotions, notifications, complaints, systemSettings,
-  safetyAlerts, driverSafetyStatus, safetyIncidents,
+  driverSafetyAlerts, driverSafetyStatus, safetyIncidents,
   type User, type InsertUser,
   type Driver, type InsertDriver,
   type Customer, type InsertCustomer,
