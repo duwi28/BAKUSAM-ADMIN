@@ -7,6 +7,308 @@ import { insertDriverSchema, insertCustomerSchema, insertVehicleSchema, insertOr
 
 export async function registerRoutes(app: Express): Promise<Server> {
   
+  // ========================================
+  // DRIVER MOBILE APP API ENDPOINTS
+  // ========================================
+  
+  // Driver Login (Mobile)
+  app.post("/api/mobile/driver/login", async (req, res) => {
+    try {
+      const { phone, password } = req.body;
+      
+      // Find driver by phone
+      const drivers = await storage.getDrivers();
+      const driver = drivers.find(d => d.phone === phone);
+      
+      if (!driver) {
+        return res.status(401).json({ 
+          success: false, 
+          message: "Driver tidak ditemukan" 
+        });
+      }
+      
+      // Simple password check (in production, use proper hashing)
+      if (password !== "driver123") {
+        return res.status(401).json({ 
+          success: false, 
+          message: "Password salah" 
+        });
+      }
+      
+      res.json({
+        success: true,
+        driver: {
+          id: driver.id,
+          fullName: driver.fullName,
+          phone: driver.phone,
+          vehicleType: driver.vehicleType,
+          status: driver.status,
+          rating: driver.rating,
+          balance: driver.balance || 0
+        },
+        token: `driver_${driver.id}_${Date.now()}`
+      });
+    } catch (error) {
+      res.status(500).json({ 
+        success: false, 
+        message: "Login gagal" 
+      });
+    }
+  });
+
+  // Driver Profile (Mobile)
+  app.get("/api/mobile/driver/:id/profile", async (req, res) => {
+    try {
+      const driverId = parseInt(req.params.id);
+      const driver = await storage.getDriver(driverId);
+      
+      if (!driver) {
+        return res.status(404).json({ 
+          success: false, 
+          message: "Driver tidak ditemukan" 
+        });
+      }
+      
+      res.json({
+        success: true,
+        data: {
+          id: driver.id,
+          fullName: driver.fullName,
+          phone: driver.phone,
+          email: driver.email,
+          vehicleType: driver.vehicleType,
+          status: driver.status,
+          rating: driver.rating,
+          totalOrders: driver.totalOrders || 0,
+          balance: driver.balance || 0,
+          joinDate: driver.joinDate
+        }
+      });
+    } catch (error) {
+      res.status(500).json({ 
+        success: false, 
+        message: "Gagal mengambil profil driver" 
+      });
+    }
+  });
+
+  // Available Orders for Driver (Mobile)
+  app.get("/api/mobile/driver/:id/available-orders", async (req, res) => {
+    try {
+      const driverId = parseInt(req.params.id);
+      const orders = await storage.getOrders();
+      
+      // Filter orders yang belum ada driver dan status pending
+      const availableOrders = orders.filter(order => 
+        !order.driverId && order.status === 'pending'
+      );
+      
+      res.json({
+        success: true,
+        data: availableOrders.map(order => ({
+          id: order.id,
+          pickupAddress: order.pickupAddress,
+          deliveryAddress: order.deliveryAddress,
+          distance: order.distance,
+          totalFare: order.totalFare,
+          notes: order.notes,
+          orderDate: order.orderDate
+        }))
+      });
+    } catch (error) {
+      res.status(500).json({ 
+        success: false, 
+        message: "Gagal mengambil order tersedia" 
+      });
+    }
+  });
+
+  // Accept Order (Mobile)
+  app.post("/api/mobile/driver/:driverId/accept-order/:orderId", async (req, res) => {
+    try {
+      const driverId = parseInt(req.params.driverId);
+      const orderId = parseInt(req.params.orderId);
+      
+      // Update order dengan driver
+      const updatedOrder = await storage.updateOrder(orderId, {
+        driverId: driverId,
+        status: 'assigned'
+      });
+      
+      if (!updatedOrder) {
+        return res.status(404).json({ 
+          success: false, 
+          message: "Order tidak ditemukan" 
+        });
+      }
+      
+      res.json({
+        success: true,
+        message: "Order berhasil diterima",
+        data: updatedOrder
+      });
+    } catch (error) {
+      res.status(500).json({ 
+        success: false, 
+        message: "Gagal menerima order" 
+      });
+    }
+  });
+
+  // Driver's Active Orders (Mobile)
+  app.get("/api/mobile/driver/:id/active-orders", async (req, res) => {
+    try {
+      const driverId = parseInt(req.params.id);
+      const orders = await storage.getOrders();
+      
+      // Filter orders driver yang sedang aktif
+      const activeOrders = orders.filter(order => 
+        order.driverId === driverId && 
+        ['assigned', 'in_progress'].includes(order.status)
+      );
+      
+      res.json({
+        success: true,
+        data: activeOrders
+      });
+    } catch (error) {
+      res.status(500).json({ 
+        success: false, 
+        message: "Gagal mengambil order aktif" 
+      });
+    }
+  });
+
+  // Update Order Status (Mobile)
+  app.patch("/api/mobile/order/:orderId/status", async (req, res) => {
+    try {
+      const orderId = parseInt(req.params.orderId);
+      const { status, driverId } = req.body;
+      
+      const updatedOrder = await storage.updateOrder(orderId, { status });
+      
+      if (!updatedOrder) {
+        return res.status(404).json({ 
+          success: false, 
+          message: "Order tidak ditemukan" 
+        });
+      }
+      
+      // Jika order completed, update balance driver
+      if (status === 'completed') {
+        const fare = parseInt(updatedOrder.totalFare);
+        const commission = Math.floor(fare * 0.8); // Driver dapat 80%
+        
+        const driver = await storage.getDriver(driverId);
+        if (driver) {
+          await storage.updateDriver(driverId, {
+            balance: (driver.balance || 0) + commission,
+            totalOrders: (driver.totalOrders || 0) + 1
+          });
+        }
+      }
+      
+      res.json({
+        success: true,
+        message: "Status order berhasil diupdate",
+        data: updatedOrder
+      });
+    } catch (error) {
+      res.status(500).json({ 
+        success: false, 
+        message: "Gagal update status order" 
+      });
+    }
+  });
+
+  // Driver Balance & Earnings (Mobile)
+  app.get("/api/mobile/driver/:id/balance", async (req, res) => {
+    try {
+      const driverId = parseInt(req.params.id);
+      const driver = await storage.getDriver(driverId);
+      
+      if (!driver) {
+        return res.status(404).json({ 
+          success: false, 
+          message: "Driver tidak ditemukan" 
+        });
+      }
+      
+      // Get completed orders for earnings calculation
+      const orders = await storage.getOrders();
+      const completedOrders = orders.filter(order => 
+        order.driverId === driverId && order.status === 'completed'
+      );
+      
+      const totalEarnings = completedOrders.reduce((sum, order) => {
+        return sum + Math.floor(parseInt(order.totalFare) * 0.8);
+      }, 0);
+      
+      res.json({
+        success: true,
+        data: {
+          currentBalance: driver.balance || 0,
+          totalEarnings: totalEarnings,
+          totalOrders: completedOrders.length,
+          averagePerOrder: completedOrders.length > 0 ? Math.floor(totalEarnings / completedOrders.length) : 0
+        }
+      });
+    } catch (error) {
+      res.status(500).json({ 
+        success: false, 
+        message: "Gagal mengambil data balance" 
+      });
+    }
+  });
+
+  // Update Driver Location (Mobile)
+  app.post("/api/mobile/driver/:id/location", async (req, res) => {
+    try {
+      const driverId = parseInt(req.params.id);
+      const { latitude, longitude } = req.body;
+      
+      // Update driver location (you might want to store this in a separate table)
+      const driver = await storage.updateDriver(driverId, {
+        // Store location in notes field for now (in production, create a separate location table)
+        notes: `Location: ${latitude}, ${longitude} - Updated: ${new Date().toISOString()}`
+      });
+      
+      res.json({
+        success: true,
+        message: "Lokasi berhasil diupdate",
+        data: { latitude, longitude }
+      });
+    } catch (error) {
+      res.status(500).json({ 
+        success: false, 
+        message: "Gagal update lokasi" 
+      });
+    }
+  });
+
+  // Driver Notifications (Mobile)
+  app.get("/api/mobile/driver/:id/notifications", async (req, res) => {
+    try {
+      const driverId = parseInt(req.params.id);
+      const notifications = await storage.getNotifications();
+      
+      // Filter notifications for this driver
+      const driverNotifications = notifications.filter(notif => 
+        notif.targetType === 'driver' || notif.targetType === 'all'
+      );
+      
+      res.json({
+        success: true,
+        data: driverNotifications.slice(0, 20) // Latest 20 notifications
+      });
+    } catch (error) {
+      res.status(500).json({ 
+        success: false, 
+        message: "Gagal mengambil notifikasi" 
+      });
+    }
+  });
+
   // Dashboard stats
   app.get("/api/dashboard/stats", async (req, res) => {
     try {
