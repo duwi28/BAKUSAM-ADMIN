@@ -596,6 +596,83 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // System Settings API - FIXED
+  app.get("/api/system-settings", async (req, res) => {
+    try {
+      const settings = await storage.getSystemSettings();
+      res.json(settings);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to fetch system settings" });
+    }
+  });
+
+  app.post("/api/system-settings", async (req, res) => {
+    try {
+      const { key, value } = req.body;
+      
+      if (!key || !value) {
+        return res.status(400).json({ message: "Key and value are required" });
+      }
+
+      const setting = await storage.updateSystemSetting(key, value);
+      res.json({ 
+        success: true, 
+        message: "System setting updated successfully",
+        setting 
+      });
+    } catch (error) {
+      res.status(500).json({ message: "Failed to update system setting" });
+    }
+  });
+
+  // Route Optimization API - Enhanced
+  app.get("/api/route-optimization", async (req, res) => {
+    try {
+      // Mock route optimization data with real driver integration
+      const drivers = await storage.getDrivers();
+      const activeDrivers = drivers.filter(d => d.status === 'active');
+      const orders = await storage.getOrders();
+      const activeOrders = orders.filter(o => o.status === 'assigned' || o.status === 'in_progress');
+
+      const routeOptimizations = activeDrivers.slice(0, 3).map((driver, index) => ({
+        id: driver.id,
+        driverId: driver.id,
+        driverName: driver.fullName,
+        vehicleType: driver.vehicleType,
+        currentLocation: {
+          lat: -6.2088 + (index * 0.01),
+          lng: 106.8456 + (index * 0.01),
+          address: `Area ${['Jakarta Pusat', 'Jakarta Selatan', 'Jakarta Barat'][index]}`
+        },
+        assignedOrders: activeOrders.filter(o => o.driverId === driver.id).map(order => ({
+          id: order.id,
+          pickupAddress: order.pickupAddress,
+          deliveryAddress: order.deliveryAddress,
+          priority: 'normal',
+          estimatedTime: 30 + Math.floor(Math.random() * 30)
+        })),
+        optimizedRoute: {
+          totalDistance: 15 + Math.floor(Math.random() * 20),
+          totalTime: 45 + Math.floor(Math.random() * 60),
+          fuelConsumption: 1.2 + Math.random() * 1.0,
+          fuelCost: 12000 + Math.floor(Math.random() * 10000),
+          co2Emission: 2.8 + Math.random() * 2.0,
+          stops: []
+        },
+        savings: {
+          distanceSaved: 5 + Math.floor(Math.random() * 10),
+          timeSaved: 15 + Math.floor(Math.random() * 20),
+          fuelSaved: 0.3 + Math.random() * 0.5,
+          costSaved: 3000 + Math.floor(Math.random() * 5000)
+        }
+      }));
+
+      res.json(routeOptimizations);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to fetch route optimization data" });
+    }
+  });
+
   // Drivers
   app.get("/api/drivers", async (req, res) => {
     try {
